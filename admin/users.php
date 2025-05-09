@@ -1,0 +1,270 @@
+<?php
+include_once '../database.php';//include database connection file  
+
+// Start the session at the beginning
+session_start();
+// Check if the user is logged in
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page if not logged in
+    header("Location: ../login.html");
+    exit();
+  }
+  
+
+
+  try {
+    // Create a new PDO instance
+    $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Prepare the SQL query to fetch data from the table
+    $stmt = $db->prepare("SELECT * FROM users"); // Replace 'employees' with your table name
+    $stmt->execute();
+
+    // Fetch all data from the query
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    exit();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brightstart Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        
+        .content {
+        padding: 30px;
+        background-color: #f5f7fa;
+        }
+
+        .content h1 {
+        margin-bottom: 20px;
+        font-size: 28px;
+        color: #333;
+        }
+
+        .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .toolbar input[type="text"] {
+        padding: 10px;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        .add-user-btn {
+        background-color: #3a7bd5;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        }
+
+        .add-user-btn:hover {
+        background-color: #2c5fb3;
+        }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        }
+
+        th,
+        td {
+        padding: 14px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+        }
+
+        th {
+        background-color: #f0f0f0;
+        font-weight: 600;
+        color: #333;
+        }
+
+        td {
+        color: #555;
+        }
+
+        tr:hover {
+        background-color: #f9f9f9;
+        }
+
+        .user-role {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        }
+
+        .role-admin {
+        background-color: #e6f7ee;
+        color: #00b894;
+        }
+
+        .role-instructor {
+        background-color: #e6f7ff;
+        color: #3a7bd5;
+        }
+
+        .role-learner {
+        background-color: #f0f0f0;
+        color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <h2>Bright<span>Start</span></h2>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" onclick="window.location.href='dashboard.php';">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='courses.php';">
+                <i class="fas fa-book"></i>
+                <span>Courses</span>
+            </div>
+            <div class="menu-item active" onclick="window.location.href='users.php';">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
+            </div>
+            
+            <div class="menu-item" onclick="window.location.href='messages.php';">
+                <i class="fas fa-comment"></i>
+                <span>Messages</span>
+              
+            </div>
+            
+            
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <div class="header-actions">
+                <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
+                    <i class="fa-solid fa-pencil"></i>
+                </button>
+                
+                <div class="user-profile">
+                    
+                    <div class="user-info">
+                        <div class="user-name"><?php
+                        $name = isset($_SESSION['name']) ? $_SESSION['name'] : "Unknown User";
+                        echo htmlspecialchars($name);
+                        ?> </div>
+                        <div class="user-role"><?php
+                        $role = isset($_SESSION['role']) ? $_SESSION['role'] : "Unknown User";
+                        echo htmlspecialchars($role);
+                        ?> </div>
+                    </div>
+                    <div class="user-avatar" onclick="window.location.href='logout.php';"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="welcome-section">
+            <h1 class="welcome-title">
+                <i class="fas fa-chart-line"></i>
+                 Participants Overview
+            </h1>
+            
+            <button class="customize-btn">
+                Customize Dashboard
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+        
+        <section class="content">
+            <div class="toolbar">
+                <input type="text" placeholder="Search users...">
+                <button class="add-user-btn" onclick="window.location.href='useradd.php';">Add user</button>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>District</th>
+                    <th>Town</th>
+                    <th>Organization</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        if ($rows) {
+                            foreach ($rows as $row) {
+                                echo "<tr>";
+                                echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['role']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['phone']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['district']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['town']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['organization']) . "</td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='6'>No data found</td></tr>";
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+        
+
+        <script>
+            
+
+            // Sidebar toggle functionality
+            document.querySelector('.menu-toggle').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+                document.querySelector('.main-content').classList.toggle('expanded');
+            });
+
+        </script>
+    </div>
+</body>
+</html>
