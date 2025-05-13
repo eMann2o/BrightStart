@@ -190,7 +190,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Courses</span>
+                <span>Modules</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fa-solid fa-upload"></i>
@@ -245,29 +245,14 @@ if (!isset($_SESSION['email'])) {
                 <div class="chat-header">
                     <h2>LMS Group Chat</h2>
                     <div class="group-members">
-                        <span>12 members</span>
-                        <button id="members-toggle">👥</button>
+                    <span>Group Members</span>
                     </div>
                 </div>
-                
-                <div class="members-list" id="members-list">
-                    <h3>Group Members</h3>
-                    <ul>
-                        <li>kodi (You)</li>
-                        <li>Miss Roberta</li>
-                        <li>Nii Kpani</li>
-                        <li>koo Emma</li>
-                        <li>Adomski</li>
-                        <li>Dora</li>
-                    </ul>
-                </div>
-                
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages will appear here -->
-                </div>
-                
+
+                <div class="chat-messages" id="chat-messages"></div>
+
                 <div class="message-input">
-                    <textarea id="message-input" placeholder="Type your message here..."></textarea>
+                    <textarea id="message-input" placeholder="Type your message..."></textarea>
                     <button id="send-button">Send</button>
                 </div>
             </div>
@@ -285,128 +270,87 @@ if (!isset($_SESSION['email'])) {
             
 
 
-            document.addEventListener('DOMContentLoaded', function() {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-button');
-            const membersToggle = document.getElementById('members-toggle');
-            const membersList = document.getElementById('members-list');
-            
-            // Sample messages (in a real app, these would come from a server)
-            const sampleMessages = [
-                {
-                    sender: "Adomski",
-                    content: "Hello everyone!?",
-                    timestamp: "2023-05-15T10:30:00",
-                    isCurrentUser: false
-                },
-                {
-                    sender: "Koo Emma",
-                    content: "Hi Adom! at 11:59 PM.",
-                    timestamp: "2023-05-15T10:35:00",
-                    isCurrentUser: true
-                },
-                {
-                    sender: "Dora",
-                    content: "what y'all up to?",
-                    timestamp: "2023-05-15T11:15:00",
-                    isCurrentUser: false
+            document.addEventListener('DOMContentLoaded', function () {
+                const chatMessages = document.getElementById('chat-messages');
+                const messageInput = document.getElementById('message-input');
+                const sendButton = document.getElementById('send-button');
+
+                function loadMessages() {
+                    fetch('fetch_messages.php')
+                        .then(response => response.json())
+                        .then(data => {
+                            chatMessages.innerHTML = '';
+                            data.forEach(msg => {
+                                const isCurrentUser = msg.sender_email === <?= json_encode($_SESSION['email']) ?>;
+                                addMessageToChat({
+                                    sender: msg.name || msg.sender_email,
+                                    content: msg.message,
+                                    timestamp: msg.created_at,
+                                    isCurrentUser: isCurrentUser
+                                });
+                            });
+                        });
                 }
-            ];
-            
-            // Toggle members list visibility
-            membersToggle.addEventListener('click', function() {
-                membersList.style.display = membersList.style.display === 'block' ? 'none' : 'block';
-            });
-            
-            // Display sample messages
-            sampleMessages.forEach(message => {
-                addMessageToChat(message);
-            });
-            
-            // Send message functionality
-            function sendMessage() {
-                const content = messageInput.value.trim();
-                if (content) {
-                    const newMessage = {
-                        sender: "Alex Johnson", // In a real app, this would be the logged-in user
-                        content: content,
-                        timestamp: new Date().toISOString(),
-                        isCurrentUser: true
-                    };
-                    
-                    addMessageToChat(newMessage);
-                    messageInput.value = '';
-                    
-                    // In a real app, you would send the message to the server here
-                    // simulateReceivedMessage();
+
+                function addMessageToChat(message) {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.classList.add(message.isCurrentUser ? 'sent' : 'received');
+
+                    const messageInfo = document.createElement('div');
+                    messageInfo.classList.add('message-info');
+                    messageInfo.textContent = message.isCurrentUser ? 'You' : message.sender;
+
+                    const messageContent = document.createElement('div');
+                    messageContent.textContent = message.content;
+
+                    const timestamp = document.createElement('div');
+                    timestamp.classList.add('timestamp');
+                    timestamp.textContent = formatTimestamp(message.timestamp);
+
+                    messageElement.appendChild(messageInfo);
+                    messageElement.appendChild(messageContent);
+                    messageElement.appendChild(timestamp);
+
+                    chatMessages.appendChild(messageElement);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
-            }
-            
-            // Add message to chat UI
-            function addMessageToChat(message) {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.classList.add(message.isCurrentUser ? 'sent' : 'received');
-                
-                const messageInfo = document.createElement('div');
-                messageInfo.classList.add('message-info');
-                messageInfo.textContent = message.isCurrentUser ? 'You' : message.sender;
-                
-                const messageContent = document.createElement('div');
-                messageContent.textContent = message.content;
-                
-                const timestamp = document.createElement('div');
-                timestamp.classList.add('timestamp');
-                timestamp.textContent = formatTimestamp(message.timestamp);
-                
-                messageElement.appendChild(messageInfo);
-                messageElement.appendChild(messageContent);
-                messageElement.appendChild(timestamp);
-                
-                chatMessages.appendChild(messageElement);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-            
-            // Format timestamp for display
-            function formatTimestamp(isoString) {
-                const date = new Date(isoString);
-                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
-            
-            // Event listeners
-            sendButton.addEventListener('click', sendMessage);
-            
-            messageInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
+
+                function formatTimestamp(dateStr) {
+                    const date = new Date(dateStr);
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
+
+                function sendMessage() {
+                    const content = messageInput.value.trim();
+                    if (!content) return;
+
+                    const formData = new FormData();
+                    formData.append('message', content);
+
+                    fetch('send_message.php', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => {
+                        if (response.ok) {
+                            messageInput.value = '';
+                            loadMessages();
+                        }
+                    });
+                }
+
+                sendButton.addEventListener('click', sendMessage);
+                messageInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                // Poll for messages every 3 seconds
+                setInterval(loadMessages, 3000);
+                loadMessages();
             });
-            
-            // Simulate receiving a message after a delay
-            function simulateReceivedMessage() {
-                setTimeout(() => {
-                    const responses = [
-                        "Thanks for the info!",
-                        "I'll be there for the study group.",
-                        "Can someone explain question 3 from the last assignment?",
-                        "The lecture slides have been updated."
-                    ];
-                    
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    
-                    const receivedMessage = {
-                        sender: sampleMessages[Math.floor(Math.random() * sampleMessages.length)].sender,
-                        content: randomResponse,
-                        timestamp: new Date().toISOString(),
-                        isCurrentUser: false
-                    };
-                    
-                    addMessageToChat(receivedMessage);
-                }, 2000);
-            }
-        });
         </script>
     </div>
 </body>

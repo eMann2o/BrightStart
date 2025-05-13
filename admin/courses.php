@@ -1,5 +1,6 @@
 <?php
-include_once '../database.php';//include database connection file  
+include_once '../database.php';//include database connection file 
+require 'db.php'; 
 
 // Start the session at the beginning
 session_start();
@@ -128,7 +129,7 @@ th, td {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Courses</span>
+                <span>Modules</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -181,11 +182,19 @@ th, td {
         <div class="welcome-section">
             <h1 class="welcome-title">
                 <i class="fas fa-chart-line"></i>
-                 Courses Overview
+                 Modules Overview
             </h1>
             
-            <button class="customize-btn">
-                Customize Dashboard
+            <button class="customize-btn" onclick="window.location.href='addmodule.php';">
+                Add a module
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="customize-btn" onclick="window.location.href='addcourse.php';">
+                Add a course
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="customize-btn" onclick="window.location.href='addlesson.php';">
+                Add a lesson
                 <i class="fas fa-cog"></i>
             </button>
         </div>
@@ -193,36 +202,49 @@ th, td {
         <section class="content">
             <div class="card">
                 <div class="container">
-                    <h2>Courses</h2>
-                    <div class="search-bar">
-                    <input type="text" placeholder="Search" />
-                    <button class="filter-btn">⚲</button>
-                    </div>
-                
-                    <div class="card">
-                        <table>
-                            <thead>
-                                <tr>
-                                <th>Course</th>
-                                <th>Code</th>
-                                <th>Category</th>
-                                <th>Last updated on</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <td>
-                                    New course
-                                    <span class="icon">🚚</span>
-                                    <span class="status inactive">Inactive</span>
-                                </td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>20 hours ago</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h2>Modules</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Module Title</th>
+                                <th>Module Description</th>
+                                <th>Course Title</th>
+                                <th>View Lessons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <?php
+                                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+                                foreach ($modules as $module) {
+                                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
+                                    $stmt->execute([$module['id']]);
+                                    $courses = $stmt->fetchAll();
+
+                                    if (count($courses) > 0) {
+                                        $first_course = true;
+                                        foreach ($courses as $course) {
+                                            echo "<tr>";
+                                            if ($first_course) {
+                                                echo "<td rowspan='" . count($courses) . "'>{$module['title']}</td>";
+                                                echo "<td rowspan='" . count($courses) . "'>{$module['description']}</td>";
+                                                $first_course = false;
+                                            }
+                                            echo "<td>{$course['title']}</td>";
+                                            echo "<td><a href='view_lessons.php?course_id={$course['id']}'>View</a></td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr>";
+                                        echo "<td>{$module['title']}</td>";
+                                        echo "<td>{$module['description']}</td>";
+                                        echo "<td colspan='2'>No courses available for this module.</td>";
+                                        echo "</tr>";
+                                    }
+                                }
+                                ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>

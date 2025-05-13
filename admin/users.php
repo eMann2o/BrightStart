@@ -152,7 +152,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Courses</span>
+                <span>Modules</span>
             </div>
             <div class="menu-item active" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -208,10 +208,7 @@ if (!isset($_SESSION['email'])) {
                  Participants Overview
             </h1>
             
-            <button class="customize-btn">
-                Customize Dashboard
-                <i class="fas fa-cog"></i>
-            </button>
+            
         </div>
         
         <section class="content">

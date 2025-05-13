@@ -164,7 +164,7 @@ try {
             </div>
             <div class="menu-item" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Courses</span>
+                <span>Modules</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fa-solid fa-upload"></i>
@@ -224,10 +224,7 @@ try {
                 Dashboard Overview
             </h1>
             
-            <button class="customize-btn">
-                Customize Dashboard
-                <i class="fas fa-cog"></i>
-            </button>
+            
         </div>
         
         <div class="dashboard-grid">
@@ -266,7 +263,95 @@ try {
         
         <div class="card">
             <div class="dashboard-container">
-                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module Title</th>
+                            <th>Module Description</th>
+                            <th>Course Title</th>
+                            <th>Progress</th>
+                            <th>View Lessons</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    require 'db.php';
+
+                    // Get user ID from session email
+                    if (!isset($_SESSION['email'])) {
+                        echo "You must be logged in.";
+                        exit;
+                    }
+
+                    $email = $_SESSION['email'];
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                    $stmt->execute([$email]);
+                    $user = $stmt->fetch();
+
+                    if (!$user) {
+                        echo "User not found.";
+                        exit;
+                    }
+
+                    $user_id = $user['id'];
+                    $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+
+                    foreach ($modules as $module) {
+                        $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
+                        $stmt->execute([$module['id']]);
+                        $courses = $stmt->fetchAll();
+
+                        $incomplete_courses = [];
+
+                        foreach ($courses as $course) {
+                            // Count total lessons for this course
+                            $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
+                            $total_stmt->execute([$course['id']]);
+                            $total_lessons = $total_stmt->fetchColumn();
+
+                            // Count completed lessons
+                            $completed_stmt = $pdo->prepare("
+                                SELECT COUNT(*) FROM progress 
+                                WHERE user_id = ? 
+                                AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
+                                AND status = 'completed'");
+                            $completed_stmt->execute([$user_id, $course['id']]);
+                            $completed_lessons = $completed_stmt->fetchColumn();
+
+                            // If incomplete, include in the display
+                            if ($completed_lessons < $total_lessons) {
+                                $course['completed'] = $completed_lessons;
+                                $course['total'] = $total_lessons;
+                                $incomplete_courses[] = $course;
+                            }
+                        }
+
+                        // Output only if there are incomplete courses
+                        if (count($incomplete_courses) > 0) {
+                            $first_course = true;
+
+                            foreach ($incomplete_courses as $course) {
+                                echo "<tr>";
+
+                                if ($first_course) {
+                                    echo "<td rowspan='" . count($incomplete_courses) . "'>{$module['title']}</td>";
+                                    echo "<td rowspan='" . count($incomplete_courses) . "'>{$module['description']}</td>";
+                                    $first_course = false;
+                                }
+
+                                $percent = $course['total'] > 0 ? round(($course['completed'] / $course['total']) * 100) : 0;
+
+                                echo "<td>{$course['title']}</td>";
+                                echo "<td>{$course['completed']} / {$course['total']} ({$percent}%)</td>";
+                                echo "<td><a href='view_lessons.php?course_id={$course['id']}'>View</a></td>";
+                                echo "</tr>";
+                            }
+                        }
+                    }
+                    ?>
+
+                    </tbody>
+                </table>
             </div>
         </div>
 

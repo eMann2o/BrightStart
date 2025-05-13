@@ -234,7 +234,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Courses</span>
+                <span>Modules</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
