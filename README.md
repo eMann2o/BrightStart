@@ -72,5 +72,3 @@ To automatically delete leftover temp files:
 ## 👨‍💻 Author
 
 Built by Josephine Ababio Nyankom, Emmanuel Opoku, Frank Kodi, Samuel Amoah
-Student, Takoradi Technical University  
-2025
