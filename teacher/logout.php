@@ -8,6 +8,6 @@ if (!isset($_SESSION['email'])) {
     exit();
   }
 session_destroy();
-header("Location: ../login.html");
+header("Location: ../index.html");
 exit;
 ?>

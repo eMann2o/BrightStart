@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!$user) {
             echo '<script type="text/javascript">
                     alert("No user found with this email");
-                    window.location.href = "login.html";
+                    window.location.href = "index.html";
                 </script>';
             exit;
         }
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 default:
                     echo '<script type="text/javascript">
                             alert("Unauthorized role");
-                            window.location.href = "login.html";
+                            window.location.href = "index.html";
                         </script>';
                     break;
             }
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Password does not match
             echo '<script type="text/javascript">
                     alert("Invalid password");
-                    window.location.href = "login.html";
+                    window.location.href = "index.html";
                 </script>';
         }
     } catch (PDOException $e) {

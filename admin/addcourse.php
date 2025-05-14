@@ -7,7 +7,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
-    header("Location: ../login.html");
+    header("Location: ../index.html");
     exit();
   }
   
@@ -44,75 +44,107 @@ if (!isset($_SESSION['email'])) {
         <link rel="stylesheet" href="styles/style.css">
         <style>
             .container {
-            max-width: 1000px;
-            margin: auto;
+                max-width: 1000px;
+                margin: auto;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+                background-color: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
 
-            h2 {
-            margin-bottom: 10px;
+            .container h2 {
+                color: #2c3e50;
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 28px;
+                font-weight: 600;
             }
 
-            .search-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+            .form-group {
+                margin-bottom: 20px;
             }
 
-            .search-bar input {
-            padding: 8px;
-            width: 200px;
-            margin-right: 8px;
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                color: #34495e;
+                font-weight: 500;
+                font-size: 16px;
             }
 
-            .filter-btn {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 8px;
-            cursor: pointer;
+            .form-control {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #dfe6e9;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+                background-color: #f8f9fa;
             }
 
-            .add-course-btn {
-            float: right;
-            margin-bottom: 10px;
-            background-color: #0061f2;
+            .form-control:focus {
+                border-color: #3498db;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+                background-color: #fff;
+            }
+
+            textarea.form-control {
+                min-height: 150px;
+                resize: vertical;
+            }
+
+            .btn {
+            display: inline-block;
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            }
-
-            table {
+            padding: 12px 20px;
             width: 100%;
-            border-collapse: collapse;
-            }
+            max-width: 250px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-            thead {
-            background-color: #f2f2f2;
-            }
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
 
-            th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-            .icon {
-            margin-left: 6px;
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .btn {
+                width: 100%;
+                padding: 15px 20px;
+                font-size: 14px;
+                max-width: none;
             }
+        }
 
-            .status.inactive {
-            background-color: #d3dbe4;
-            color: #333;
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 6px;
+        @media screen and (max-width: 480px) {
+            .btn {
+                padding: 12px 16px;
+                font-size: 13px;
             }
-
-            .highlight {
-            color: #0073e6;
-            }
+        }
         </style>
     </head>
     <body>
@@ -200,24 +232,32 @@ if (!isset($_SESSION['email'])) {
                         <form method="POST" action="addcourse.php">
                             <h2>Create New Course</h2>
 
-                            <label>Select Module:</label>
-                            <select name="module_id" required>
-                                <?php
-                                require 'db.php';
-                                $modules = $pdo->query("SELECT id, title FROM modules")->fetchAll();
-                                foreach ($modules as $mod) {
-                                    echo "<option value='{$mod['id']}'>{$mod['title']}</option>";
-                                }
-                                ?>
-                            </select><br>
+                            <div class="form-group">
+                                <label for="module_id" >Select Module:</label>
+                                <select name="module_id" class="form-control" required>
+                                    <?php
+                                    require 'db.php';
+                                    $modules = $pdo->query("SELECT id, title FROM modules")->fetchAll();
+                                    foreach ($modules as $mod) {
+                                        echo "<option value='{$mod['id']}'>{$mod['title']}</option>";
+                                    }
+                                    ?>
+                                </select><br>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <label>Course Title:</label>
+                                <input type="text" class="form-control" name="title" maxlength="255" required><br>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Description:</label>
+                                <textarea name="description" class="form-control" required></textarea><br>
+                            </div>
+                            
 
-                            <label>Course Title:</label>
-                            <input type="text" name="title" maxlength="255" required><br>
-
-                            <label>Description:</label>
-                            <textarea name="description" required></textarea><br>
-
-                            <input type="submit" value="Create Course">
+                            <input type="submit" class="btn" value="Create Course">
                         </form>
                     </div>
                 </div>

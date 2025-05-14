@@ -244,9 +244,6 @@ if (!isset($_SESSION['email'])) {
             <div class="chat-container">
                 <div class="chat-header">
                     <h2>LMS Group Chat</h2>
-                    <div class="group-members">
-                    <span>Group Members</span>
-                    </div>
                 </div>
 
                 <div class="chat-messages" id="chat-messages"></div>

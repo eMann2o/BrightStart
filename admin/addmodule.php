@@ -7,7 +7,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
-    header("Location: ../login.html");
+    header("Location: ../index.html");
     exit();
   }
   
@@ -43,78 +43,108 @@ if (!isset($_SESSION['email'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
     <style>
+        .container {
+        max-width: 1000px;
+        margin: auto;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
 
+        .container h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
 
-.container {
-  max-width: 1000px;
-  margin: auto;
-}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-h2 {
-  margin-bottom: 10px;
-}
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 16px;
+        }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
 
-.search-bar input {
-  padding: 8px;
-  width: 200px;
-  margin-right: 8px;
-}
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: #fff;
+        }
 
-.filter-btn {
-  background: none;
-  border: 1px solid #ccc;
-  padding: 8px;
-  cursor: pointer;
-}
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
 
-.add-course-btn {
-  float: right;
-  margin-bottom: 10px;
-  background-color: #0061f2;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
+        .btn {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        width: 100%;
+        max-width: 250px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+    .btn:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+    }
 
-thead {
-  background-color: #f2f2f2;
-}
+    .btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-th, td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
+    /* Responsive adjustments */
+    @media screen and (max-width: 768px) {
+        .btn {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 14px;
+            max-width: none;
+        }
+    }
 
-.icon {
-  margin-left: 6px;
-}
-
-.status.inactive {
-  background-color: #d3dbe4;
-  color: #333;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  margin-left: 6px;
-}
-
-.highlight {
-  color: #0073e6;
-}
+    @media screen and (max-width: 480px) {
+        .btn {
+            padding: 12px 16px;
+            font-size: 13px;
+        }
+    }
     </style>
 </head>
 <body>
@@ -203,13 +233,17 @@ th, td {
                     <form method="POST" action="addmodule.php">
                         <h2>Create New Module</h2>
 
-                        <label>Module Title:</label>
-                        <input type="text" name="title" maxlength="255" required><br>
+                        <div class="form-group">
+                            <label for="title">Module Title:</label>
+                            <input type="text" class="form-control" name="title" maxlength="255" required><br>
+                        </div>
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <textarea name="description" class="form-control" required></textarea><br>
+                        </div>
+                        
 
-                        <label>Description:</label>
-                        <textarea name="description" required></textarea><br>
-
-                        <input type="submit" value="Create Module">
+                        <input type="submit" class="btn"value="Create Module">
                     </form>
                 </div>
             </div>

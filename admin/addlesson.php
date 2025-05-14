@@ -7,7 +7,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
-    header("Location: ../login.html");
+    header("Location: ../index.html");
     exit();
   }
   
@@ -45,10 +45,10 @@ if (!isset($_SESSION['email'])) {
     <style>
 
 
-.container {
-  max-width: 1000px;
-  margin: auto;
-}
+        .container {
+        max-width: 1000px;
+        margin: auto;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;

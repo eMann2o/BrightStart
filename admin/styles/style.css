@@ -110,6 +110,7 @@ body {
     cursor: pointer;
     transition: transform 0.3s;
     z-index: 1000;
+    display: none;
 }
 .menu-toggle:hover {
     transform: rotate(90deg);
@@ -1330,7 +1331,7 @@ align-items: center;
     }
     
     .welcome-section {
-        flex-direction: column;
+        flex-direction: row;
         align-items: flex-start;
     }
     
@@ -1766,7 +1767,7 @@ input:checked + .slider:before {
             }
         
             .welcome-section {
-                flex-direction: column;
+                flex-direction: row;
                 align-items: flex-start;
                 gap: 10px;
             }

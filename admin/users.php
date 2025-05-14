@@ -6,7 +6,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
-    header("Location: ../login.html");
+    header("Location: ../index.html");
     exit();
   }
   
@@ -213,11 +213,11 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="toolbar">
-                <input type="text" placeholder="Search users...">
+                <input type="text" placeholder="Search users..." id="searchInput" onkeyup="searchTable()">
                 <button class="add-user-btn" onclick="window.location.href='useradd.php';">Add user</button>
             </div>
 
-            <table>
+            <table id="myTable">
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -260,6 +260,33 @@ if (!isset($_SESSION['email'])) {
                 document.querySelector('.sidebar').classList.toggle('collapsed');
                 document.querySelector('.main-content').classList.toggle('expanded');
             });
+
+            function searchTable() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("searchInput");
+                filter = input.value.toLowerCase();
+                table = document.getElementById("myTable");
+                tr = table.getElementsByTagName("tr");
+
+                for (i = 1; i < tr.length; i++) {  // Starts from 1 to skip the header row
+                    td = tr[i].getElementsByTagName("td");
+                    let rowFound = false;
+                    
+                    for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        rowFound = true;
+                        }
+                    }
+                    }
+                    if (rowFound) {
+                    tr[i].style.display = "";
+                    } else {
+                    tr[i].style.display = "none";
+                    }
+                }
+            }
 
         </script>
     </div>
