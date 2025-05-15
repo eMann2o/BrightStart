@@ -67,10 +67,59 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brightstart Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
+    <script>
+        let activityChart;
+
+        function fetchChartData(days) {
+            fetch(`fetch_logins.php?days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (activityChart) activityChart.destroy();
+
+                    const ctx = document.getElementById('activityChart').getContext('2d');
+                    activityChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Unique Logins',
+                                data: data.logins,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: '#4bc0c0',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                            }, {
+                            label: 'Course Views',
+                            data: [28, 48, 40, 45, 46, 30, 50],
+                            borderColor: '#00d2ff',
+                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    });
+                });
+        }
+
+        // Load default (7 days) on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchChartData(7);
+        });
+    </script>
+
     <style>
         .dashboard-container {
             display: flex;
@@ -231,11 +280,12 @@ try {
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title">Portal Activity</h2>
-                    <select class="dropdown-select">
-                        <option>Last 7 Days</option>
-                        <option>Last 30 Days</option>
-                        <option>Last 3 Months</option>
+                    <select id="activity-range" onchange="fetchChartData(this.value)" class="dropdown-select">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 3 Months</option>
                     </select>
+
                 </div>
                 <div class="chart-container">
                     <canvas id="activityChart"></canvas>
@@ -405,102 +455,48 @@ try {
 
         <script>
             // Initialize charts
-            document.addEventListener('DOMContentLoaded', function() {
-                // Sample activity chart
-                const activityCtx = document.getElementById('activityChart').getContext('2d');
-                const activityChart = new Chart(activityCtx, {
-                    type: 'line',
+            document.addEventListener('DOMContentLoaded', function() {                
+            
+                // Calculate total
+                const total = userData.reduce((sum, item) => sum + item.count, 0);
+                userData.forEach(item => {
+                    item.percentage = ((item.count / total) * 100).toFixed(1);
+                });
+                // Create pie chart
+                const ctx = document.getElementById('userChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
                     data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: userData.map(item => item.role),
                         datasets: [{
-                            label: 'Student Logins',
-                            data: [65, 59, 80, 81, 56, 40, 70],
-                            borderColor: '#3a7bd5',
-                            backgroundColor: 'rgba(58, 123, 213, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }, {
-                            label: 'Course Views',
-                            data: [28, 48, 40, 45, 46, 30, 50],
-                            borderColor: '#00d2ff',
-                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
+                            data: userData.map(item => item.count),
+                            backgroundColor: userData.map(item => item.color),
+                            borderColor: 'white',
+                            borderWidth: 2
+                        }],
+                        hoverOffset: 4
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                }
+                                display: false
                             },
-                            x: {
-                                grid: {
-                                    display: false
+                            tooltip: {
+                                
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${context.label}: ${value} (${percentage}%)`;
+                                    }
                                 }
                             }
                         }
                     }
                 });
             });
-
-            // Sidebar toggle functionality
-            document.querySelector('.menu-toggle').addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('collapsed');
-                document.querySelector('.main-content').classList.toggle('expanded');
-            });
-
-
-            /////////////////////////////////////////////////////////
-            document.addEventListener('DOMContentLoaded', function() {
-            // Calculate total
-            const total = userData.reduce((sum, item) => sum + item.count, 0);
-            userData.forEach(item => {
-                item.percentage = ((item.count / total) * 100).toFixed(1);
-            });
-
-            // Create pie chart
-            const ctx = document.getElementById('userChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: userData.map(item => item.role),
-                    datasets: [{
-                        data: userData.map(item => item.count),
-                        backgroundColor: userData.map(item => item.color),
-                        borderColor: 'white',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${context.label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
 
         </script>
     </div>
