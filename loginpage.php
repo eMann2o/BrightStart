@@ -36,7 +36,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["email"] = $user["email"];
             $_SESSION["name"] = htmlspecialchars($user["name"]); // Store name in session
             $_SESSION["role"] = htmlspecialchars($user["role"]); // Store role
-    
+            
+            // Log unique daily login
+            $user_id = $user["id"];
+            $today = date('Y-m-d');
+            $stmtLog = $db->prepare("INSERT IGNORE INTO user_logins (user_id, login_date) VALUES (:user_id, :login_date)");
+            $stmtLog->bindParam(':user_id', $user_id);
+            $stmtLog->bindParam(':login_date', $today);
+            $stmtLog->execute();
+             
             // Redirect based on role
             switch ($_SESSION["role"]) {
                 case "Admin":

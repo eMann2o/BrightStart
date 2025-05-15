@@ -16,4 +16,11 @@ if ($exists) {
     $pdo->prepare("INSERT INTO progress (user_id, lesson_id, status) VALUES (?, ?, 'completed')")
         ->execute([$user_id, $lesson_id]);
 }
+
+if (isset($_GET['temp_file'])) {
+    $tempFile = basename($_GET['temp_file']); // security: remove any path info
+    if (file_exists($tempFile)) {
+        unlink($tempFile);
+    }
+}
 ?>
