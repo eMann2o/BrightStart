@@ -37,7 +37,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brightstart Dashboard</title>
+    <title>Add a module</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -275,6 +275,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO modules (title, description) VALUES (?, ?)");
     $stmt->execute([$title, $description]);
 
-    echo "<p style='color:green;'>✅ Module created successfully!</p>";
+    echo "<script type=\"text/javascript\">
+                alert(\"✅ Module created successfully!\");
+                window.location.href = \"courses.php\";
+            </script>";
 }
 ?>

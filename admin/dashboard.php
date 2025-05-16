@@ -66,7 +66,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brightstart Dashboard</title>
+    <title>Brightstart Admin Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
@@ -94,7 +94,7 @@ try {
                                 tension: 0.4,
                             }, {
                             label: 'Course Views',
-                            data: [28, 48, 40, 45, 46, 30, 50],
+                            data: [28, 18, 20, 15, 6, 13, 25, 30, 15, 1, 8, 2, 13],
                             borderColor: '#00d2ff',
                             backgroundColor: 'rgba(0, 210, 255, 0.1)',
                             tension: 0.4,
