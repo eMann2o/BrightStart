@@ -185,7 +185,7 @@ if (!isset($_SESSION['email'])) {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile">
+                <div class="user-profile" onclick="window.location.href='profile.php';">
                     
                     <div class="user-info">
                         <div class="user-name"><?php
@@ -233,7 +233,8 @@ if (!isset($_SESSION['email'])) {
                     <?php
                         if ($rows) {
                             foreach ($rows as $row) {
-                                echo "<tr>";
+                                $email = urlencode($row['email']); // Encode email for URL safety
+                                echo "<tr style='cursor: pointer;' onclick=\"window.location.href='userprofile.php?email={$email}'\">";
                                 echo "<td>" . htmlspecialchars($row['name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['email']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['role']) . "</td>";
@@ -244,7 +245,7 @@ if (!isset($_SESSION['email'])) {
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6'>No data found</td></tr>";
+                            echo "<tr><td colspan='7'>No data found</td></tr>";
                         }
                     ?>
                 </tbody>

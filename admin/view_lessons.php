@@ -231,6 +231,7 @@ th, td {
       margin-bottom: 15px;
       transition: all 0.3s ease;
       border-left: 5px solid #3498db;
+      width: fit-content;
     }
     
     .lesson-card:hover {
@@ -369,7 +370,7 @@ th, td {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile">
+                <div class="user-profile" onclick="window.location.href='profile.php';">
                     
                     <div class="user-info">
                         <div class="user-name"><?php

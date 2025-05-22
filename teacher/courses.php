@@ -162,7 +162,7 @@ th, td {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile">
+                <div class="user-profile" onclick="window.location.href='profile.php';">
                     
                     <div class="user-info">
                         <div class="user-name"><?php

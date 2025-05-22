@@ -9,25 +9,48 @@ if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
     header("Location: ../index.html");
     exit();
-  }
+}
   
 
 
-  try {
+try {
     // Create a new PDO instance
     $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Prepare the SQL query to fetch data from the table
-    $stmt = $db->prepare("SELECT * FROM users"); // Replace 'employees' with your table name
+    // Fetch course details
+    $courses_id = $_GET['module_id'] ?? null;
+    if (!$courses_id) {
+        echo "Module ID not specified.";
+        exit;
+    }
+    $stmt = $db->prepare("SELECT * FROM courses WHERE module_id = :module_id");
+    $stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Fetch all data from the query
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
     exit();
+}
+
+// Get module ID from URL
+$courses_id = $_GET['module_id'] ?? null;
+if (!$courses_id) {
+    echo "Module ID not specified.";
+    exit;
+}
+
+// Fetch module information
+$module_stmt = $db->prepare("SELECT * FROM modules WHERE id = :module_id");
+$module_stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
+$module_stmt->execute();
+$module = $module_stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$module) {
+    echo "Module not found.";
+    exit;
 }
 
 ?>
@@ -37,7 +60,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses Overview</title>
+    <title><?php echo htmlspecialchars($module['title']); ?></title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -352,20 +375,10 @@ th, td {
         
         <div class="welcome-section">
             <h1 class="welcome-title">
-                <i class="fas fa-chart-line"></i>
-                 Modules Overview
+                 <?php echo htmlspecialchars($module['title']); ?> Overview
             </h1>
-            
-            <button class="customize-btn" onclick="window.location.href='addmodule.php';">
-                Add a module
-                <i class="fa-solid fa-square-plus"></i>
-            </button>
             <button class="customize-btn" onclick="window.location.href='addcourse.php';">
                 Add a course
-                <i class="fa-solid fa-square-plus"></i>
-            </button>
-            <button class="customize-btn" onclick="window.location.href='addlesson.php';">
-                Add a lesson
                 <i class="fa-solid fa-square-plus"></i>
             </button>
         </div>
@@ -373,38 +386,37 @@ th, td {
         <section class="content">
             <div class="modules-container">
                 <?php
-                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+                // Fetch courses that belong to this module
+                $stmt = $db->prepare("SELECT * FROM courses WHERE module_id = :module_id");
+                $stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $courses = $stmt->fetchAll();
 
-                foreach ($modules as $module) {
-                    // Fetch associated courses
-                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
-                    $stmt->execute([$module['id']]);
-                    $courses = $stmt->fetchAll();
-                    $courseCount = count($courses);
+                foreach ($courses as $course) {
+                    // Placeholder values
+                    $completedCourses = 2;
+                    $totalHours = 15;
+                    $progressPercent = 100; // adjust if needed
 
-                    // Example placeholders for completed courses and duration (replace with real data if available)
-                    $completedCourses = 2; // You can fetch actual completed count if you track it
-                    $totalHours = 15;      // Replace with actual hours if stored
-                    $progressPercent = $courseCount > 0 ? intval(($completedCourses / $courseCount) * 100) : 0;
-
-                    echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
+                    echo '<div class="module-card" onclick="window.location.href=\'view_lessons.php?course_id=' . $course['id'] . '\'">';
                     echo '    <div class="module-image-container">';
                     echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
                     echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
-                    echo "        <h3 class='module-title'>{$module['title']}</h3>";
-                    echo "        <p class='module-description'>{$module['description']}</p>";
+                    echo "        <h3 class='module-title'>{$course['title']}</h3>";
+                    echo "        <p class='module-description'>{$course['description']}</p>";
                     echo '        <div class="course-count">';
                     echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
                     echo '                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>';
                     echo '            </svg>';
-                    echo "            {$courseCount} Course" . ($courseCount !== 1 ? 's' : '');
+                    echo "            1 Course";
                     echo '        </div>';
                     echo '    </div>';
                     echo '</div>';
                 }
                 ?>
+
             </div>
         </section>
         
