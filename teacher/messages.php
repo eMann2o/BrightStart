@@ -192,9 +192,9 @@ if (!isset($_SESSION['email'])) {
                 <i class="fas fa-book"></i>
                 <span>Modules</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='users.php';">
+            <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
-                <span>Video Upload</span>
+                <span>Upload Video</span>
             </div>
             
             <div class="menu-item active" onclick="window.location.href='messages.php';">

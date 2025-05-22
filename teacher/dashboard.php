@@ -150,6 +150,135 @@ try {
             height: 12px;
             border-radius: 2px;
         }
+
+        /* Container for all module cards */
+        .modules-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Individual module card */
+        .module-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 280px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Module image container */
+        .module-image-container {
+            position: relative;
+            height: 140px;
+        }
+        
+        /* Module image */
+        .module-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Status tag */
+        .status-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-in-progress {
+            background-color: #fff8e1;
+            color: #fbbc04;
+        }
+        
+        .status-not-started {
+            background-color: #f5f5f5;
+            color: #5f6368;
+        }
+        
+        /* Card content */
+        .card-content {
+            padding: 15px;
+        }
+        
+        /* Institution logo */
+        .institution-logo {
+            height: 30px;
+            margin-bottom: 10px;
+        }
+        
+        /* Module title */
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            line-height: 1.3;
+        }
+        
+        /* Module description */
+        .module-description {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
+        
+        /* Course count */
+        .course-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #4285F4;
+            margin-top: 12px;
+        }
+        
+        /* Progress bar container */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 15px;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            background-color: #4285F4;
+        }
+        
+        /* Module info container */
+        .module-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #5f6368;
+        }
     </style>
 </head>
 <body>
@@ -166,9 +295,9 @@ try {
                 <i class="fas fa-book"></i>
                 <span>Modules</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='users.php';">
+            <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
-                <span>Video Upload</span>
+                <span>Upload Video</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
@@ -218,15 +347,6 @@ try {
             </div>
         </div>
         
-        <div class="welcome-section">
-            <h1 class="welcome-title">
-                <i class="fas fa-chart-line"></i>
-                Dashboard Overview
-            </h1>
-            
-            
-        </div>
-        
         <div class="dashboard-grid">
            
             
@@ -234,25 +354,19 @@ try {
                 <div class="card-header">
                     <h2 class="card-title">Quick Actions</h2>
                 </div>
-                <div class="action-item" onclick="window.location.href='useradd.php';">
+                <div class="action-item" onclick="window.location.href='courses.php';">
                     <div class="action-icon">
                         <i class="fas fa-plus"></i>
                     </div>
-                    <div class="action-text">Courses</div>
+                    <div class="action-text">Modules</div>
                 </div>
-                <div class="action-item">
+                <div class="action-item" onclick="window.location.href='videoupload.php';">
                     <div class="action-icon">
                         <i class="fa-solid fa-upload"></i>
                     </div>
                     <div class="action-text">Upload Videos</div>
                 </div>
-                <div class=>
-                    <div class=>
-                       
-                    </div>
-                    
-                </div>
-                <div class="action-item">
+                <div class="action-item" onclick="window.location.href='messages.php';">
                     <div class="action-icon">
                         <i class="fas fa-comment"></i>
                     </div>
@@ -260,98 +374,98 @@ try {
                 </div>
             </div>
         </div>
+        <h2>Unfinished Courses</h2>
         
         <div class="card">
             <div class="dashboard-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Module Title</th>
-                            <th>Module Description</th>
-                            <th>Course Title</th>
-                            <th>Progress</th>
-                            <th>View Lessons</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    require 'db.php';
+                <?php
+                require 'db.php';
 
-                    // Get user ID from session email
-                    if (!isset($_SESSION['email'])) {
-                        echo "You must be logged in.";
-                        exit;
-                    }
+                // Get user ID from session email
+                if (!isset($_SESSION['email'])) {
+                    echo "You must be logged in.";
+                    exit;
+                }
 
-                    $email = $_SESSION['email'];
-                    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                    $stmt->execute([$email]);
-                    $user = $stmt->fetch();
+                $email = $_SESSION['email'];
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
 
-                    if (!$user) {
-                        echo "User not found.";
-                        exit;
-                    }
+                if (!$user) {
+                    echo "User not found.";
+                    exit;
+                }
 
-                    $user_id = $user['id'];
-                    $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+                $user_id = $user['id'];
+                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
 
-                    foreach ($modules as $module) {
-                        $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
-                        $stmt->execute([$module['id']]);
-                        $courses = $stmt->fetchAll();
+                foreach ($modules as $module) {
+                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
+                    $stmt->execute([$module['id']]);
+                    $courses = $stmt->fetchAll();
 
-                        $incomplete_courses = [];
+                    $incomplete_courses = [];
 
-                        foreach ($courses as $course) {
-                            // Count total lessons for this course
-                            $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
-                            $total_stmt->execute([$course['id']]);
-                            $total_lessons = $total_stmt->fetchColumn();
+                    foreach ($courses as $course) {
+                        // Count total lessons for this course
+                        $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
+                        $total_stmt->execute([$course['id']]);
+                        $total_lessons = $total_stmt->fetchColumn();
 
-                            // Count completed lessons
-                            $completed_stmt = $pdo->prepare("
-                                SELECT COUNT(*) FROM progress 
-                                WHERE user_id = ? 
-                                AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
-                                AND status = 'completed'");
-                            $completed_stmt->execute([$user_id, $course['id']]);
-                            $completed_lessons = $completed_stmt->fetchColumn();
+                        // Count completed lessons
+                        $completed_stmt = $pdo->prepare("
+                            SELECT COUNT(*) FROM progress 
+                            WHERE user_id = ? 
+                            AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
+                            AND status = 'completed'");
+                        $completed_stmt->execute([$user_id, $course['id']]);
+                        $completed_lessons = $completed_stmt->fetchColumn();
 
-                            // If incomplete, include in the display
-                            if ($completed_lessons < $total_lessons) {
-                                $course['completed'] = $completed_lessons;
-                                $course['total'] = $total_lessons;
-                                $incomplete_courses[] = $course;
-                            }
-                        }
-
-                        // Output only if there are incomplete courses
-                        if (count($incomplete_courses) > 0) {
-                            $first_course = true;
-
-                            foreach ($incomplete_courses as $course) {
-                                echo "<tr>";
-
-                                if ($first_course) {
-                                    echo "<td rowspan='" . count($incomplete_courses) . "'>{$module['title']}</td>";
-                                    echo "<td rowspan='" . count($incomplete_courses) . "'>{$module['description']}</td>";
-                                    $first_course = false;
-                                }
-
-                                $percent = $course['total'] > 0 ? round(($course['completed'] / $course['total']) * 100) : 0;
-
-                                echo "<td>{$course['title']}</td>";
-                                echo "<td>{$course['completed']} / {$course['total']} ({$percent}%)</td>";
-                                echo "<td><a href='view_lessons.php?course_id={$course['id']}'>View</a></td>";
-                                echo "</tr>";
-                            }
+                        // If incomplete, include in the display
+                        if ($completed_lessons < $total_lessons) {
+                            $course['completed'] = $completed_lessons;
+                            $course['total'] = $total_lessons;
+                            $incomplete_courses[] = $course;
                         }
                     }
-                    ?>
 
-                    </tbody>
-                </table>
+                    // Output only if there are incomplete courses
+                    if (count($incomplete_courses) > 0) {
+                        $first_course = true;
+
+                        foreach ($incomplete_courses as $course) {
+                        $percent = $course['total'] > 0 ? ($course['completed'] / $course['total']) * 100 : 0;
+                        $status_class = $percent >= 100 ? 'completed' : 'in-progress';
+                        $status_text = $percent >= 100 ? 'Completed' : 'In Progress';
+
+                        echo '<div class="module-card">';
+                        echo '    <div class="module-image-container">';
+                        echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
+                        echo '    </div>';
+                        echo '    <div class="card-content">';
+                        echo '        <img src="/api/placeholder/100/30" alt="Institution Logo" class="institution-logo">';
+                        echo "        <h3 class=\"module-title\">{$module['title']}</h3>";
+                        echo "        <p class=\"module-description\">{$module['description']}</p>";
+                        echo '        <div class="course-count">';
+                        echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                                        </svg>';
+                        echo count($courses) . ' Course' . (count($courses) !== 1 ? 's' : '');
+                        echo '        </div>';
+                        echo "        <div class=\"progress-container\">";
+                        echo "            <div class=\"progress-bar\" style=\"width: {$percent}%;\"></div>";
+                        echo "        </div>";
+                        echo "        <div class=\"module-info\">";
+                        echo "            <span>{$course['completed']} of {$course['total']} completed</span>";
+                        echo "        </div>";
+                        echo "    </div>";
+                        echo "</div>";
+                    }
+
+                    }
+                }
+                ?>
             </div>
         </div>
 

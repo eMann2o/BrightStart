@@ -9,25 +9,48 @@ if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
     header("Location: ../index.html");
     exit();
-  }
+}
   
 
 
-  try {
+try {
     // Create a new PDO instance
     $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Prepare the SQL query to fetch data from the table
-    $stmt = $db->prepare("SELECT * FROM users"); // Replace 'employees' with your table name
+    // Fetch course details
+    $courses_id = $_GET['module_id'] ?? null;
+    if (!$courses_id) {
+        echo "Module ID not specified.";
+        exit;
+    }
+    $stmt = $db->prepare("SELECT * FROM courses WHERE module_id = :module_id");
+    $stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Fetch all data from the query
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
     exit();
+}
+
+// Get module ID from URL
+$courses_id = $_GET['module_id'] ?? null;
+if (!$courses_id) {
+    echo "Module ID not specified.";
+    exit;
+}
+
+// Fetch module information
+$module_stmt = $db->prepare("SELECT * FROM modules WHERE id = :module_id");
+$module_stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
+$module_stmt->execute();
+$module = $module_stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$module) {
+    echo "Module not found.";
+    exit;
 }
 
 ?>
@@ -37,12 +60,48 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View courses</title>
+    <title><?php echo htmlspecialchars($module['title']); ?></title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
-    <style>
+    <style>        
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .modules-container {
+                gap: 15px;
+            }
+            
+            .module-card {
+                max-width: 100%;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .module-title {
+                font-size: 16px;
+            }
+            
+            .module-description {
+                font-size: 13px;
+                -webkit-line-clamp: 2;
+            }
+            
+            .module-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .module-image-container {
+                height: 120px;
+            }
+        }
+        
         /* Container for all module cards */
         .modules-container {
             display: flex;
@@ -50,6 +109,7 @@ if (!isset($_SESSION['email'])) {
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            justify-content: center;
         }
         
         /* Individual module card */
@@ -58,8 +118,8 @@ if (!isset($_SESSION['email'])) {
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            width: 280px;
-            display: grid;
+            width: 100%;
+            max-width: 280px;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             cursor: pointer;
         }
@@ -178,6 +238,77 @@ if (!isset($_SESSION['email'])) {
             font-size: 12px;
             color: #5f6368;
         }
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  padding: 8px;
+  width: 200px;
+  margin-right: 8px;
+}
+
+.filter-btn {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.add-course-btn {
+  float: right;
+  margin-bottom: 10px;
+  background-color: #0061f2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.icon {
+  margin-left: 6px;
+}
+
+.status.inactive {
+  background-color: #d3dbe4;
+  color: #333;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.highlight {
+  color: #0073e6;
+}
     </style>
 </head>
 <body>
@@ -244,111 +375,45 @@ if (!isset($_SESSION['email'])) {
         
         <div class="welcome-section">
             <h1 class="welcome-title">
-                 Modules
+                 <?php echo htmlspecialchars($module['title']); ?> Overview
             </h1>
         </div>
         
         <section class="content">
             <div class="modules-container">
                 <?php
-                require 'db.php';
+                // Fetch courses that belong to this module
+                $stmt = $db->prepare("SELECT * FROM courses WHERE module_id = :module_id");
+                $stmt->bindParam(':module_id', $courses_id, PDO::PARAM_INT);
+                $stmt->execute();
+                $courses = $stmt->fetchAll();
 
-                // Get user ID from session email
-                if (!isset($_SESSION['email'])) {
-                    echo "You must be logged in.";
-                    exit;
-                }
+                foreach ($courses as $course) {
+    // Count lessons for this course
+    $lesson_stmt = $db->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = :course_id");
+    $lesson_stmt->bindParam(':course_id', $course['id'], PDO::PARAM_INT);
+    $lesson_stmt->execute();
+    $lesson_count = $lesson_stmt->fetchColumn();
 
-                $email = $_SESSION['email'];
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                $stmt->execute([$email]);
-                $user = $stmt->fetch();
+    echo '<div class="module-card" onclick="window.location.href=\'view_lessons.php?course_id=' . $course['id'] . '\'">';
+    echo '    <div class="module-image-container">';
+    echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
+    echo '    </div>';
+    echo '    <div class="card-content">';
+    echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
+    echo "        <h3 class='module-title'>{$course['title']}</h3>";
+    echo "        <p class='module-description'>{$course['description']}</p>";
+    echo '        <div class="course-count">';
+    echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+    echo '                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>';
+    echo '            </svg>';
+    echo $lesson_count . " Lesson" . ($lesson_count != 1 ? "s" : "");
+    echo '        </div>';
+    echo '    </div>';
+    echo '</div>';
+}
 
-                if (!$user) {
-                    echo "User not found.";
-                    exit;
-                }
-
-                $user_id = $user['id'];
                 ?>
-
-                <?php
-                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
-
-                foreach ($modules as $module) {
-                    // Get courses for the module
-                    $stmt = $pdo->prepare("SELECT id FROM courses WHERE module_id = ?");
-                    $stmt->execute([$module['id']]);
-                    $course_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-                    $course_count = count($course_ids);
-
-                    if ($course_count > 0) {
-                        // Count total lessons across all courses
-                        $in_clause = implode(',', array_fill(0, $course_count, '?'));
-                        $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id IN ($in_clause)");
-                        $total_stmt->execute($course_ids);
-                        $total_lessons = $total_stmt->fetchColumn();
-
-                        // Count completed lessons
-                        $completed_stmt = $pdo->prepare("
-                            SELECT COUNT(*) FROM progress 
-                            WHERE user_id = ? 
-                            AND LOWER(status) = 'completed' 
-                            AND lesson_id IN (
-                                SELECT id FROM lessons WHERE course_id IN ($in_clause)
-                            )");
-                        $completed_stmt->execute(array_merge([$user_id], $course_ids));
-                        $completed_lessons = $completed_stmt->fetchColumn();
-
-                        // Progress calculation
-                        $percent = $total_lessons > 0 ? round(($completed_lessons / $total_lessons) * 100) : 0;
-
-                        // Status class
-                        $status_class = 'status-not-started';
-                        $status_text = 'Not Started';
-                        $percent = 100;
-                        
-                        if ($percent > 0 && $percent < 100) {
-                            $status_class = 'status-in-progress';
-                            $status_text = 'In Progress';
-                        } elseif ($percent == 100) {
-                            $status_class = 'status-complete';
-                            $status_text = 'Completed';
-                        } elseif ($percent == 0) {
-                            $status_class = 'status-not-started';
-                            $status_text = 'Not Started';
-                        }
-
-                        echo '                        
-                            <div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">
-                                <div class="module-image-container">
-                                    <img src="chill.jpg" alt="Module illustration" class="module-image">
-                                    <div class="status-tag ' . $status_class . '">' . $status_text . '</div>
-                                </div>
-                                <div class="card-content">
-                                    <img src="../logo.png" alt="Institution Logo" class="institution-logo">
-                                    <h3 class="module-title">' . htmlspecialchars($module["title"]) . '</h3>
-                                    <p class="module-description">' . htmlspecialchars($module["description"]) . '</p>
-                                    <div class="course-count">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-                                        </svg>
-                                        ' . $course_count . ' Courses
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar" style="width: ' . $percent . '%;"></div>
-                                    </div>
-                                    <div class="module-info">
-                                        <span>' . $completed_lessons . ' of ' . $total_lessons . ' lessons completed</span>
-                                    </div>
-                                </div>
-                            </div>';
-                    }
-                }
-                ?>
-
-
 
             </div>
         </section>
