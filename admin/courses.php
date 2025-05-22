@@ -255,21 +255,6 @@ h2 {
   cursor: pointer;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-th, td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
 .icon {
   margin-left: 6px;
 }

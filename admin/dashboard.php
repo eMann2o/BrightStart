@@ -302,7 +302,7 @@ try {
                     </div>
                     <div class="action-text">Add New User</div>
                 </div>
-                <div class="action-item">
+                <div class="action-item" onclick="window.location.href='addcourse.php';">
                     <div class="action-icon">
                         <i class="fas fa-book"></i>
                     </div>
@@ -314,7 +314,7 @@ try {
                     </div>
                     
                 </div>
-                <div class="action-item">
+                <div class="action-item" onclick="window.location.href='uploaded_videos.php';">
                     <div class="action-icon">
                         <i class="fas fa-file-export"></i>
                     </div>
@@ -454,6 +454,13 @@ try {
         ?>
 
         <script>
+
+            // Sidebar toggle functionality
+            document.querySelector('.menu-toggle').addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+                document.querySelector('.main-content').classList.toggle('expanded');
+            });
+            
             // Initialize charts
             document.addEventListener('DOMContentLoaded', function() {                
             
