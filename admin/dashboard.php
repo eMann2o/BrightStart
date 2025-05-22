@@ -59,6 +59,23 @@ try {
     echo "Error: " . $e->getMessage();
 }
 
+try {
+    // Get total count and counts per role in one query
+    $stmt = $db->query("
+        SELECT 
+            COUNT(*) AS total_lessons
+        FROM lessons
+    ");
+    
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $total_lessons = $row['total_lessons'];
+
+    
+
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +84,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brightstart Admin Dashboard</title>
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
@@ -236,11 +254,6 @@ try {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -269,7 +282,7 @@ try {
         
         <div class="welcome-section">
             <h1 class="welcome-title">
-                <i class="fas fa-chart-line"></i>
+                
                 Dashboard Overview
             </h1>
             
@@ -327,7 +340,7 @@ try {
             <div class="dashboard-container">
                 <!-- Overview Panel -->
                 <div class="panel">
-                    <h2>Overview</h2>
+                    <h2>User Overview</h2>
                     
                     <div class="stat-row">
                         <div class="stat-label">
@@ -374,9 +387,9 @@ try {
                             <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                            Assigned courses
+                            Total Lessons
                         </div>
-                        <div class="stat-value">45</div>
+                        <div class="stat-value"><?php echo $total_lessons; ?></div>
                     </div>
                     
                     <div class="stat-row">

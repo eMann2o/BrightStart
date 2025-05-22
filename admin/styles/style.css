@@ -96,7 +96,7 @@ body {
 /* Header Styles */
 .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
@@ -1734,7 +1734,7 @@ input:checked + .slider:before {
             }
         
             .header {
-                flex-direction: column;
+                flex-direction: row;
                 align-items: flex-start;
                 gap: 10px;
             }

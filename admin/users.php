@@ -36,7 +36,8 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users</title>
+    <title>Participants</title>
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -175,11 +176,6 @@ if (!isset($_SESSION['email'])) {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -204,7 +200,7 @@ if (!isset($_SESSION['email'])) {
         
         <div class="welcome-section">
             <h1 class="welcome-title">
-                <i class="fas fa-chart-line"></i>
+                
                  Participants Overview
             </h1>
             

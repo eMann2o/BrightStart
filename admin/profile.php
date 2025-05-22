@@ -36,361 +36,216 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses Overview</title>
+    <title><?php $name = isset($_SESSION['name']) ? $_SESSION['name'] : "Unknown User"; echo htmlspecialchars($name);?></title>
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-        .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px; /* Add padding to container for smaller screens */
-}
-
-.profile-card {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding: 0;
-    position: relative;
-    margin: 20px auto; /* Add margin for spacing */
-}
-
-.headers {
-    background: linear-gradient(135deg, #3498db, #9b59b6);
-    height: 120px; /* Reduced height to eliminate space */
-    position: relative;
-}
-
-.profile-image {
-    position: absolute;
-    top: 20px; /* Position image to overlap header more */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    border: 5px solid white;
-    background-color: #ddd;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Ensure image stays on top */
-}
-
-.profile-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.content {
-    padding-top: 110px; /* Adjusted to reduce space above content */
-    padding-bottom: 40px;
-    padding-left: 20px;
-    padding-right: 20px;
-    text-align: center;
-    position: relative;
-    z-index: 5;
-}
-
-.name {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.title {
-    font-size: 16px;
-    color: #888;
-    margin-bottom: 20px;
-}
-
-.stats {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap; /* Allow stats to wrap on smaller screens */
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 80px; /* Ensure minimum width */
-}
-
-.stat-value {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-}
-
-.stat-label {
-    font-size: 14px;
-    color: #888;
-}
-
-.bio {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 30px;
-    text-align: center; /* Center on mobile for better readability */
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.progress-section {
-    margin-bottom: 25px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.progress-title {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.progress-label {
-    font-size: 15px;
-    font-weight: 500;
-    color: #333;
-}
-
-.progress-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: #3498db;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 10px;
-    background-color: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background: linear-gradient(to right, #3498db, #9b59b6);
-    border-radius: 5px;
-    transition: width 0.5s ease;
-}
-
-.badges {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.badge {
-    display: flex;
-    align-items: center;
-    background-color: #f0f2f5;
-    border-radius: 20px;
-    padding: 6px 12px;
-    margin-bottom: 5px;
-}
-
-.badge-icon {
-    width: 18px;
-    height: 18px;
-    background-color: #3498db;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.badge-text {
-    font-size: 13px;
-    color: #555;
-}
-
-.contact-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #3498db, #9b59b6);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 25px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.contact-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.info-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 15px;
-    margin-bottom: 20px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.info-item {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 15px;
-}
-
-.info-label {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 5px;
-    text-align: left;
-}
-
-.info-value {
-    font-size: 15px;
-    color: #333;
-    text-align: left;
-}
-
-/* Improved Media Queries */
-@media (min-width: 992px) {
-    /* Large screens */
-    .profile-image {
-        width: 250px;
-        height: 250px;
-        top: 20px;
-    }
-    
-    .headers {
-        height: 140px;
-    }
-    
-    .content {
-        padding-top: 140px;
-        padding-left: 50px;
-        padding-right: 50px;
-    }
-    
-    .name {
-        font-size: 28px;
-    }
-    
-    .title {
-        font-size: 18px;
-    }
-    
-    .bio {
-        text-align: justify;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-    /* Medium screens */
-    .profile-image {
-        width: 220px;
-        height: 220px;
-        top: 20px;
-    }
-    
-    .headers {
-        height: 130px;
-    }
-    
-    .content {
-        padding-top: 120px;
-        padding-left: 40px;
-        padding-right: 40px;
-    }
-}
-
-@media (max-width: 767px) {
-    /* Small screens */
-    .profile-image {
-        width: 180px;
-        height: 180px;
-        top: 20px;
-    }
-    
-    .headers {
-        height: 110px;
-    }
-    
-    .content {
-        padding-top: 100px;
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-    
-    .stats {
-        gap: 15px;
-    }
-    
-    .info-row {
-        flex-direction: column;
-    }
-    
-    .info-item {
-        min-width: 100%;
-        margin-bottom: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Extra small screens */
-    .profile-image {
-        width: 140px;
-        height: 140px;
-        top: 20px;
-    }
-    
-    .headers {
-        height: 90px;
-    }
-    
-    .content {
-        padding-top: 80px;
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-    
-    .name {
-        font-size: 20px;
-    }
-    
-    .title {
-        font-size: 14px;
-    }
-    
-    .stat-value {
-        font-size: 18px;
-    }
-    
-    .stat-label {
-        font-size: 12px;
-    }
-    
-    .badge {
-        padding: 5px 10px;
-    }
-    
-    .contact-btn {
-        padding: 8px 20px;
-        font-size: 14px;
-    }
-}
+        /* Profile Card Styles */
+        .profile-card {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Header Section */
+        .profile-header {
+            background: linear-gradient(to right, #3b82f6, #4f46e5);
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .profile-image-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            padding: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .canvas-container {
+            width: 100px;
+            height: 100px;
+        }
+        
+        /* Stats Section */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            background-color: #eff6ff;
+            border-bottom: 1px solid #dbeafe;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .progress-chart {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        /* Details Section */
+        .details-container {
+            padding: 1.5rem;
+        }
+        
+        /* Responsive Grid for Details */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .detail-item:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background-color: #eff6ff;
+            border-radius: 8px;
+            margin-right: 0.75rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #3b82f6;
+        }
+        
+        .detail-content {
+            flex-grow: 1;
+        }
+        
+        .detail-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.125rem;
+        }
+        
+        .detail-value {
+            font-size: 0.875rem;
+            color: #1f2937;
+            word-break: break-word;
+        }
+        
+        /* Footer Section */
+        .profile-footer {
+            padding: 1rem;
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            border: 1px solid transparent;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .canvas-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .stat-value {
+                font-size: 1rem;
+            }
+            
+            .progress-chart {
+                width: 50px;
+                height: 50px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -428,11 +283,6 @@ if (!isset($_SESSION['email'])) {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -458,48 +308,103 @@ if (!isset($_SESSION['email'])) {
         <section class="content">
             <div class="container">
                 <div class="profile-card">
-                    <div class="headers"></div>
-                    <div class="profile-image">
-                        <img src="emoji.png" alt="Teacher Profile Picture" onerror="this.src='/api/placeholder/400/400'">
+                    <!-- Header Section -->
+                    <div class="profile-header">
+                        <div class="profile-image-container">
+                            <div class="profile-image">
+                                <img src="emoji.png" alt="Teacher Profile Picture" onerror="this.src='/api/placeholder/400/400'">
+                            </div>
+                        </div>
                     </div>
-                    <div class="content">
-                        <div class="info-row">
-                            <div class="info-item">
-                                <div class="info-label">Name</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['name']); ?></div>
+                    <!-- Details Section - Responsive Grid -->
+                    <div class="details-container">
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Name</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['name']); ?></div>
+                                </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-label">Email</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"></path>
+                                        <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
+                                        <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"></path>
+                                        <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"></path>
+                                        <path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"></path>
+                                        <path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"></path>
+                                        <path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"></path>
+                                        <path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"></path>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Role</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['role']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Phone</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['phone']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">District</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['district']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Organization</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['organization']); ?></div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="info-row">
-                            <div class="info-item">
-                                <div class="info-label">Role</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['role']); ?></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Phone</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['phone']); ?></div>
-                            </div>
-                        </div>
-
-                        <div class="info-row">
-                            <div class="info-item">
-                                <div class="info-label">District</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['district']); ?></div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Organization</div>
-                                <div class="info-value"><?php echo htmlspecialchars($user['organization']); ?></div>
-                            </div>
-                        </div>
-
-
-                    
                     </div>
                 </div>
+
             </div>
         </section>
         

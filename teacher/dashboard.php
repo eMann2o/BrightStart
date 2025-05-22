@@ -67,6 +67,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brightstart Teacher's Dashboard</title>
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -316,11 +317,6 @@ try {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -444,7 +440,7 @@ try {
                         echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
                         echo '    </div>';
                         echo '    <div class="card-content">';
-                        echo '        <img src="/api/placeholder/100/30" alt="Institution Logo" class="institution-logo">';
+                        echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
                         echo "        <h3 class=\"module-title\">{$module['title']}</h3>";
                         echo "        <p class=\"module-description\">{$module['description']}</p>";
                         echo '        <div class="course-count">';

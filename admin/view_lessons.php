@@ -38,6 +38,7 @@ if (!isset($_SESSION['email'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lessons</title>
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -48,6 +49,9 @@ if (!isset($_SESSION['email'])) {
 .container {
   max-width: 1000px;
   margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 h2 {
@@ -73,48 +77,6 @@ h2 {
   cursor: pointer;
 }
 
-.add-course-btn {
-  float: right;
-  margin-bottom: 10px;
-  background-color: #0061f2;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-th, td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
-.icon {
-  margin-left: 6px;
-}
-
-.status.inactive {
-  background-color: #d3dbe4;
-  color: #333;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  margin-left: 6px;
-}
-
-.highlight {
-  color: #0073e6;
-}
 
 .courses-header {
       margin-bottom: 30px;
@@ -360,11 +322,6 @@ th, td {
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search courses, students, or content...">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -389,6 +346,7 @@ th, td {
         
         <section class="content">
             <div class="card">
+              <h2 class="lessons-header">Lessons</h2>
                 <div class="container">
                     <?php
                     require 'db.php';
@@ -425,11 +383,6 @@ th, td {
                     $lesson_stmt = $pdo->prepare("SELECT * FROM lessons WHERE course_id = ?");
                     $lesson_stmt->execute([$course_id]);
                     $lessons = $lesson_stmt->fetchAll();
-
-                    
-
-                    echo "<h2 class=\"lessons-header\">Lessons</h2>";
-
                     foreach ($lessons as $lesson) {
                         echo "<div class=\"lesson-card\">";
                         echo "<h3 class=\"lesson-title\">{$lesson['title']}</h3>";                        

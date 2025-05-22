@@ -96,7 +96,7 @@ body {
 /* Header Styles */
 .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
@@ -110,6 +110,7 @@ body {
     cursor: pointer;
     transition: transform 0.3s;
     z-index: 1000;
+    display: none;
 }
 .menu-toggle:hover {
     transform: rotate(90deg);
@@ -1288,7 +1289,7 @@ align-items: center;
         width: 70px;
     }
     
-    .sidebar-logo h2, .menu-item span, .notification-badge {
+    .sidebar-logo h2, .notification-badge {
         display: none;
     }
     
@@ -1630,7 +1631,7 @@ input:checked + .slider:before {
 .pagination-link.active {
     background-color: var(--primary-color);
     color: white;
-}
+} 
 .pagination-prev, .pagination-next {
     width: auto;
     padding: 0 15px;
@@ -1733,7 +1734,7 @@ input:checked + .slider:before {
             }
         
             .header {
-                flex-direction: column;
+                flex-direction: row;
                 align-items: flex-start;
                 gap: 10px;
             }
