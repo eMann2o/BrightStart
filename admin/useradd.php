@@ -287,6 +287,8 @@ if (!isset($_SESSION['email'])) {
                                 <option value="SISO">SISO/STEM</option>
                                 <option value="Headteacher">Headteacher</option>
                                 <option value="Teacher">Teacher</option>
+                                <option value="District Director">District Director</option>
+                                <option value="Regional Director">Regional Director</option>
                             </select>
                         </div>
                         

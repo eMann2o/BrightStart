@@ -36,7 +36,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Uploaded Files</title>
+    <title>My Uploaded Files</title>
     <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -379,9 +379,9 @@ if (!isset($_SESSION['email'])) {
                 <i class="fas fa-book"></i>
                 <span>Modules</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='users.php';">
-                <i class="fas fa-users"></i>
-                <span>Participants</span>
+            <div class="menu-item" onclick="window.location.href='videoupload.php';">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload Files</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
@@ -427,7 +427,6 @@ if (!isset($_SESSION['email'])) {
                 <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>Uploader</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -469,7 +468,7 @@ if (!isset($_SESSION['email'])) {
                     renderPagination(data.totalVideos, data.limit, data.page);
                 })
                 .catch(err => {
-                    Swal.fire('Error', 'Failed to fetch videos.', 'error');
+                    Swal.fire('Error', 'Failed to fetch files.', 'error');
                     console.error(err);
                 });
             }
@@ -488,11 +487,6 @@ if (!isset($_SESSION['email'])) {
                 nameTd.textContent = video.file_name;
                 tr.appendChild(nameTd);
 
-                // Uploader username
-                const uploaderTd = document.createElement('td');
-                uploaderTd.textContent = video.username;
-                tr.appendChild(uploaderTd);
-
                 // Actions buttons
                 const actionsTd = document.createElement('td');
 
@@ -507,12 +501,7 @@ if (!isset($_SESSION['email'])) {
                 });
                 actionsTd.appendChild(downloadBtn);
 
-                // Delete button
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = 'Delete';
-                deleteBtn.classList.add('btn-delete');
-                deleteBtn.addEventListener('click', () => confirmDelete(video.id, video.file_path));
-                actionsTd.appendChild(deleteBtn);
+                
 
                 tr.appendChild(actionsTd);
 
@@ -580,42 +569,6 @@ if (!isset($_SESSION['email'])) {
                 }
                 });
                 paginationControls.appendChild(nextBtn);
-            }
-
-            function confirmDelete(id, filePath) {
-                Swal.fire({
-                title: 'Are you sure?',
-                text: "This will permanently delete the video.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteVideo(id, filePath);
-                }
-                });
-            }
-
-            function deleteVideo(id, filePath) {
-                fetch('delete_video.php', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({id: id, file_path: filePath})
-                })
-                .then(res => res.json())
-                .then(data => {
-                if (data.success) {
-                    Swal.fire('Deleted!', 'Video has been deleted.', 'success');
-                    fetchVideos(currentPage);  // refresh list
-                } else {
-                    Swal.fire('Error', data.error || 'Failed to delete video.', 'error');
-                }
-                })
-                .catch(() => {
-                Swal.fire('Error', 'Failed to delete video.', 'error');
-                });
             }
 
             // Initial fetch

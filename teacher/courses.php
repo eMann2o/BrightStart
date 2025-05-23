@@ -197,7 +197,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
-                <span>Upload Video</span>
+                <span>Upload Files</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">

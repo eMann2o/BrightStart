@@ -169,6 +169,7 @@ try {
             overflow: hidden;
             width: 280px;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
         }
         
         .module-card:hover {
@@ -280,6 +281,11 @@ try {
             font-size: 12px;
             color: #5f6368;
         }
+
+        .modules{
+            justify-content: space-around;
+            display: grid;
+        }
     </style>
 </head>
 <body>
@@ -298,7 +304,7 @@ try {
             </div>
             <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
-                <span>Upload Video</span>
+                <span>Upload Files</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
@@ -356,12 +362,6 @@ try {
                     </div>
                     <div class="action-text">Modules</div>
                 </div>
-                <div class="action-item" onclick="window.location.href='videoupload.php';">
-                    <div class="action-icon">
-                        <i class="fa-solid fa-upload"></i>
-                    </div>
-                    <div class="action-text">Upload Videos</div>
-                </div>
                 <div class="action-item" onclick="window.location.href='messages.php';">
                     <div class="action-icon">
                         <i class="fas fa-comment"></i>
@@ -369,8 +369,28 @@ try {
                     <div class="action-text">Messages</div>
                 </div>
             </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Actions</h2>
+                </div>
+                <div class="action-item" onclick="window.location.href='my_files.php';">
+                    <div class="action-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="action-text">My Uploaded Files</div>
+                </div>
+                <div class="action-item" onclick="window.location.href='videoupload.php';">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-upload"></i>
+                    </div>
+                    <div class="action-text">Upload Files</div>
+                </div>
+            </div>
         </div>
-        <h2>Unfinished Courses</h2>
+        <div class="modules">
+            <h2>Incomplete Modules</h2>
+        </div>
         
         <div class="dashboard-container">
                 <?php
@@ -434,7 +454,7 @@ try {
                         $status_class = $percent >= 100 ? 'completed' : 'in-progress';
                         $status_text = $percent >= 100 ? 'Completed' : 'In Progress';
 
-                        echo '<div class="module-card">';
+                        echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
                         echo '    <div class="module-image-container">';
                         echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
                         echo '    </div>';
@@ -463,7 +483,9 @@ try {
                 ?>
             </div>
 
-            <h2>Completed Courses</h2>
+            <div class="modules">
+                <h2>Completed Modules</h2>
+            </div>
 
             <div class="dashboard-container">
                 <?php
@@ -524,7 +546,7 @@ try {
                             $status_class = 'completed';
                             $status_text = 'Completed';
 
-                            echo '<div class="module-card">';
+                            echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
                             echo '    <div class="module-image-container">';
                             echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
                             echo '    </div>';

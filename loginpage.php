@@ -50,11 +50,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 case "Admin":
                     header("Location: admin/dashboard.php");
                     break;
-                case "siso":
+                case "SISO":
                     header("Location: SISO/dashboard.php");
                     break;
                 case "Headteacher":
                     header("Location: headteacher/dashboard.php");
+                    break;
+                case "STEM-Coordinator":
+                    header("Location: STEM/dashboard.php");
+                    break;
+                case "District Director":
+                    header("Location: DD/dashboard.php");
+                    break;
+                case "Regional Director":
+                    header("Location: RD/dashboard.php");
                     break;
                 case "Teacher":
                     header("Location: teacher/dashboard.php");
