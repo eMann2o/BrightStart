@@ -331,7 +331,7 @@ try {
                     <div class="action-icon">
                         <i class="fas fa-file-export"></i>
                     </div>
-                    <div class="action-text">Videos</div>
+                    <div class="action-text">User Uploaded Files</div>
                 </div>
             </div>
         </div>

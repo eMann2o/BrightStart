@@ -200,24 +200,6 @@ file_put_contents($uniqueFileName, $lesson['video']);
         </div>
     </div>
     
-    <div class="stats">
-        <h2>Your Progress</h2>
-        <div class="stats-content">
-            <div class="stat-box">
-                <h3>Watch Time</h3>
-                <div id="watchTimeValue" class="stat-value">0:00</div>
-            </div>
-            <div class="stat-box">
-                <h3>Video Duration</h3>
-                <div id="videoDurationValue" class="stat-value">0:00</div>
-            </div>
-            <div class="stat-box">
-                <h3>Completion</h3>
-                <div id="completionValue" class="stat-value">0%</div>
-            </div>
-        </div>
-    </div>
-    
     <div id="completionMessage" class="completion-message">
         Congratulations! You have completed this video lesson.
     </div>

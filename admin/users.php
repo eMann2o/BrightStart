@@ -211,6 +211,8 @@ if (!isset($_SESSION['email'])) {
             <div class="toolbar">
                 <input type="text" placeholder="Search users..." id="searchInput" onkeyup="searchTable()">
                 <button class="add-user-btn" onclick="window.location.href='useradd.php';">Add user</button>
+                <button class="add-user-btn" onclick="downloadTableAsExcel()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+                
             </div>
 
             <table id="myTable">
@@ -284,6 +286,26 @@ if (!isset($_SESSION['email'])) {
                     }
                 }
             }
+
+            function downloadTableAsExcel() {
+            // Get the table element
+            const table = document.getElementById("myTable");
+
+            // Convert the table to a data string
+            let tableHTML = table.outerHTML.replace(/ /g, "%20");
+
+            // File properties
+            const filename = "Participants list";
+            const dataType = "application/vnd.ms-excel";
+
+            // Create a download link
+            const link = document.createElement("a");
+            link.href = `data:${dataType}, ${tableHTML}`;
+            link.download = filename;
+
+            // Trigger the download
+            link.click();
+        }
 
         </script>
     </div>

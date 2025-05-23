@@ -36,7 +36,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Upload</title>
+    <title>File Upload</title>
     <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -215,7 +215,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item active" onclick="window.location.href='users.php';">
                 <i class="fa-solid fa-upload"></i>
-                <span>Video Upload</span>
+                <span>Files Upload</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
@@ -258,7 +258,7 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="upload-container">
-                <h1 class="upload-title">Upload a video of you practising what you learnt</h1>
+                <h1 class="upload-title">Upload File</h1>
                 
                 <div class="upload-area" id="uploadArea">
                     <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -266,8 +266,8 @@ if (!isset($_SESSION['email'])) {
                         <polyline points="7,10 12,15 17,10"/>
                         <line x1="12" y1="15" x2="12" y2="3"/>
                     </svg>
-                    <div class="upload-text">Drag and drop your video here or click to browse</div>
-                    <div class="upload-subtext">Supports: MP4, MOV, AVI, etc. (Max 1GB)</div>
+                    <div class="upload-text">Drag and drop your file here or click to browse</div>
+                    <div class="upload-subtext">Supports all files</div>
                 </div>
 
                 <div class="file-info" id="fileInfo" style="display: none;">
@@ -284,14 +284,14 @@ if (!isset($_SESSION['email'])) {
                             <polyline points="7,10 12,15 17,10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                        Upload Video
+                        Upload File
                     </button>
                     <div id="spinner">⏳ Uploading, please wait...</div>
 
                     <button class="cancel-button" id="cancelButton">Cancel</button>
                 </div>
 
-                <input type="file" id="fileInput" class="file-input" accept="video/*" hidden>
+                <input type="file" id="fileInput" class="file-input" hidden>
             </div>
         </section>
         
@@ -356,7 +356,7 @@ if (!isset($_SESSION['email'])) {
             // Upload button clicked
             uploadButton.addEventListener('click', () => {
                 if (!selectedFile) {
-                    uploadStatus.textContent = "⚠️ Please select a video first.";
+                    uploadStatus.textContent = "⚠️ Please select a file first.";
                     return;
                 }
 
@@ -380,7 +380,7 @@ if (!isset($_SESSION['email'])) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Upload Successful',
-                            text: 'Your video has been uploaded!',
+                            text: 'Your file has been uploaded!',
                             confirmButtonColor: '#3085d6',
                             timer: 2000,
                             timerProgressBar: true

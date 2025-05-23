@@ -55,51 +55,6 @@ h2 {
   margin-bottom: 10px;
 }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.search-bar input {
-  padding: 8px;
-  width: 200px;
-  margin-right: 8px;
-}
-
-.filter-btn {
-  background: none;
-  border: 1px solid #ccc;
-  padding: 8px;
-  cursor: pointer;
-}
-
-.add-course-btn {
-  float: right;
-  margin-bottom: 10px;
-  background-color: #0061f2;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-th, td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
 .icon {
   margin-left: 6px;
 }
@@ -234,8 +189,11 @@ th, td {
       margin-bottom: 15px;
       transition: all 0.3s ease;
       border-left: 5px solid #3498db;
+      width: max-content;
     }
-    
+    .cart{
+      display: flex;
+    }
     .lesson-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -385,94 +343,93 @@ th, td {
         </div>
         
         <section class="content">
-            <div class="card">
-                <div class="container">
-                    <?php
-                    require 'db.php';
+          <div class="container">
+            <?php
+            require 'db.php';
 
-                    // Validate session
-                    if (!isset($_SESSION['email'])) {
-                        echo "You must be logged in to view this page.";
-                        exit;
-                    }
+            // Validate session
+            if (!isset($_SESSION['email'])) {
+                echo "You must be logged in to view this page.";
+                exit;
+            }
 
-                    $email = $_SESSION['email'];
+            $email = $_SESSION['email'];
 
-                    // Get user ID from email
-                    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                    $stmt->execute([$email]);
-                    $user = $stmt->fetch();
+            // Get user ID from email
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
 
-                    if (!$user) {
-                        echo "User not found.";
-                        exit;
-                    }
+            if (!$user) {
+                echo "User not found.";
+                exit;
+            }
 
-                    $user_id = $user['id'];
+            $user_id = $user['id'];
 
-                    // Check course ID
-                    if (!isset($_GET['course_id'])) {
-                        echo "Invalid course ID";
-                        exit;
-                    }
+            // Check course ID
+            if (!isset($_GET['course_id'])) {
+                echo "Invalid course ID";
+                exit;
+            }
 
-                    $course_id = $_GET['course_id'];
+            $course_id = $_GET['course_id'];
 
-                    // Get all lessons for this course
-                    $lesson_stmt = $pdo->prepare("SELECT * FROM lessons WHERE course_id = ?");
-                    $lesson_stmt->execute([$course_id]);
-                    $lessons = $lesson_stmt->fetchAll();
+            // Get all lessons for this course
+            $lesson_stmt = $pdo->prepare("SELECT * FROM lessons WHERE course_id = ?");
+            $lesson_stmt->execute([$course_id]);
+            $lessons = $lesson_stmt->fetchAll();
 
-                    // Calculate progress
-                    $total = count($lessons);
+            // Calculate progress
+            $total = count($lessons);
 
-                    $completed_stmt = $pdo->prepare("SELECT COUNT(*) FROM progress WHERE user_id = ? AND lesson_id IN 
-                        (SELECT id FROM lessons WHERE course_id = ?) AND status = 'completed'");
-                    $completed_stmt->execute([$user_id, $course_id]);
-                    $completed = $completed_stmt->fetchColumn();
+            $completed_stmt = $pdo->prepare("SELECT COUNT(*) FROM progress WHERE user_id = ? AND lesson_id IN 
+                (SELECT id FROM lessons WHERE course_id = ?) AND status = 'completed'");
+            $completed_stmt->execute([$user_id, $course_id]);
+            $completed = $completed_stmt->fetchColumn();
 
-                    $percent = $total > 0 ? round(($completed / $total) * 100) : 0;
+            $percent = $total > 0 ? round(($completed / $total) * 100) : 0;
 
-                    // Show progress bar
-                    echo "<p class=\"progress-text\">Course Progress: $completed / $total lessons completed ($percent%)</p>";
-                    
-                    echo "<div class=\"progress-bar-container\">
-                            <div class=\"progress-bar\" style=\"width:{$percent}%\"></div>
-                            <span class=\"progress-percentage\">$percent%</span>
+            // Show progress bar
+            echo "<p class=\"progress-text\">Course Progress: $completed / $total lessons completed ($percent%)</p>";
+            
+            echo "<div class=\"progress-bar-container\">
+                    <div class=\"progress-bar\" style=\"width:{$percent}%\"></div>
+                    <span class=\"progress-percentage\">$percent%</span>
+                </div>";
+
+            echo "<h2 class=\"lessons-header\">Lessons</h2>";
+            echo '<div class="cart">';
+            foreach ($lessons as $lesson) {
+                // Get current progress status
+                $progress_stmt = $pdo->prepare("SELECT status FROM progress WHERE user_id = ? AND lesson_id = ?");
+                $progress_stmt->execute([$user_id, $lesson['id']]);
+                $progress = $progress_stmt->fetch();
+                $status = $progress ? $progress['status'] : 'not_started';
+
+                echo "<div class=\"lesson-card\">";
+                echo "<h3 class=\"lesson-title\">{$lesson['title']}</h3>";                        
+                echo "<p class=\"lesson-subtitle\">{$lesson['content']}</p>"; 
+                echo "
+                        <div class=\"status\">
+                            <span class=\"status-label\">Status:</span>
+                            <span class=\"status-completed\">$status</span>
                         </div>";
 
-                    echo "<h2 class=\"lessons-header\">Lessons</h2>";
+                echo "
+                    <div class=\"lesson-actions\">
+                        <a href='view_video.php?lesson_id={$lesson['id']}' target='_blank' class=\"action-button video-button\">
+                        <span class=\"icon\">▶</span> Watch Video
+                        </a>";
+                        if ($lesson['file_attachment']) {
+                            echo "<a href='download_file.php?lesson_id={$lesson['id']}' class=\"action-button download-button\"><span class=\"icon\">⬇</span> Download File</a>";
+                        }
+                echo "</div>";
 
-                    foreach ($lessons as $lesson) {
-                        // Get current progress status
-                        $progress_stmt = $pdo->prepare("SELECT status FROM progress WHERE user_id = ? AND lesson_id = ?");
-                        $progress_stmt->execute([$user_id, $lesson['id']]);
-                        $progress = $progress_stmt->fetch();
-                        $status = $progress ? $progress['status'] : 'not_started';
-
-                        echo "<div class=\"lesson-card\">";
-                        echo "<h3 class=\"lesson-title\">{$lesson['title']}</h3>";                        
-                        echo "<p class=\"lesson-subtitle\">{$lesson['content']}</p>"; 
-                        echo "
-                                <div class=\"status\">
-                                    <span class=\"status-label\">Status:</span>
-                                    <span class=\"status-completed\">$status</span>
-                                </div>";
-
-                        echo "
-                            <div class=\"lesson-actions\">
-                                <a href='view_video.php?lesson_id={$lesson['id']}' target='_blank' class=\"action-button video-button\">
-                                <span class=\"icon\">▶</span> Watch Video
-                                </a>";
-                                if ($lesson['file_attachment']) {
-                                    echo "<a href='download_file.php?lesson_id={$lesson['id']}' class=\"action-button download-button\"><span class=\"icon\">⬇</span> Download File</a>";
-                                }
-                        echo "</div>";
-
-                        echo "<hr>";
-                        echo "</div>";
-                    }
-                    ?>
+                echo "<hr>";
+                echo "</div>";
+            }
+            ?>
             </div>
         </section>
         

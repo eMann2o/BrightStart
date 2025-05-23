@@ -426,7 +426,7 @@ if (!isset($_SESSION['email'])) {
             <table id="videosTable" aria-label="Uploaded Videos Table">
                 <thead>
                 <tr>
-                    <th>Video Name</th>
+                    <th>File Name</th>
                     <th>Uploader</th>
                     <th>Actions</th>
                 </tr>
@@ -477,7 +477,7 @@ if (!isset($_SESSION['email'])) {
             function renderTable(videos) {
                 tableBody.innerHTML = '';
                 if (videos.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No videos found.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No files found.</td></tr>';
                 return;
                 }
                 videos.forEach(video => {
@@ -498,7 +498,7 @@ if (!isset($_SESSION['email'])) {
 
                 // Download button
                 const downloadBtn = document.createElement('button');
-                downloadBtn.textContent = 'Download';
+                downloadBtn.textContent = 'View';
                 downloadBtn.classList.add('btn-download');
                 downloadBtn.addEventListener('click', () => {
                     // Assuming videos are accessible via /uploads/ folder on your web root

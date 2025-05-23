@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 case "siso":
                     header("Location: SISO/dashboard.php");
                     break;
-                case "headteacher":
+                case "Headteacher":
                     header("Location: headteacher/dashboard.php");
                     break;
                 case "Teacher":

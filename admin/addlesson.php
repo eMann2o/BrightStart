@@ -323,11 +323,11 @@ if (!isset($_SESSION['email'])) {
                         </div>
 
                         <div class="form-group">
-                            <label class="file-input-label">File Attachment (PDF, DOCX):</label>
+                            <label class="file-input-label">File Attachment (PDF, DOCX. PPT):</label>
                             <div class="file-input-wrapper">
                                 <button type="button" class="file-input-button">Choose File</button>
                                 <span class="file-input-name">No file chosen</span>
-                                <input type="file" class="file-input-real" name="file" id="file" accept=".pdf,.docx">
+                                <input type="file" class="file-input-real" name="file" id="file" accept=".pdf,.docx,.pptx">
                             </div>
                             <div class="file-input-info">Optional: Upload supporting documents</div>
                         </div>

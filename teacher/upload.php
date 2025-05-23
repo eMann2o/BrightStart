@@ -10,7 +10,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 
 // Database credentials
-require '../database.php'; // Make sure this file sets $host, $dbname, $username_db, $password_db
+require '../database.php'; // Make sure this sets $host, $dbname, $username_db, $password_db
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
@@ -27,23 +27,8 @@ if (!isset($_FILES['video']) || $_FILES['video']['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-$allowedTypes = [
-    'video/mp4' => 'mp4',
-    'video/quicktime' => 'mov',
-    'video/x-msvideo' => 'avi',
-    'video/webm' => 'webm',
-    'video/x-ms-wmv' => 'wmv'
-];
-
-$fileType = mime_content_type($_FILES['video']['tmp_name']);
 $fileSize = $_FILES['video']['size'];
 $maxSize = 1024 * 1024 * 1024; // 1GB
-
-if (!array_key_exists($fileType, $allowedTypes)) {
-    http_response_code(415);
-    echo "Unsupported file type.";
-    exit;
-}
 
 if ($fileSize > $maxSize) {
     http_response_code(413);
@@ -51,10 +36,12 @@ if ($fileSize > $maxSize) {
     exit;
 }
 
-$extension = $allowedTypes[$fileType];
-$uniqueName = uniqid('video_', true) . "." . $extension;
+// Preserve original extension
+$originalName = $_FILES['video']['name'];
+$extension = pathinfo($originalName, PATHINFO_EXTENSION);
+$uniqueName = uniqid('file_', true) . '.' . $extension;
 
-$uploadDir = __DIR__ . "/../uploads/";
+$uploadDir = __DIR__ . '/../uploads/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -66,9 +53,9 @@ if (!move_uploaded_file($_FILES['video']['tmp_name'], $destination)) {
     exit;
 }
 
-// Insert video record into the database
+// Save file details in database
 $stmt = $pdo->prepare("INSERT INTO videos (email, file_name, file_path, file_size, uploaded_at) VALUES (?, ?, ?, ?, NOW())");
-$stmt->execute([$email, $_FILES['video']['name'], $uniqueName, $fileSize]);
+$stmt->execute([$email, $originalName, $uniqueName, $fileSize]);
 
 echo "Upload successful!";
 ?>

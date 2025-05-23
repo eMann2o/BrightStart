@@ -77,6 +77,80 @@ foreach ($courses as $course) {
         'progress' => $progress_percent
     ];
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
+    $email_to_delete = $_POST['student_email'] ?? '';
+
+    if (!empty($email_to_delete)) {
+        // Get user ID by email
+        $stmt = $db->prepare("SELECT id FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email_to_delete]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            $user_id = $user['id'];
+
+            // Start transaction
+            $db->beginTransaction();
+
+            try {
+                // Delete related entries in user_logins (add other related tables here)
+                $stmt = $db->prepare("DELETE FROM user_logins WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $stmt = $db->prepare("DELETE FROM courses WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $stmt = $db->prepare("DELETE FROM progress WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $stmt = $db->prepare("DELETE FROM enrollments WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+
+                // TODO: Add deletes for other referencing tables here
+
+                // Delete user
+                $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+                $stmt->execute([$user_id]);
+
+                $db->commit();
+
+                echo "<script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Student account deleted successfully.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = 'adminview.php';
+                    });
+                </script>";
+                exit();
+
+            } catch (PDOException $e) {
+                $db->rollBack();
+                echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Delete failed: " . addslashes($e->getMessage()) . "',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
+                </script>";
+            }
+        } else {
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'User not found.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            </script>";
+        }
+    }
+}
+
 ?>
 
 
@@ -85,11 +159,12 @@ foreach ($courses as $course) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($user['name']); ?></title>
+    <title>User</title>
     <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="styles/style.css">
     <style>        
         /* Profile Card Styles */
@@ -233,10 +308,8 @@ foreach ($courses as $course) {
         /* Footer Section */
         .profile-footer {
             padding: 1rem;
-            background-color: #f9fafb;
-            border-top: 1px solid #e5e7eb;
             display: flex;
-            justify-content: space-between;
+            justify-content: end;
         }
         
         .btn {
@@ -357,6 +430,16 @@ foreach ($courses as $course) {
         
         <section class="content">
             <div class="container">
+                
+
+                <!-- Footer Section -->
+                <div class="profile-footer">
+                    <button class="btn btn-secondary">Edit Profile</button>
+                    <button type="button" class="btn btn-danger delete-user-btn" data-email="<?= htmlspecialchars($user['email']) ?>">
+                        Delete User
+                    </button>
+
+                </div>
                 <div class="profile-card">
                     <!-- Header Section -->
                     <div class="profile-header">
@@ -463,7 +546,59 @@ foreach ($courses as $course) {
         
 
         <script>
-            
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.delete-user-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const email = button.getAttribute('data-email');
+
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "This action will permanently delete the user and their data.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch('delete_user.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: 'student_email=' + encodeURIComponent(email)
+                                })
+                                .then(response => response.text())
+                                .then(text => {
+                                    try {
+                                        const data = JSON.parse(text);
+                                        if (data.success) {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Deleted!',
+                                                text: data.message,
+                                            }).then(() => window.location.href = 'users.php');
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: data.message
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error('Response was not valid JSON:', text);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Server Error',
+                                            text: 'Unexpected server response (HTML instead of JSON). Check console for details.'
+                                        });
+                                    }
+                                })
+                            }
+                        });
+                    });
+                });
+            });
 
             // Sidebar toggle functionality
             document.querySelector('.menu-toggle').addEventListener('click', function() {
