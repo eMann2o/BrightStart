@@ -1,33 +1,26 @@
 <?php
-include_once '../database.php';//include database connection file  
+include_once '../database.php'; // Include database connection file
 
 // Start the session at the beginning
 session_start();
+
 // Check if the user is logged in
 if (!isset($_SESSION['email'])) {
     // Redirect to login page if not logged in
     header("Location: ../index.html");
     exit();
-  }
-  
-  try {
-      // Create a new PDO instance
-      $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
-      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  
-      // Prepare the SQL query to fetch data from the table
-      $stmt = $db->prepare("SELECT * FROM users WHERE role IN ('siso', 'teacher', 'headteacher');"); 
-      $stmt->execute();
-  
-      // Fetch all data from the query
-      $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
-  } catch (PDOException $e) {
-      echo "Connection failed: " . $e->getMessage();
-      exit();
 }
 
 try {
+    // Create a new PDO instance
+    $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Fetch users with specific roles
+    $stmt = $db->prepare("SELECT * FROM users WHERE role IN ('siso', 'teacher', 'headteacher');");
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     // Get total count and counts per role in one query
     $stmt = $db->query("
         SELECT 
@@ -53,13 +46,35 @@ try {
     $headteacher_percent = $total > 0 ? round(($headteacher / $total) * 100, 2) : 0;
     $admin_percent = $total > 0 ? round(($admin / $total) * 100, 2) : 0;
 
-    
+    // Count total lessons
+    $total_stmt = $db->query("SELECT COUNT(*) FROM lessons");
+    $total_lessons = $total_stmt->fetchColumn();
+
+    // Get the current user ID (assuming it's stored in session)
+    $user_email = $_SESSION['email'];
+    $user_stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
+    $user_stmt->execute([$user_email]);
+    $user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+    $user_id = $user ? $user['id'] : 0;
+
+    // Count user completed lessons
+    $completed_stmt = $db->prepare("
+        SELECT COUNT(*) FROM progress 
+        WHERE user_id = ? 
+        AND status = 'completed'
+    ");
+    $completed_stmt->execute([$user_id]);
+    $completed_lessons = $completed_stmt->fetchColumn();
+
+    // Calculate remaining lessons
+    $remaining = $total_lessons - $completed_lessons;
 
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
+    exit();
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -286,6 +301,14 @@ try {
             justify-content: space-around;
             display: grid;
         }
+
+        .no-courses {
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+            color: #777;
+        }
+
     </style>
 </head>
 <body>
@@ -358,7 +381,7 @@ try {
                 </div>
                 <div class="action-item" onclick="window.location.href='courses.php';">
                     <div class="action-icon">
-                        <i class="fas fa-plus"></i>
+                        <i class="fas fa-book"></i>
                     </div>
                     <div class="action-text">Modules</div>
                 </div>
@@ -368,15 +391,9 @@ try {
                     </div>
                     <div class="action-text">Messages</div>
                 </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Quick Actions</h2>
-                </div>
                 <div class="action-item" onclick="window.location.href='my_files.php';">
                     <div class="action-icon">
-                        <i class="fas fa-book"></i>
+                        <i class="fa-solid fa-file"></i>
                     </div>
                     <div class="action-text">My Uploaded Files</div>
                 </div>
@@ -387,242 +404,196 @@ try {
                     <div class="action-text">Upload Files</div>
                 </div>
             </div>
+
+            <div class="card">
+                <div class="lesson-summary-chart" style="max-width: 400px; margin: auto;">
+                    <canvas id="lessonsDoughnut"></canvas>
+                </div>
+                
+            </div>
         </div>
         <div class="modules">
             <h2>Incomplete Modules</h2>
         </div>
         
-        <div class="dashboard-container">
-                <?php
-                require 'db.php';
+        <?php
+        require 'db.php';
 
-                // Get user ID from session email
-                if (!isset($_SESSION['email'])) {
-                    echo "You must be logged in.";
-                    exit;
-                }
+        // Get the logged-in user's ID
+        function getUserIdByEmail($pdo) {
+            if (!isset($_SESSION['email'])) {
+                echo "You must be logged in.";
+                exit;
+            }
 
-                $email = $_SESSION['email'];
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                $stmt->execute([$email]);
-                $user = $stmt->fetch();
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$_SESSION['email']]);
+            $user = $stmt->fetch();
 
-                if (!$user) {
-                    echo "User not found.";
-                    exit;
-                }
+            if (!$user) {
+                echo "User not found.";
+                exit;
+            }
 
-                $user_id = $user['id'];
-                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+            return $user['id'];
+        }
 
-                foreach ($modules as $module) {
-                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
-                    $stmt->execute([$module['id']]);
-                    $courses = $stmt->fetchAll();
-
-                    $incomplete_courses = [];
-
-                    foreach ($courses as $course) {
-                        // Count total lessons for this course
-                        $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
-                        $total_stmt->execute([$course['id']]);
-                        $total_lessons = $total_stmt->fetchColumn();
-
-                        // Count completed lessons
-                        $completed_stmt = $pdo->prepare("
-                            SELECT COUNT(*) FROM progress 
-                            WHERE user_id = ? 
-                            AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
-                            AND status = 'completed'");
-                        $completed_stmt->execute([$user_id, $course['id']]);
-                        $completed_lessons = $completed_stmt->fetchColumn();
-
-                        // If incomplete, include in the display
-                        if ($completed_lessons < $total_lessons) {
-                            $course['completed'] = $completed_lessons;
-                            $course['total'] = $total_lessons;
-                            $incomplete_courses[] = $course;
-                        }
-                    }
-
-                    // Output only if there are incomplete courses
-                    if (count($incomplete_courses) > 0) {
-                        $first_course = true;
-
-                        foreach ($incomplete_courses as $course) {
-                        $percent = $course['total'] > 0 ? ($course['completed'] / $course['total']) * 100 : 0;
-                        $status_class = $percent >= 100 ? 'completed' : 'in-progress';
-                        $status_text = $percent >= 100 ? 'Completed' : 'In Progress';
-
-                        echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
-                        echo '    <div class="module-image-container">';
-                        echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
-                        echo '    </div>';
-                        echo '    <div class="card-content">';
-                        echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
-                        echo "        <h3 class=\"module-title\">{$module['title']}</h3>";
-                        echo "        <p class=\"module-description\">{$module['description']}</p>";
-                        echo '        <div class="course-count">';
-                        echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-                                        </svg>';
-                        echo count($courses) . ' Course' . (count($courses) !== 1 ? 's' : '');
-                        echo '        </div>';
-                        echo "        <div class=\"progress-container\">";
-                        echo "            <div class=\"progress-bar\" style=\"width: {$percent}%;\"></div>";
-                        echo "        </div>";
-                        echo "        <div class=\"module-info\">";
-                        echo "            <span>{$course['completed']} of {$course['total']} completed</span>";
-                        echo "        </div>";
-                        echo "    </div>";
-                        echo "</div>";
-                    }
-
-                    }
-                }
-                ?>
-            </div>
-
-            <div class="modules">
-                <h2>Completed Modules</h2>
-            </div>
-
-            <div class="dashboard-container">
-                <?php
-                require 'db.php';
-
-                if (!isset($_SESSION['email'])) {
-                    echo "You must be logged in.";
-                    exit;
-                }
-
-                $email = $_SESSION['email'];
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                $stmt->execute([$email]);
-                $user = $stmt->fetch();
-
-                if (!$user) {
-                    echo "User not found.";
-                    exit;
-                }
-
-                $user_id = $user['id'];
-                $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
-
-                foreach ($modules as $module) {
-                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
-                    $stmt->execute([$module['id']]);
-                    $courses = $stmt->fetchAll();
-
-                    $completed_courses = [];
-
-                    foreach ($courses as $course) {
-                        // Count total lessons for this course
-                        $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
-                        $total_stmt->execute([$course['id']]);
-                        $total_lessons = $total_stmt->fetchColumn();
-
-                        // Count completed lessons
-                        $completed_stmt = $pdo->prepare("
-                            SELECT COUNT(*) FROM progress 
-                            WHERE user_id = ? 
-                            AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
-                            AND status = 'completed'");
-                        $completed_stmt->execute([$user_id, $course['id']]);
-                        $completed_lessons = $completed_stmt->fetchColumn();
-
-                        // Include only if fully completed
-                        if ($total_lessons > 0 && $completed_lessons == $total_lessons) {
-                            $course['completed'] = $completed_lessons;
-                            $course['total'] = $total_lessons;
-                            $completed_courses[] = $course;
-                        }
-                    }
-
-                    // Output only if there are completed courses
-                    if (count($completed_courses) > 0) {
-                        foreach ($completed_courses as $course) {
-                            $percent = 100; // completed 100%
-                            $status_class = 'completed';
-                            $status_text = 'Completed';
-
-                            echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
-                            echo '    <div class="module-image-container">';
-                            echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
-                            echo '    </div>';
-                            echo '    <div class="card-content">';
-                            echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
-                            echo "        <h3 class=\"module-title\">{$module['title']}</h3>";
-                            echo "        <p class=\"module-description\">{$module['description']}</p>";
-                            echo '        <div class="course-count">';
-                            echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        // Reusable card rendering function
+        function renderModuleCard($module, $course, $percent, $courseCount) {
+            echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
+            echo '  <div class="module-image-container">';
+            echo '      <img src="chill.jpg" alt="Module illustration" class="module-image">';
+            echo '  </div>';
+            echo '  <div class="card-content">';
+            echo '      <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
+            echo "      <h3 class=\"module-title\">{$module['title']}</h3>";
+            echo "      <p class=\"module-description\">{$module['description']}</p>";
+            echo '      <div class="course-count">';
+            echo '          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
                                                     </svg>';
-                            echo count($courses) . ' Course' . (count($courses) !== 1 ? 's' : '');
-                            echo '        </div>';
-                            echo "        <div class=\"progress-container\">";
-                            echo "            <div class=\"progress-bar\" style=\"width: {$percent}%;\"></div>";
-                            echo "        </div>";
-                            echo "        <div class=\"module-info\">";
-                            echo "            <span>{$course['completed']} of {$course['total']} completed</span>";
-                            echo "        </div>";
-                            echo "    </div>";
-                            echo "</div>";
-                        }
+            echo $courseCount . ' Course' . ($courseCount !== 1 ? 's' : '');
+            echo '      </div>';
+            echo "      <div class=\"progress-container\">";
+            echo "          <div class=\"progress-bar\" style=\"width: {$percent}%;\"></div>";
+            echo "      </div>";
+            echo "      <div class=\"module-info\">";
+            echo "          <span>{$course['completed']} of {$course['total']} completed</span>";
+            echo "      </div>";
+            echo "  </div>";
+            echo "</div>";
+        }
+
+        $user_id = getUserIdByEmail($pdo);
+        $modules = $pdo->query("SELECT * FROM modules")->fetchAll();
+
+        $hasIncomplete = false;
+        $hasComplete = false;
+        ?>
+
+        <!-- Ongoing Modules Section -->
+        <div class="dashboard-container">
+            <?php
+            foreach ($modules as $module) {
+                $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
+                $stmt->execute([$module['id']]);
+                $courses = $stmt->fetchAll();
+
+                $incompleteCourses = [];
+
+                foreach ($courses as $course) {
+                    $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
+                    $total_stmt->execute([$course['id']]);
+                    $total_lessons = $total_stmt->fetchColumn();
+
+                    $completed_stmt = $pdo->prepare("
+                        SELECT COUNT(*) FROM progress 
+                        WHERE user_id = ? 
+                        AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
+                        AND status = 'completed'");
+                    $completed_stmt->execute([$user_id, $course['id']]);
+                    $completed_lessons = $completed_stmt->fetchColumn();
+
+                    if ($total_lessons > 0 && $completed_lessons < $total_lessons) {
+                        $course['total'] = $total_lessons;
+                        $course['completed'] = $completed_lessons;
+                        $incompleteCourses[] = $course;
                     }
                 }
-                ?>
-            </div>
+
+                $courseCount = count($incompleteCourses);
+                if ($courseCount > 0) {
+                    foreach ($incompleteCourses as $course) {
+                        $percent = ($course['completed'] / $course['total']) * 100;
+                        renderModuleCard($module, $course, $percent, $courseCount);
+                        $hasIncomplete = true;
+                    }
+                }
+            }
+
+            if (!$hasIncomplete) {
+                echo '<div class="no-courses">No new courses found.</div>';
+            }
+            ?>
+        </div>
+
+        <!-- Completed Modules Section -->
+        <div class="modules">
+            <h2>Completed Modules</h2>
+        </div>
+
+        <div class="dashboard-container">
+            <?php
+            foreach ($modules as $module) {
+                $stmt = $pdo->prepare("SELECT * FROM courses WHERE module_id = ?");
+                $stmt->execute([$module['id']]);
+                $courses = $stmt->fetchAll();
+
+                $completeCourses = [];
+
+                foreach ($courses as $course) {
+                    $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM lessons WHERE course_id = ?");
+                    $total_stmt->execute([$course['id']]);
+                    $total_lessons = $total_stmt->fetchColumn();
+
+                    $completed_stmt = $pdo->prepare("
+                        SELECT COUNT(*) FROM progress 
+                        WHERE user_id = ? 
+                        AND lesson_id IN (SELECT id FROM lessons WHERE course_id = ?) 
+                        AND status = 'completed'");
+                    $completed_stmt->execute([$user_id, $course['id']]);
+                    $completed_lessons = $completed_stmt->fetchColumn();
+
+                    if ($total_lessons > 0 && $completed_lessons == $total_lessons) {
+                        $course['total'] = $total_lessons;
+                        $course['completed'] = $completed_lessons;
+                        $completeCourses[] = $course;
+                    }
+                }
+
+                $courseCount = count($completeCourses);
+                if ($courseCount > 0) {
+                    foreach ($completeCourses as $course) {
+                        $percent = 100;
+                        renderModuleCard($module, $course, $percent, $courseCount);
+                        $hasComplete = true;
+                    }
+                }
+            }
+
+            if (!$hasComplete) {
+                echo '<div class="no-courses">No completed modules found.</div>';
+            }
+            ?>
+        </div>
+
 
 
         <script>
             // Initialize charts
-            document.addEventListener('DOMContentLoaded', function() {
-                // Sample activity chart
-                const activityCtx = document.getElementById('activityChart').getContext('2d');
-                const activityChart = new Chart(activityCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        datasets: [{
-                            label: 'Student Logins',
-                            data: [65, 59, 80, 81, 56, 40, 70],
-                            borderColor: '#3a7bd5',
-                            backgroundColor: 'rgba(58, 123, 213, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }, {
-                            label: 'Course Views',
-                            data: [28, 48, 40, 45, 46, 30, 50],
-                            borderColor: '#00d2ff',
-                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
+            const ctx = document.getElementById('lessonsDoughnut').getContext('2d');
+            const lessonsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed Lessons', 'Remaining Lessons'],
+                    datasets: [{
+                        data: [<?= $completed_lessons ?>, <?= $remaining ?>],
+                        backgroundColor: ['#4CAF50', '#ffbf00'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
+                        title: {
+                            display: true,
+                            text: 'Lesson Completion Overview'
                         }
                     }
-                });
+                }
             });
 
             // Sidebar toggle functionality

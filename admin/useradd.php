@@ -149,9 +149,9 @@ if (!isset($_SESSION['email'])) {
             margin-left: 3px;
         }
         
-        .header {
+        .headers {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
@@ -248,7 +248,7 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="container">
-                <div class="header">
+                <div class="headers">
                     <h1>Add New User</h1>
                 </div>
         
@@ -262,21 +262,6 @@ if (!isset($_SESSION['email'])) {
                         <div class="form-group">
                             <label for="phone" class="required">Phone</label>
                             <input type="tel" id="phone" name="phone" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="required">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="district">District</label>
-                            <input type="text" id="district" name="district">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="town">Town</label>
-                            <input type="text" id="town" name="town">
                         </div>
 
                         <div class="form-group">
@@ -292,9 +277,34 @@ if (!isset($_SESSION['email'])) {
                             </select>
                         </div>
                         
-                        <div class="form-group form-full">
+                        <div class="form-group">
+                            <label for="email" class="required">Login Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact_mail" class="required">Contact Email</label>
+                            <input type="email" id="contact_mail" name="contact_mail" required>
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="organization">Organization/School</label>
                             <input type="text" id="organization" name="organization">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="district">District</label>
+                            <input type="text" id="district" name="district">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="town">Town</label>
+                            <input type="text" id="town" name="town">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="region">Region</label>
+                            <input type="text" id="region" name="region">
                         </div>
                         
                         <div class="form-group">

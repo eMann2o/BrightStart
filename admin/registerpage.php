@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // }
 
 // Validate and sanitize inputs
-$required_fields = ['name', 'phone', 'email', 'role', 'password', 'district', 'confirmPassword'];
+$required_fields = ['name', 'phone', 'email', 'role', 'password', 'district', 'confirmPassword', 'contact_mail', 'region'];
 foreach ($required_fields as $field) {
     if (empty($_POST[$field])) {
         json_error("Field $field is required", $field);
@@ -56,11 +56,17 @@ $district = trim($_POST['district']);
 $town = isset($_POST['town']) ? trim($_POST['town']) : '';
 $organization = isset($_POST['organization']) ? trim($_POST['organization']) : '';
 $password = $_POST['password'];
+$contact_mail = $_POST['contact_mail'];
+$region = $_POST['region'];
 $confirm_password = $_POST['confirmPassword'];
 
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     json_error("Invalid email format", 'email');
+}
+
+if (!filter_var($contact_mail, FILTER_VALIDATE_EMAIL)) {
+    json_error("Invalid email format", 'contact_mail');
 }
 
 // Validate password strength
@@ -74,7 +80,7 @@ if ($password !== $confirm_password) {
 }
 
 // Validate role against allowed values
-$allowed_roles = ['Admin', 'SISO', 'Headteacher', 'Teacher'];
+$allowed_roles = ['Admin', 'SISO', 'Headteacher', 'Teacher', 'STEM', 'District Director', 'Regional Director'];
 if (!in_array($role, $allowed_roles)) {
     json_error("Invalid user role", 'role');
 }
@@ -97,8 +103,8 @@ $hashedPassword = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
 try {
     $pdo->beginTransaction();
     
-    $sql = "INSERT INTO users (name, phone, email, role, district, town, organization, password, created_by, created_at) 
-            VALUES (:name, :phone, :email, :role, :district, :town, :organization, :password, :created_by, NOW())";
+    $sql = "INSERT INTO users (name, phone, email, role, district, town, organization, password, contact_mail, region, created_by, created_at) 
+            VALUES (:name, :phone, :email, :role, :district, :town, :organization, :password, :contact_mail, :region, :created_by, NOW())";
     
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':name', $name);
@@ -106,6 +112,8 @@ try {
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':role', $role);
     $stmt->bindParam(':town', $town);
+    $stmt->bindParam(':region', $region);
+    $stmt->bindParam(':contact_mail', $contact_mail);
     $stmt->bindParam(':district', $district);
     $stmt->bindParam(':organization', $organization);
     $stmt->bindParam(':password', $hashedPassword);

@@ -434,8 +434,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
 
                 <!-- Footer Section -->
                 <div class="profile-footer">
-                    <button class="btn btn-secondary">Edit Profile</button>
-                    <button type="button" class="btn btn-danger delete-user-btn" data-email="<?= htmlspecialchars($user['email']) ?>">
+                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff;">Edit Profile</button>
+                    <button type="button" class="btn btn-danger delete-user-btn" style="color: #ff0000; border: 1px solid #ff0000; margin-left: 10px; background-color: white;" data-email="<?= htmlspecialchars($user['email']) ?>">
                         Delete User
                     </button>
 
@@ -467,8 +467,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                                     <div class="detail-value"><?php echo htmlspecialchars($user['name']); ?></div>
                                 </div>
                             </div>
-                            
+
                             <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                    <polyline points="10,17 15,12 10,7"></polyline>
+                                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                                </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Login Email</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item" style="cursor: pointer;" onclick="window.location.href = 'mailto:<?php echo htmlspecialchars($user['contact_mail']); ?>';">
                                 <div class="detail-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -476,8 +490,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                                     </svg>
                                 </div>
                                 <div class="detail-content">
-                                    <div class="detail-label">Email</div>
-                                    <div class="detail-value"><?php echo htmlspecialchars($user['email']); ?></div>
+                                    <div class="detail-label">Contact Email</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['contact_mail']); ?></div>
                                 </div>
                             </div>
                             
@@ -511,7 +525,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                                     <div class="detail-value"><?php echo htmlspecialchars($user['phone']); ?></div>
                                 </div>
                             </div>
-                            
+
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Town</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['town']); ?></div>
+                                </div>
+                            </div>
+
                             <div class="detail-item">
                                 <div class="detail-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -522,6 +549,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                                 <div class="detail-content">
                                     <div class="detail-label">District</div>
                                     <div class="detail-value"><?php echo htmlspecialchars($user['district']); ?></div>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Region</div>
+                                    <div class="detail-value"><?php echo htmlspecialchars($user['region']); ?></div>
                                 </div>
                             </div>
                             

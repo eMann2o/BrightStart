@@ -452,6 +452,7 @@ if (!isset($_SESSION['email'])) {
 
             const tableBody = document.querySelector('#videosTable tbody');
             const paginationControls = document.getElementById('paginationControls');
+            const sessionEmail = <?= json_encode($_SESSION['email']) ?>;
 
             let currentPage = 1;
             const limit = 10;
@@ -473,41 +474,59 @@ if (!isset($_SESSION['email'])) {
                 });
             }
 
-            function renderTable(videos) {
-                tableBody.innerHTML = '';
-                if (videos.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No files found.</td></tr>';
-                return;
-                }
-                videos.forEach(video => {
-                const tr = document.createElement('tr');
+            function renderTable(videos, sessionEmail) {
+    tableBody.innerHTML = '';
 
-                // Video name
-                const nameTd = document.createElement('td');
-                nameTd.textContent = video.file_name;
-                tr.appendChild(nameTd);
+    // Filter videos by logged-in user's email
+    const userVideos = videos.filter(video => video.uploader_email === sessionEmail);
 
-                // Actions buttons
-                const actionsTd = document.createElement('td');
+    if (userVideos.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No files found.</td></tr>';
+        return;
+    }
 
-                // Download button
-                const downloadBtn = document.createElement('button');
-                downloadBtn.textContent = 'View';
-                downloadBtn.classList.add('btn-download');
-                downloadBtn.addEventListener('click', () => {
-                    // Assuming videos are accessible via /uploads/ folder on your web root
-                    const url = `../uploads/${encodeURIComponent(video.file_path)}`;
-                    window.open(url, '_blank');
-                });
-                actionsTd.appendChild(downloadBtn);
+    userVideos.forEach(video => {
+        const tr = document.createElement('tr');
 
-                
+        // Video name
+        const nameTd = document.createElement('td');
+        nameTd.textContent = video.file_name;
+        tr.appendChild(nameTd);
 
-                tr.appendChild(actionsTd);
+        // Actions
+        const actionsTd = document.createElement('td');
+        actionsTd.style.display = 'flex';
+        actionsTd.style.gap = '8px';
+        actionsTd.style.flexWrap = 'wrap';
 
-                tableBody.appendChild(tr);
-                });
-            }
+        // View button
+        const viewBtn = document.createElement('button');
+        viewBtn.textContent = 'View';
+        viewBtn.classList.add('btn-view');
+        viewBtn.addEventListener('click', () => {
+            const url = `../uploads/${encodeURIComponent(video.file_path)}`;
+            window.open(url, '_blank');
+        });
+        actionsTd.appendChild(viewBtn);
+
+        // Download button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = 'Download';
+        downloadBtn.classList.add('btn-download');
+        downloadBtn.addEventListener('click', () => {
+            const url = `../uploads/${encodeURIComponent(video.file_path)}`;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = video.file_name;
+            a.click();
+        });
+        actionsTd.appendChild(downloadBtn);
+
+        tr.appendChild(actionsTd);
+        tableBody.appendChild(tr);
+    });
+}
+
 
             function renderPagination(total, limit, page) {
                 paginationControls.innerHTML = '';
