@@ -89,7 +89,7 @@ body {
 /* Main Content Styles */
 .main-content {
     flex: 1;
-    padding: 30px;
+    padding: 0.5rem;
     overflow-y: auto;
     height: 100vh;
 }
@@ -98,8 +98,7 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 .menu-toggle {
@@ -1730,7 +1729,7 @@ input:checked + .slider:before {
             .main-content {
                 margin-left: 0;
                 width: 100%;
-                padding: 1rem;
+                padding: 0.5rem;
             }
         
             .header {

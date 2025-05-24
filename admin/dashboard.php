@@ -333,6 +333,12 @@ try {
                     </div>
                     <div class="action-text">User Uploaded Files</div>
                 </div>
+                <div class="action-item" onclick="window.location.href='logged_in_users.php';">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </div>
+                    <div class="action-text">User Logins</div>
+                </div>
             </div>
         </div>
         

@@ -37,12 +37,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["name"] = htmlspecialchars($user["name"]); // Store name in session
             $_SESSION["role"] = htmlspecialchars($user["role"]); // Store role
             
-            // Log unique daily login
+            // Log unique login with datetime
             $user_id = $user["id"];
-            $today = date('Y-m-d');
-            $stmtLog = $db->prepare("INSERT IGNORE INTO user_logins (user_id, login_date) VALUES (:user_id, :login_date)");
+            $now = date('Y-m-d H:i:s'); // This includes both date and time
+            $stmtLog = $db->prepare("INSERT INTO user_logins (user_id, login_date) VALUES (:user_id, :login_datetime)");
             $stmtLog->bindParam(':user_id', $user_id);
-            $stmtLog->bindParam(':login_date', $today);
+            $stmtLog->bindParam(':login_datetime', $now);
             $stmtLog->execute();
              
             // Redirect based on role
