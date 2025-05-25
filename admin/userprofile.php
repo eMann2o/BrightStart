@@ -120,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        window.location.href = 'adminview.php';
+                        window.location.href = 'users.php';
                     });
                 </script>";
                 exit();
@@ -434,7 +434,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
 
                 <!-- Footer Section -->
                 <div class="profile-footer">
-                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff;">Edit Profile</button>
+                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff;" onclick="window.location.href='edit_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Edit Profile</button>
                     <button type="button" class="btn btn-danger delete-user-btn" style="color: #ff0000; border: 1px solid #ff0000; margin-left: 10px; background-color: white;" data-email="<?= htmlspecialchars($user['email']) ?>">
                         Delete User
                     </button>

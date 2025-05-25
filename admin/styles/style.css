@@ -99,7 +99,7 @@ body {
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);height: 10vh;
 }
 .menu-toggle {
     background: none;
