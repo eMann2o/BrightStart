@@ -383,7 +383,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -680,7 +680,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                         x: {
                             title: {
                                 display: true,
-                                text: 'Courses'
+                                text: 'Module'
                             }
                         }
                     },

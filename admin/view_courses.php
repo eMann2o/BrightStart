@@ -38,7 +38,7 @@ try {
 // Get module ID from URL
 $courses_id = $_GET['module_id'] ?? null;
 if (!$courses_id) {
-    echo "Module ID not specified.";
+    echo "Course ID not specified.";
     exit;
 }
 
@@ -49,7 +49,7 @@ $module_stmt->execute();
 $module = $module_stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$module) {
-    echo "Module not found.";
+    echo "Course not found.";
     exit;
 }
 
@@ -324,7 +324,7 @@ th, td {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -374,7 +374,7 @@ th, td {
                  <?php echo htmlspecialchars($module['title']); ?> Overview
             </h1>
             <button class="customize-btn" onclick="window.location.href='addcourse.php';">
-                Add a course
+                Add a Module
                 <i class="fa-solid fa-square-plus"></i>
             </button>
         </div>

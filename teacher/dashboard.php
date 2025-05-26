@@ -323,7 +323,7 @@ try {
             </div>
             <div class="menu-item" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
@@ -383,7 +383,7 @@ try {
                     <div class="action-icon">
                         <i class="fas fa-book"></i>
                     </div>
-                    <div class="action-text">Modules</div>
+                    <div class="action-text">Courses</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='messages.php';">
                     <div class="action-icon">
@@ -413,7 +413,7 @@ try {
             </div>
         </div>
         <div class="modules">
-            <h2>Incomplete Modules</h2>
+            <h2>Incomplete Courses</h2>
         </div>
         
         <?php
@@ -452,7 +452,7 @@ try {
             echo '          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
                                                     </svg>';
-            echo $courseCount . ' Course' . ($courseCount !== 1 ? 's' : '');
+            echo $courseCount . ' Module' . ($courseCount !== 1 ? 's' : '');
             echo '      </div>';
             echo "      <div class=\"progress-container\">";
             echo "          <div class=\"progress-bar\" style=\"width: {$percent}%;\"></div>";
@@ -512,14 +512,14 @@ try {
             }
 
             if (!$hasIncomplete) {
-                echo '<div class="no-courses">No new courses found.</div>';
+                echo '<div class="no-courses">No new modules found.</div>';
             }
             ?>
         </div>
 
         <!-- Completed Modules Section -->
         <div class="modules">
-            <h2>Completed Modules</h2>
+            <h2>Completed Courses</h2>
         </div>
 
         <div class="dashboard-container">
@@ -562,7 +562,7 @@ try {
             }
 
             if (!$hasComplete) {
-                echo '<div class="no-courses">No completed modules found.</div>';
+                echo '<div class="no-courses">No completed course found.</div>';
             }
             ?>
         </div>

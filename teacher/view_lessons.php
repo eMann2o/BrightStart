@@ -297,7 +297,7 @@ h2 {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='videoupload.php';">
                 <i class="fa-solid fa-upload"></i>
@@ -369,7 +369,7 @@ h2 {
 
             // Check course ID
             if (!isset($_GET['course_id'])) {
-                echo "Invalid course ID";
+                echo "Invalid Modules ID";
                 exit;
             }
 
@@ -391,7 +391,7 @@ h2 {
             $percent = $total > 0 ? round(($completed / $total) * 100) : 0;
 
             // Show progress bar
-            echo "<p class=\"progress-text\">Course Progress: $completed / $total lessons completed ($percent%)</p>";
+            echo "<p class=\"progress-text\">Module Progress: $completed / $total lessons completed ($percent%)</p>";
             
             echo "<div class=\"progress-bar-container\">
                     <div class=\"progress-bar\" style=\"width:{$percent}%\"></div>

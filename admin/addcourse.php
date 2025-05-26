@@ -37,7 +37,7 @@ if (!isset($_SESSION['email'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add a Course</title>
+        <title>Add a Module</title>
         <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -160,7 +160,7 @@ if (!isset($_SESSION['email'])) {
                 </div>
                 <div class="menu-item active" onclick="window.location.href='courses.php';">
                     <i class="fas fa-book"></i>
-                    <span>Modules</span>
+                    <span>Courses</span>
                 </div>
                 <div class="menu-item" onclick="window.location.href='users.php';">
                     <i class="fas fa-users"></i>
@@ -213,11 +213,11 @@ if (!isset($_SESSION['email'])) {
             <div class="welcome-section">
                 
                 <button class="customize-btn" onclick="window.location.href='addmodule.php';">
-                    Add a module
+                    Add a Course
                     <i class="fas fa-cog"></i>
                 </button>
                 <button class="customize-btn" onclick="window.location.href='addcourse.php';">
-                    Add a course
+                    Add a Module
                     <i class="fas fa-cog"></i>
                 </button>
                 <button class="customize-btn" onclick="window.location.href='addlesson.php';">
@@ -231,10 +231,10 @@ if (!isset($_SESSION['email'])) {
                     <div class="container">
                         <!-- add_course.php -->
                         <form method="POST" action="addcourse.php">
-                            <h2>Create New Course</h2>
+                            <h2>Create New Module</h2>
 
                             <div class="form-group">
-                                <label for="module_id" >Select Module:</label>
+                                <label for="module_id" >Select Course:</label>
                                 <select name="module_id" class="form-control" required>
                                     <?php
                                     require 'db.php';
@@ -248,7 +248,7 @@ if (!isset($_SESSION['email'])) {
                             
                             
                             <div class="form-group">
-                                <label>Course Title:</label>
+                                <label>Module Title:</label>
                                 <input type="text" class="form-control" name="title" maxlength="255" required><br>
                             </div>
                             
@@ -258,7 +258,7 @@ if (!isset($_SESSION['email'])) {
                             </div>
                             
 
-                            <input type="submit" class="btn" value="Create Course">
+                            <input type="submit" class="btn" value="Create Module">
                         </form>
                     </div>
                 </div>
@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$module_id, $title, $description]);
 
     echo "<script type=\"text/javascript\">
-                alert(\"✅ Course created successfully!\");
+                alert(\"✅ Module created successfully!\");
                 window.location.href = \"courses.php\";
             </script>";
 }

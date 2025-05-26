@@ -37,7 +37,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modules Overview</title>
+    <title>Course Overview</title>
     <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -282,7 +282,7 @@ h2 {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -329,15 +329,15 @@ h2 {
         
         <div class="welcome-section">
             <h1 class="welcome-title">
-                Modules Overview
+                Course Overview
             </h1>
             
             <button class="customize-btn" onclick="window.location.href='addmodule.php';">
-                Add a module
+                Add a Course
                 <i class="fa-solid fa-square-plus"></i>
             </button>
             <button class="customize-btn" onclick="window.location.href='addcourse.php';">
-                Add a course
+                Add a Module
                 <i class="fa-solid fa-square-plus"></i>
             </button>
             <button class="customize-btn" onclick="window.location.href='addlesson.php';">
@@ -375,7 +375,7 @@ h2 {
                     echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
                     echo '                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>';
                     echo '            </svg>';
-                    echo "            {$courseCount} Course" . ($courseCount !== 1 ? 's' : '');
+                    echo "            {$courseCount} Module" . ($courseCount !== 1 ? 's' : '');
                     echo '        </div>';
                     echo '    </div>';
                     echo '</div>';

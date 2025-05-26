@@ -218,7 +218,7 @@ if (!isset($_SESSION['email'])) {
             </div>
             <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
-                <span>Modules</span>
+                <span>Courses</span>
             </div>
             <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
@@ -267,11 +267,11 @@ if (!isset($_SESSION['email'])) {
             
             
             <button class="customize-btn" onclick="window.location.href='addmodule.php';">
-                Add a module
+                Add a Course
                 <i class="fas fa-cog"></i>
             </button>
             <button class="customize-btn" onclick="window.location.href='addcourse.php';">
-                Add a course
+                Add a Module
                 <i class="fas fa-cog"></i>
             </button>
             <button class="customize-btn" onclick="window.location.href='addlesson.php';">
@@ -288,7 +288,7 @@ if (!isset($_SESSION['email'])) {
                         <h2>Create New Lesson</h2>
 
                         <div class="form-group">
-                            <label for="course_id">Select Course:</label>
+                            <label for="course_id">Select Module:</label>
                             <select class="form-control" name="course_id" id="course_id" required>
                                 <?php
                                 require 'db.php';
