@@ -165,20 +165,8 @@ if (!isset($_SESSION['email'])) {
             background: #ff3b30;
         }
 
-        .role-badge.student {
-            background: #007aff;
-        }
-
-        .role-badge.ta {
-            background: #ff9500;
-        }
-
         .role-badge.admin {
             background: #af52de;
-        }
-
-        .role-badge.moderator {
-            background: #34c759;
         }
 
         .role-badge.siso {
