@@ -87,6 +87,7 @@ if (!isset($_SESSION['email'])) {
             font-size: 16px;
             transition: all 0.3s ease;
             background-color: #f8f9fa;
+            margin-bottom: 10px;
         }
 
         .form-control:focus {
@@ -332,6 +333,36 @@ if (!isset($_SESSION['email'])) {
                             <div class="file-input-info">Optional: Upload supporting documents</div>
                         </div>
 
+                        <hr>
+                        <h3>Lesson Quiz (5 Multiple Choice & 1 Theory Question)</h3><br>
+
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <div class="form-group">
+                                <label for="mcq_question<?= $i ?>">Question <?= $i ?>:</label>
+                                <input type="text" class="form-control" name="mcq_question<?= $i ?>" id="mcq_question<?= $i ?>" placeholder="Enter question <?= $i ?>" required>
+                                <label>Enter possible answers</label>
+
+                                <?php foreach (['A', 'B', 'C', 'D'] as $option): ?>
+                                    <input type="text" class="form-control mt-1" name="mcq<?= $i ?>_option<?= $option ?>" placeholder="Option <?= $option ?>" required>
+                                <?php endforeach; ?>
+
+                                <label for="mcq<?= $i ?>_answer">Correct Answer:</label>
+                                <select name="mcq<?= $i ?>_answer" class="form-control" id="mcq<?= $i ?>_answer" required>
+                                    <option value="">-- Select Correct Option --</option>
+                                    <option value="A">Option A</option><br>
+                                    <option value="B">Option B</option><br>
+                                    <option value="C">Option C</option><br>
+                                    <option value="D">Option D</option><br>
+                                </select>
+                            </div>
+                        <?php endfor; ?>
+
+                        <div class="form-group">
+                            <label for="theory_question">Theory Question:</label>
+                            <textarea name="theory_question" id="theory_question" class="form-control" placeholder="Enter theory question..." required></textarea>
+                        </div>
+
+
                         <button type="submit" class="btn">Create Lesson</button>
                     </form>
 
@@ -383,80 +414,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate video upload
     if (!isset($_FILES['video']) || $_FILES['video']['error'] !== UPLOAD_ERR_OK) {
-        echo "
-        <script type=\"text/javascript\">
-                    alert(\"⚠️ Video upload failed.\");
-                    window.location.href = \"addlesson.php\";
-                </script>";
+        echo "<script>alert('⚠️ Video upload failed.'); window.location.href = 'addlesson.php';</script>";
         exit;
     }
 
-    // Read video as binary
     $videoBlob = file_get_contents($_FILES['video']['tmp_name']);
 
-    // Handle optional file attachment
+    // Handle optional file
     $fileBlob = null;
     $fileName = null;
     $fileMimeType = null;
 
     if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
-        // Store file info
         $fileName = $_FILES['file']['name'];
         $fileMimeType = $_FILES['file']['type'];
-        
-        // If mime type is empty or not detected, try to determine it
-        if (empty($fileMimeType)) {
-            if (function_exists('mime_content_type')) {
-                $fileMimeType = mime_content_type($_FILES['file']['tmp_name']);
-            } else {
-                // Fallback to a basic check by extension
-                $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                $mimeTypes = [
-                    'pdf' => 'application/pdf',
-                    'doc' => 'application/msword',
-                    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'xls' => 'application/vnd.ms-excel',
-                    'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'ppt' => 'application/vnd.ms-powerpoint',
-                    'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    'txt' => 'text/plain',
-                    'jpg' => 'image/jpeg',
-                    'jpeg' => 'image/jpeg',
-                    'png' => 'image/png',
-                    'gif' => 'image/gif',
-                    'zip' => 'application/zip'
-                ];
-                $fileMimeType = isset($mimeTypes[$extension]) ? $mimeTypes[$extension] : 'application/octet-stream';
-            }
+        if (empty($fileMimeType) && function_exists('mime_content_type')) {
+            $fileMimeType = mime_content_type($_FILES['file']['tmp_name']);
         }
-        
-        // Read file as binary
         $fileBlob = file_get_contents($_FILES['file']['tmp_name']);
     }
 
-    // Check if we need to alter the table structure (first time use)
+    // Ensure file metadata columns exist
     try {
         $checkColumn = $pdo->query("SHOW COLUMNS FROM lessons LIKE 'file_mime_type'");
         if ($checkColumn->rowCount() == 0) {
-            // Add new columns for file metadata
             $pdo->exec("ALTER TABLE lessons 
-                       ADD COLUMN file_mime_type VARCHAR(100) AFTER file_attachment,
-                       ADD COLUMN file_name VARCHAR(255) AFTER file_attachment,
-                       MODIFY COLUMN file_attachment LONGBLOB");
+                        ADD COLUMN file_mime_type VARCHAR(100) AFTER file_attachment,
+                        ADD COLUMN file_name VARCHAR(255) AFTER file_attachment,
+                        MODIFY COLUMN file_attachment LONGBLOB");
         }
     } catch (PDOException $e) {
-        error_log("Database structure update error: " . $e->getMessage());
-        // Continue with the script, it might work if the structure is already correct
+        error_log("Schema check failed: " . $e->getMessage());
     }
 
-    // Insert new lesson into the database
+    // Insert lesson
     $stmt = $pdo->prepare("INSERT INTO lessons (course_id, title, content, video, file_attachment, file_name, file_mime_type) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?)");
+                           VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$course_id, $title, $content, $videoBlob, $fileBlob, $fileName, $fileMimeType]);
+    $lesson_id = $pdo->lastInsertId();
 
-    echo "<script type=\"text/javascript\">
-                alert(\"✅ Lesson created successfully!\");
-                window.location.href = \"courses.php\";
-            </script>";
+    // Insert 5 MCQs
+    for ($i = 1; $i <= 5; $i++) {
+        $q = trim($_POST["mcq_question$i"]);
+        $a = trim($_POST["mcq{$i}_optionA"]);
+        $b = trim($_POST["mcq{$i}_optionB"]);
+        $c = trim($_POST["mcq{$i}_optionC"]);
+        $d = trim($_POST["mcq{$i}_optionD"]);
+        $ans = $_POST["mcq{$i}_answer"];
+
+        $quizStmt = $pdo->prepare("INSERT INTO lesson_quizzes (lesson_id, question, option_a, option_b, option_c, option_d, correct_option, type)
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, 'mcq')");
+        $quizStmt->execute([$lesson_id, $q, $a, $b, $c, $d, $ans]);
+    }
+
+    // Insert theory question
+    $theory = trim($_POST['theory_question']);
+    if (!empty($theory)) {
+        $theoryStmt = $pdo->prepare("INSERT INTO lesson_quizzes (lesson_id, question, type) VALUES (?, ?, 'theory')");
+        $theoryStmt->execute([$lesson_id, $theory]);
+    }
+
+    echo "<script>alert('✅ Lesson and quiz created successfully!'); window.location.href = 'courses.php';</script>";
 }
 ?>

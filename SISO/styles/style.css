@@ -99,7 +99,7 @@ body {
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);height: 10vh;
+    border-bottom: 1px solid var(--border-color);
 }
 .menu-toggle {
     background: none;
@@ -1330,7 +1330,7 @@ align-items: center;
     }
     
     .welcome-section {
-        flex-direction: row;
+        flex-direction: column;
         align-items: flex-start;
     }
     
@@ -1630,7 +1630,7 @@ input:checked + .slider:before {
 .pagination-link.active {
     background-color: var(--primary-color);
     color: white;
-}
+} 
 .pagination-prev, .pagination-next {
     width: auto;
     padding: 0 15px;
@@ -1734,7 +1734,6 @@ input:checked + .slider:before {
         
             .header {
                 flex-direction: row;
-                align-items: flex-start;
                 gap: 10px;
             }
         
@@ -1766,7 +1765,7 @@ input:checked + .slider:before {
             }
         
             .welcome-section {
-                flex-direction: row;
+                flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }

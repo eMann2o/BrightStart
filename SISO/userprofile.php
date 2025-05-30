@@ -467,15 +467,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                 <i class="fas fa-book"></i>
                 <span>Courses</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='users.php';">
-                <i class="fas fa-users"></i>
-                <span>Participants</span>
+            <div class="menu-item" onclick="window.location.href='videoupload.php';">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload Files</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
                 <i class="fas fa-comment"></i>
                 <span>Messages</span>
               
+            </div>
+            <div class="menu-item" onclick="window.location.href='users.php';">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
             </div>
             
             
@@ -512,16 +516,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
         
         <section class="content">
             <div class="container">
-                
-
-                <!-- Footer Section -->
-                <div class="profile-footer">
-                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff;" onclick="window.location.href='edit_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Edit Profile</button>
-                    <button type="button" class="btn btn-danger delete-user-btn" style="color: #ff0000; border: 1px solid #ff0000; margin-left: 10px; background-color: white;" data-email="<?= htmlspecialchars($user['email']) ?>">
-                        Delete User
-                    </button>
-
-                </div>
                 <div class="profile-card">
                     <!-- Header Section -->
                     <div class="profile-header">

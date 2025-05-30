@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: headteacher/dashboard.php");
                     break;
                 case "STEM-Coordinator":
-                    header("Location: STEM/dashboard.php");
+                    header("Location: SISO/dashboard.php");
                     break;
                 case "District Director":
                     header("Location: DD/dashboard.php");

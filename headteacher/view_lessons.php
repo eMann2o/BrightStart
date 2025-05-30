@@ -87,11 +87,11 @@ function renderLessonCard($lesson, $status) {
                 <span>Status: <?= htmlspecialchars($status) ?></span>
             </div>
             <div class="lesson-actions">
-                <a href="view_video.php?lesson_id=<?= $lesson['id'] ?>" target="_blank" class="action-button video-button"  style="text-decoration: none;">
+                <a href="view_video.php?lesson_id=<?= $lesson['id'] ?>" target="_blank" class="action-button video-button">
                     <i class="fa-solid fa-play"></i>Watch Video
                 </a>
                 <?php if (!empty($lesson['file_attachment'])): ?>
-                    <a href="download_file.php?lesson_id=<?= $lesson['id'] ?>" class="action-button download-button" style="text-decoration: none;">
+                    <a href="download_file.php?lesson_id=<?= $lesson['id'] ?>" class="action-button download-button">
                         <i class="fa-solid fa-download"></i> Download File
                     </a>
                 <?php endif; ?>
@@ -355,6 +355,10 @@ function renderLessonCard($lesson, $status) {
                 <i class="fas fa-comment"></i>
                 <span>Messages</span>
               
+            </div>
+            <div class="menu-item" onclick="window.location.href='users.php';">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
             </div>
             
             

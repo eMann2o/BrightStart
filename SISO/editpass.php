@@ -36,13 +36,25 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a New User</title>
+    <title>Change Password</title>
     <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
-    <style>     
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
         .container {
             max-width: 800px;
             margin: 40px auto;
@@ -84,12 +96,8 @@ if (!isset($_SESSION['email'])) {
         
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 15px;
-        }
-        
-        .form-full {
-            grid-column: span 2;
         }
         
         .button-group {
@@ -127,31 +135,15 @@ if (!isset($_SESSION['email'])) {
             background-color: #e5e5e5;
         }
         
-        .checkbox-group {
-            margin-top: 10px;
-        }
-        
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-        
-        .checkbox-label input {
-            width: auto;
-            margin-right: 10px;
-        }
-        
         .required::after {
             content: '*';
             color: #e74c3c;
             margin-left: 3px;
         }
         
-        .headers {
+        .header {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
@@ -187,6 +179,48 @@ if (!isset($_SESSION['email'])) {
             width: 18px;
             height: 18px;
         }
+        
+        .password-requirements {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .password-requirements ul {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        
+        .password-requirements li {
+            margin-bottom: 3px;
+        }
+        
+        .requirement-met {
+            color: #2ecc71;
+        }
+        
+        .requirement-unmet {
+            color: #e74c3c;
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -213,6 +247,10 @@ if (!isset($_SESSION['email'])) {
                 <span>Messages</span>
               
             </div>
+            <div class="menu-item" onclick="window.location.href='users.php';">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
+            </div>
             
             
         </div>
@@ -228,6 +266,7 @@ if (!isset($_SESSION['email'])) {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+
                 
                 <div class="user-profile" onclick="window.location.href='profile.php';">
                     
@@ -248,71 +287,19 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="container">
-                <div class="headers">
-                    <h1>Add New User</h1>
+                <div class="header">
+                    <h1>Edit Password</h1>
                 </div>
-        
-                <form id="addUserForm" action="registerpage.php" method="post">
+                
+                <div id="alertBox" class="alert"></div>
+                
+                <form id="editPasswordForm">
                     <div class="form-grid">
-                        <div class="form-group form-full">
-                            <label for="name" class="required">Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        
                         <div class="form-group">
-                            <label for="phone" class="required">Phone</label>
-                            <input type="tel" id="phone" name="phone" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="role" class="required">User Type</label>
-                            <select id="role" name="role" required>
-                                <option value="">Select User Type</option>
-                                <option value="Admin">Admin</option>
-                                <option value="SISO">SISO</option>
-                                <option value="STEM-Coordinator">STEM-Coordinator</option>
-                                <option value="Headteacher">Headteacher</option>
-                                <option value="Teacher">Teacher</option>
-                                <option value="District Director">District Director</option>
-                                <option value="Regional Director">Regional Director</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="required">Login Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contact_mail" class="required">Contact Email</label>
-                            <input type="email" id="contact_mail" name="contact_mail" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="organization">Organization/School</label>
-                            <input type="text" id="organization" name="organization">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="district">District</label>
-                            <input type="text" id="district" name="district">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="town">Town</label>
-                            <input type="text" id="town" name="town">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="region">Region</label>
-                            <input type="text" id="region" name="region">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password" class="required">Password</label>
+                            <label for="currentPassword" class="required">Current Password</label>
                             <div class="password-container">
-                                <input type="password" id="password" name="password" required>
-                                <button type="button" class="password-toggle" aria-label="Show password" data-target="password">
+                                <input type="password" id="currentPassword" name="currentPassword" required>
+                                <button type="button" class="password-toggle" aria-label="Show password" data-target="currentPassword">
                                     <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
@@ -326,10 +313,10 @@ if (!isset($_SESSION['email'])) {
                         </div>
                         
                         <div class="form-group">
-                            <label for="confirmPassword" class="required">Confirm Password</label>
+                            <label for="newPassword" class="required">New Password</label>
                             <div class="password-container">
-                                <input type="password" id="confirmPassword" name="confirmPassword" required>
-                                <button type="button" class="password-toggle" aria-label="Show password" data-target="confirmPassword">
+                                <input type="password" id="newPassword" name="newPassword" required>
+                                <button type="button" class="password-toggle" aria-label="Show password" data-target="newPassword">
                                     <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
@@ -340,12 +327,40 @@ if (!isset($_SESSION['email'])) {
                                     </svg>
                                 </button>
                             </div>
+                            <div class="password-requirements">
+                                <span>Password must contain:</span>
+                                <ul id="passwordRequirements">
+                                    <li id="req-length" class="requirement-unmet">At least 8 characters</li>
+                                    <li id="req-uppercase" class="requirement-unmet">At least one uppercase letter</li>
+                                    <li id="req-lowercase" class="requirement-unmet">At least one lowercase letter</li>
+                                    <li id="req-number" class="requirement-unmet">At least one number</li>
+                                    <li id="req-special" class="requirement-unmet">At least one special character</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmNewPassword" class="required">Confirm New Password</label>
+                            <div class="password-container">
+                                <input type="password" id="confirmNewPassword" name="confirmNewPassword" required>
+                                <button type="button" class="password-toggle" aria-label="Show password" data-target="confirmNewPassword">
+                                    <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="passwordMatch" class="password-requirements"></div>
                         </div>
                     </div>
                     
                     <div class="button-group">
                         <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Update Password</button>
                     </div>
                 </form>
             </div>
@@ -362,10 +377,14 @@ if (!isset($_SESSION['email'])) {
             });
 
             document.addEventListener('DOMContentLoaded', () => {
-                const form = document.getElementById('addUserForm');
+                const form = document.getElementById('editPasswordForm');
                 const cancelBtn = document.getElementById('cancelBtn');
+                const alertBox = document.getElementById('alertBox');
+                const newPassword = document.getElementById('newPassword');
+                const confirmNewPassword = document.getElementById('confirmNewPassword');
+                const passwordMatch = document.getElementById('passwordMatch');
                 
-                // Add event listeners for password toggle buttons
+                // Password toggle functionality
                 const passwordToggles = document.querySelectorAll('.password-toggle');
                 passwordToggles.forEach(toggle => {
                     toggle.addEventListener('click', () => {
@@ -389,39 +408,108 @@ if (!isset($_SESSION['email'])) {
                     });
                 });
                 
-                form.addEventListener('submit', async (e) => {
+                // Password validation
+                function validatePassword(password) {
+                    const requirements = {
+                        length: password.length >= 8,
+                        uppercase: /[A-Z]/.test(password),
+                        lowercase: /[a-z]/.test(password),
+                        number: /[0-9]/.test(password),
+                        special: /[^A-Za-z0-9]/.test(password)
+                    };
+                    
+                    document.getElementById('req-length').className = requirements.length ? 'requirement-met' : 'requirement-unmet';
+                    document.getElementById('req-uppercase').className = requirements.uppercase ? 'requirement-met' : 'requirement-unmet';
+                    document.getElementById('req-lowercase').className = requirements.lowercase ? 'requirement-met' : 'requirement-unmet';
+                    document.getElementById('req-number').className = requirements.number ? 'requirement-met' : 'requirement-unmet';
+                    document.getElementById('req-special').className = requirements.special ? 'requirement-met' : 'requirement-unmet';
+                    
+                    return Object.values(requirements).every(value => value === true);
+                }
+                
+                // Check password match
+                function checkPasswordMatch() {
+                    if (confirmNewPassword.value === '') {
+                        passwordMatch.textContent = '';
+                        return false;
+                    } else if (newPassword.value === confirmNewPassword.value) {
+                        passwordMatch.textContent = 'Passwords match!';
+                        passwordMatch.className = 'password-requirements requirement-met';
+                        return true;
+                    } else {
+                        passwordMatch.textContent = 'Passwords do not match!';
+                        passwordMatch.className = 'password-requirements requirement-unmet';
+                        return false;
+                    }
+                }
+                
+                // Show alert
+                function showAlert(message, type) {
+                    alertBox.textContent = message;
+                    alertBox.className = `alert alert-${type}`;
+                    alertBox.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        alertBox.style.display = 'none';
+                    }, 5000);
+                }
+                
+                // Event listeners for password validation
+                newPassword.addEventListener('input', () => {
+                    validatePassword(newPassword.value);
+                    if (confirmNewPassword.value !== '') {
+                        checkPasswordMatch();
+                    }
+                });
+                
+                confirmNewPassword.addEventListener('input', checkPasswordMatch);
+                
+                document.getElementById('editPasswordForm').addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
+                    const form = e.target;
                     const formData = new FormData(form);
+                    const saveBtn = document.getElementById('saveBtn');
+                    
+                    // Disable button during submission
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Processing...';
+                    
                     try {
-                        const response = await fetch('registerpage.php', {
+                        const response = await fetch('editpage.php', {
                             method: 'POST',
                             body: formData
                         });
+                        
                         const result = await response.json();
                         
                         if (result.success) {
                             alert(result.message);
-                            window.location.href = result.redirect;
+                            window.location.href = 'dashboard.php'; // Redirect after success
                         } else {
-                            alert(result.error);
+                            alert(result.message);
                             if (result.field) {
                                 document.getElementById(result.field).focus();
                             }
                         }
                     } catch (error) {
-                        alert('An error occurred during registration');
+                        alert('An error occurred. Please try again.');
+                    } finally {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Update Password';
                     }
                 });
-
+                
+                
                 cancelBtn.addEventListener('click', () => {
-                    // Redirect back to users list
-                    // window.location.href = 'users.html';
-                    
-                    // For demo purposes:
                     if (confirm('Are you sure you want to cancel? All entered data will be lost.')) {
                         form.reset();
-                        // window.location.href = 'users.html';
+                        // Reset password requirement indicators
+                        document.querySelectorAll('#passwordRequirements li').forEach(li => {
+                            li.className = 'requirement-unmet';
+                        });
+                        passwordMatch.textContent = '';
+                        // Normally would redirect: window.location.href = 'profile.html';
                     }
                 });
             });

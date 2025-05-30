@@ -556,23 +556,27 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
             <h2>Bright<span>Start</span></h2>
         </div>
         <div class="sidebar-menu">
-            <div class="menu-item active" onclick="window.location.href='dashboard.php';">
+            <div class="menu-item" onclick="window.location.href='dashboard.php';">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='courses.php';">
+            <div class="menu-item active" onclick="window.location.href='courses.php';">
                 <i class="fas fa-book"></i>
                 <span>Courses</span>
             </div>
-            <div class="menu-item" onclick="window.location.href='users.php';">
-                <i class="fas fa-users"></i>
-                <span>Participants</span>
+            <div class="menu-item" onclick="window.location.href='videoupload.php';">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload Files</span>
             </div>
             
             <div class="menu-item" onclick="window.location.href='messages.php';">
                 <i class="fas fa-comment"></i>
                 <span>Messages</span>
               
+            </div>
+            <div class="menu-item" onclick="window.location.href='users.php';">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
             </div>
             
             
