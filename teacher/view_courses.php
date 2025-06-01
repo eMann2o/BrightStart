@@ -110,7 +110,7 @@ if (!$module) {
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            justify-content: center;
+            justify-content: start;
         }
         
         /* Individual module card */

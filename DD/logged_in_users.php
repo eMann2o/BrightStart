@@ -28,7 +28,7 @@ try {
     $district = $user['district'];
 
     // Step 2: Fetch all users in the same district
-    $stmt2 = $db->prepare("SELECT * FROM user_logins WHERE district = :district");
+    $stmt2 = $db->prepare("SELECT * FROM users WHERE district = :district");
     $stmt2->execute([':district' => $district]);
     $rows = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 

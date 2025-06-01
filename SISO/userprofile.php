@@ -525,11 +525,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="chart-container">
-                            <canvas id="courseProgressChart"></canvas>
+                    <?php
+                    if ($user['role'] == 'SISO' or $user['role'] == 'Teacher' or $user['role'] == 'Headteacher' or $user['role'] == 'STEM-Coordinator'){
+                        echo '
+                        <div class="card">
+                            <div class="chart-container">
+                                <canvas id="courseProgressChart"></canvas>
+                            </div>
                         </div>
-                    </div>
+                        ';
+                    }
+                    
+                    ?>
                     <!-- Details Section - Responsive Grid -->
                     <div class="details-container">
                         <div class="details-grid">

@@ -112,7 +112,7 @@ try {
                                 tension: 0.4,
                             }, {
                             label: 'Module Views',
-                            data: [28, 18, 20, 15, 6, 13, 25, 30, 15, 1, 8, 2, 13],
+                            data: data.completions,
                             borderColor: '#00d2ff',
                             backgroundColor: 'rgba(0, 210, 255, 0.1)',
                             tension: 0.4,

@@ -16,7 +16,7 @@ try {
     $email = $_SESSION['email'];
 
     // Step 1: Retrieve the district of the logged-in user
-    $stmt = $db->prepare("SELECT district FROM user_logins WHERE email = :email");
+    $stmt = $db->prepare("SELECT district FROM users WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -28,7 +28,7 @@ try {
     $district = $user['district'];
 
     // Step 2: Retrieve all users in the same district
-    $stmt = $db->prepare("SELECT * FROM user_logins WHERE district = :district");
+    $stmt = $db->prepare("SELECT * FROM users WHERE district = :district");
     $stmt->execute([':district' => $district]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

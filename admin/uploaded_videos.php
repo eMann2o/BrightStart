@@ -490,7 +490,7 @@ if (!isset($_SESSION['email'])) {
 
                 // Uploader username
                 const uploaderTd = document.createElement('td');
-                uploaderTd.textContent = video.username;
+                uploaderTd.textContent = video.name;
                 tr.appendChild(uploaderTd);
 
                 // Actions buttons

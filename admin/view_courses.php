@@ -110,7 +110,7 @@ if (!$module) {
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            justify-content: center;
+            justify-content: start;
         }
         
         /* Individual module card */
@@ -389,11 +389,6 @@ th, td {
                 $courses = $stmt->fetchAll();
 
                 foreach ($courses as $course) {
-                    // Placeholder values
-                    $completedCourses = 2;
-                    $totalHours = 15;
-                    $progressPercent = 100; // adjust if needed
-
                     echo '<div class="module-card" onclick="window.location.href=\'view_lessons.php?course_id=' . $course['id'] . '\'">';
                     echo '    <div class="module-image-container">';
                     echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';

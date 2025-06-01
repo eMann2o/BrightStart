@@ -585,7 +585,7 @@ if (!isset($_SESSION['email'])) {
 
                 <div class="message-input">
                     <textarea id="message-input" placeholder="Type your message..."></textarea>
-                    <button id="send-button">Send</button>
+                    <button id="send-button"><i class="fa-solid fa-arrow-up"></i></button>
                 </div>
             </div>
         </section>
