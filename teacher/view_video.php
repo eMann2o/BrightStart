@@ -721,197 +721,561 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
         
     </div>
 
-
-
-
-    
-
     <script>
-        // Sidebar toggle functionality
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            document.querySelector('.main-content').classList.toggle('expanded');
-        });
+        // Enhanced Video Learning Management System
+// Combines video tracking, anti-cheat features, and quiz integration
+
+class VideoLearningSystem {
+    constructor(config = {}) {
+        // Configuration
+        this.config = {
+            requiredWatchPercentage: config.requiredWatchPercentage || 95,
+            seekTolerance: config.seekTolerance || 2,
+            maxTabSwitches: config.maxTabSwitches || 5,
+            saveProgressInterval: config.saveProgressInterval || 30000, // 30 seconds
+            ...config
+        };
+
+        // DOM elements
+        this.video = document.getElementById('courseVideo');
+        this.overlay = document.getElementById('videoOverlay');
+        this.playPauseBtn = document.getElementById('playPauseBtn');
+        this.progressBar = document.getElementById('progressBar');
+        this.progressContainer = document.querySelector('.progress-container');
+        this.currentTimeEl = document.getElementById('currentTime');
+        this.durationEl = document.getElementById('duration');
+        this.quizSection = document.querySelector('.quiz-section');
+        this.completionMessage = document.getElementById('completionMessage');
+        this.warningMessage = document.getElementById('warningMessage');
+
+        // Tracking variables
+        this.videoDuration = 0;
+        this.maxWatchedTime = 0;
+        this.watchData = {};
+        this.isVideoCompleted = false;
+        this.quizUnlocked = false;
         
-        function markCompleted() {
-            fetch("mark_progress.php?lesson_id=<?= $lesson_id ?>&user_id=<?= $user_id ?>&temp_file=<?= htmlspecialchars($videoFile) ?>")
-                .then(response => console.log("Progress marked and cleanup triggered"));
+        // Anti-cheat tracking
+        this.tabSwitchCount = 0;
+        this.seekAttempts = 0;
+        this.playbackSpeed = 1;
+        this.suspiciousActivity = [];
+        
+        // Progress saving
+        this.lastSavedProgress = 0;
+        this.progressSaveInterval = null;
+
+        this.init();
+    }
+
+    init() {
+        if (!this.video) {
+            console.error('Video element not found');
+            return;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const video = document.getElementById('courseVideo');
-            const overlay = document.getElementById('videoOverlay');
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const progressBar = document.getElementById('progressBar');
-            const currentTimeDisplay = document.getElementById('currentTime');
-            const durationDisplay = document.getElementById('duration');
+        this.setupEventListeners();
+        this.hideQuizInitially();
+        this.setupProgressSaving();
+        this.addCustomStyles();
+    }
 
-            const completionMessage = document.getElementById('completionMessage');
-            const warningMessage = document.getElementById('warningMessage');
-            
-            // Variables for tracking
-            let watchTime = 0;
-            let lastUpdateTime = 0;
-            let videoDuration = 0;
-            let isVideoCompleted = false;
-            let isValidPlay = true;
-            let watchData = {};
-            let tabSwitchCount = 0;
-            let seekAttempts = 0;
-            
-            // Initialize video tracking data structure
-            function initializeWatchData() {
-                for (let i = 0; i < Math.ceil(videoDuration); i++) {
-                    watchData[i] = false;
-                }
-            }
-            
-            // Format time (seconds) to MM:SS format
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = Math.floor(seconds % 60);
-                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-            }
+    setupEventListeners() {
+        // Video events
+        this.video.addEventListener('loadedmetadata', () => this.onMetadataLoaded());
+        this.video.addEventListener('timeupdate', () => this.onTimeUpdate());
+        this.video.addEventListener('ended', () => this.onVideoEnded());
+        this.video.addEventListener('seeking', () => this.onSeeking());
+        this.video.addEventListener('ratechange', () => this.onRateChange());
+        this.video.addEventListener('contextmenu', (e) => e.preventDefault());
 
-            
-            // Calculate and update progress
-            function updateProgress() {
-                const progress = (video.currentTime / videoDuration) * 100;
-                progressBar.style.width = `${progress}%`;
-                currentTimeDisplay.textContent = formatTime(video.currentTime);
-                
-                // Mark the current second as watched
-                const currentSecond = Math.floor(video.currentTime);
-                if (currentSecond < videoDuration) {
-                    watchData[currentSecond] = true;
-                }
-                
-                // Calculate actual watch time based on marked seconds
-                const watchedSeconds = Object.values(watchData).filter(Boolean).length;
-                watchTime = watchedSeconds;
-                
-                // Update stats
-                const completionPercentage = Math.min(Math.round((watchTime / videoDuration) * 100), 100);
-                
-                // Check if video is completed (95% watched)
-                if (completionPercentage >= 95 && !isVideoCompleted) {
-                    isVideoCompleted = true;
-                    completionMessage.classList.add('show');
-                    
-                    // Simulate sending data to LMS backend
-                    console.log('Video completed! Sending data to LMS:', {
-                        watchTime: watchTime,
-                        videoDuration: videoDuration,
-                        completionPercentage: completionPercentage,
-                        tabSwitches: tabSwitchCount,
-                        seekAttempts: seekAttempts
-                    });
-                    
-                    // You would replace this with actual API call
-                    setTimeout(() => {
-                        alert('Progress saved successfully!');
-                    }, 1000);
-                }
-            }
-            
-            // Event: Video metadata loaded
-            video.addEventListener('loadedmetadata', function() {
-                videoDuration = video.duration;
-                durationDisplay.textContent = formatTime(videoDuration);
-                initializeWatchData();
-            });
-            
-            // Event: Video time update
-            video.addEventListener('timeupdate', function() {
-                if (isValidPlay) {
-                    updateProgress();
-                }
-            });
-            
-            // Event: Video ended
-            video.addEventListener('ended', function() {
-                playPauseBtn.textContent = 'Replay';
-            });
+        // Control events
+        if (this.overlay) {
+            this.overlay.addEventListener('click', () => this.startVideo());
+        }
+        
+        if (this.playPauseBtn) {
+            this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+        }
 
+        if (this.progressContainer) {
+            this.progressContainer.addEventListener('click', (e) => this.seekVideo(e));
+        }
+
+        // Anti-cheat events
+        document.addEventListener('visibilitychange', () => this.onVisibilityChange());
+        document.addEventListener('keydown', (e) => this.onKeyDown(e));
+        window.addEventListener('beforeunload', (e) => this.onBeforeUnload(e));
+        window.addEventListener('blur', () => this.onWindowBlur());
+        window.addEventListener('focus', () => this.onWindowFocus());
+    }
+
+    onMetadataLoaded() {
+        this.videoDuration = this.video.duration;
+        this.updateDurationDisplay();
+        this.initializeWatchData();
+        console.log(`Video loaded: ${this.formatTime(this.videoDuration)}`);
+    }
+
+    initializeWatchData() {
+        this.watchData = {};
+        for (let i = 0; i < Math.ceil(this.videoDuration); i++) {
+            this.watchData[i] = false;
+        }
+    }
+
+    onTimeUpdate() {
+        this.updateProgress();
+        this.trackWatchedSegments();
+        this.checkQuizUnlock();
+        
+        // Update max watched time
+        if (this.video.currentTime > this.maxWatchedTime) {
+            this.maxWatchedTime = this.video.currentTime;
+        }
+    }
+
+    trackWatchedSegments() {
+        const currentSecond = Math.floor(this.video.currentTime);
+        if (currentSecond < this.videoDuration && currentSecond >= 0) {
+            this.watchData[currentSecond] = true;
+        }
+    }
+
+    updateProgress() {
+        if (!this.videoDuration) return;
+
+        const currentPercentage = (this.video.currentTime / this.videoDuration) * 100;
+        const watchedSeconds = Object.values(this.watchData).filter(Boolean).length;
+        const watchedPercentage = (watchedSeconds / this.videoDuration) * 100;
+
+        // Update progress bar
+        if (this.progressBar) {
+            this.progressBar.style.width = `${currentPercentage}%`;
+        }
+
+        // Update time display
+        if (this.currentTimeEl) {
+            this.currentTimeEl.textContent = this.formatTime(this.video.currentTime);
+        }
+
+        // Update progress display in UI
+        this.updateProgressDisplay(Math.min(watchedPercentage, 100));
+    }
+
+    updateProgressDisplay(percentage) {
+        const progressDisplay = document.getElementById('videoProgressDisplay');
+        if (progressDisplay) {
+            progressDisplay.textContent = Math.floor(percentage) + '%';
             
-            // Event: Play button clicked
-            playPauseBtn.addEventListener('click', function() {
-                if (video.paused) {
-                    video.play();
-                    playPauseBtn.textContent = 'Pause';
-                } else {
-                    video.pause();
-                    playPauseBtn.textContent = 'Play';
-                }
+            // Color coding based on progress
+            if (percentage >= this.config.requiredWatchPercentage) {
+                progressDisplay.style.color = '#00b894';
+            } else if (percentage >= 75) {
+                progressDisplay.style.color = '#ffe200';
+            } else {
+                progressDisplay.style.color = '#d63031';
+            }
+        }
+    }
+
+    checkQuizUnlock() {
+        if (this.quizUnlocked || !this.videoDuration) return;
+
+        const watchedSeconds = Object.values(this.watchData).filter(Boolean).length;
+        const watchedPercentage = (watchedSeconds / this.videoDuration) * 100;
+
+        if (watchedPercentage >= this.config.requiredWatchPercentage) {
+            this.unlockQuiz();
+        }
+    }
+
+    unlockQuiz() {
+        if (this.quizUnlocked) return;
+
+        this.quizUnlocked = true;
+        this.isVideoCompleted = true;
+
+        // Hide locked message
+        const lockedMessage = document.getElementById('videoLockedMessage');
+        if (lockedMessage) {
+            lockedMessage.style.display = 'none';
+        }
+
+        // Show quiz with animation
+        if (this.quizSection) {
+            this.showQuizWithAnimation();
+        }
+
+        // Show completion message
+        if (this.completionMessage) {
+            this.completionMessage.classList.add('show');
+        }
+
+        this.showUnlockNotification();
+        this.saveProgressToServer();
+    }
+
+    showQuizWithAnimation() {
+        this.quizSection.style.display = 'block';
+        this.quizSection.style.opacity = '0';
+        this.quizSection.style.transform = 'translateY(20px)';
+
+        setTimeout(() => {
+            this.quizSection.style.transition = 'all 0.5s ease-out';
+            this.quizSection.style.opacity = '1';
+            this.quizSection.style.transform = 'translateY(0)';
+        }, 100);
+
+        setTimeout(() => {
+            this.quizSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
             });
-            
-            // Event: Overlay clicked
-            overlay.addEventListener('click', function() {
-                overlay.classList.add('hidden');
-                video.play();
-                playPauseBtn.textContent = 'Pause';
+        }, 300);
+    }
+
+    onSeeking() {
+        const seekTime = this.video.currentTime;
+        
+        // Prevent seeking beyond watched content
+        if (seekTime > this.maxWatchedTime + this.config.seekTolerance) {
+            this.seekAttempts++;
+            this.video.currentTime = this.maxWatchedTime;
+            this.logSuspiciousActivity('seek_attempt', {
+                attemptedTime: seekTime,
+                maxAllowed: this.maxWatchedTime
             });
+            this.showWarning('You must watch the video sequentially. Cannot skip to unwatched content.');
+        }
+    }
+
+    onRateChange() {
+        const newRate = this.video.playbackRate;
+        if (newRate !== this.playbackSpeed) {
+            this.playbackSpeed = newRate;
+            this.logSuspiciousActivity('playback_speed_change', { rate: newRate });
             
-            // Anti-cheat: Prevent seeking forward
-            video.addEventListener('seeking', function() {
-                if (video.currentTime > lastUpdateTime + 2) {
-                    seekAttempts++;
-                    video.currentTime = lastUpdateTime;
-                    isValidPlay = false;
-                    
-                    // Show warning
-                    warningMessage.textContent = '⚠️ Video skipping is not allowed. Please watch the video in sequence.';
-                    warningMessage.style.display = 'block';
-                    setTimeout(() => {
-                        warningMessage.style.display = 'none';
-                    }, 3000);
-                    
-                    setTimeout(() => {
-                        isValidPlay = true;
-                    }, 100);
-                }
-                lastUpdateTime = video.currentTime;
-            });
-            
-            // Anti-cheat: Block right-click context menu
-            video.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
-            
-            // Anti-cheat: Prevent keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                // Prevent arrow keys, space bar when not focused on play button
-                if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1 && 
-                    document.activeElement !== playPauseBtn) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            // Anti-cheat: Handle tab switching
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden && !video.paused) {
-                    tabSwitchCount++;
-                    video.pause();
-                    playPauseBtn.textContent = 'Play';
-                    
-                    warningMessage.textContent = '⚠️ Video paused due to tab switch. Please keep this tab active while watching.';
-                    warningMessage.style.display = 'block';
-                    setTimeout(() => {
-                        warningMessage.style.display = 'none';
-                    }, 5000);
-                }
-            });
-            
-            // Prevent video download attempts
-            video.addEventListener('loadstart', function() {
-                video.removeAttribute('controls');
-            });
-            
-            // Initialize
+            if (newRate > 2 || newRate < 0.5) {
+                this.showWarning('Unusual playback speed detected.');
+            }
+        }
+    }
+
+    onVisibilityChange() {
+        if (document.hidden && !this.video.paused) {
+            this.tabSwitchCount++;
+            this.video.pause();
+            if (this.playPauseBtn) {
+                this.playPauseBtn.textContent = 'Play';
+            }
+            this.logSuspiciousActivity('tab_switch', { count: this.tabSwitchCount });
+            this.showWarning('Video paused due to tab switch. Please keep this tab active while watching.');
+        }
+    }
+
+    onWindowBlur() {
+        this.logSuspiciousActivity('window_blur', { timestamp: Date.now() });
+    }
+
+    onWindowFocus() {
+        this.logSuspiciousActivity('window_focus', { timestamp: Date.now() });
+    }
+
+    onBeforeUnload(e) {
+        if (this.getWatchProgress() < this.config.requiredWatchPercentage && this.maxWatchedTime > 0) {
+            const message = 'You haven\'t completed the video yet. Are you sure you want to leave?';
+            e.returnValue = message;
+            return message;
+        }
+    }
+
+    logSuspiciousActivity(type, data) {
+        this.suspiciousActivity.push({
+            type,
+            data,
+            timestamp: Date.now(),
+            videoTime: this.video.currentTime
         });
+        
+        console.warn(`Suspicious activity detected: ${type}`, data);
+    }
+
+    startVideo() {
+        if (this.overlay) {
+            this.overlay.classList.add('hidden');
+        }
+        this.video.play();
+        if (this.playPauseBtn) {
+            this.playPauseBtn.textContent = 'Pause';
+        }
+    }
+
+    togglePlayPause() {
+        if (this.video.paused) {
+            this.video.play();
+            if (this.playPauseBtn) {
+                this.playPauseBtn.textContent = 'Pause';
+            }
+        } else {
+            this.video.pause();
+            if (this.playPauseBtn) {
+                this.playPauseBtn.textContent = 'Play';
+            }
+        }
+    }
+
+    seekVideo(e) {
+        if (!this.videoDuration) return;
+
+        const rect = this.progressContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const percentage = clickX / rect.width;
+        const newTime = percentage * this.videoDuration;
+
+        if (newTime <= this.maxWatchedTime) {
+            this.video.currentTime = newTime;
+        } else {
+            this.showWarning('Cannot skip to unwatched content. Please watch sequentially.');
+        }
+    }
+
+    showWarning(message) {
+        if (this.warningMessage) {
+            this.warningMessage.textContent = `⚠️ ${message}`;
+            this.warningMessage.style.display = 'block';
+            setTimeout(() => {
+                this.warningMessage.style.display = 'none';
+            }, 3000);
+        } else {
+            // Create temporary warning if element doesn't exist
+            const warning = document.createElement('div');
+            warning.innerHTML = `
+                <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                            background: rgba(231, 76, 60, 0.95); color: white; padding: 20px;
+                            border-radius: 10px; z-index: 1000; text-align: center; font-weight: 600;">
+                    ⚠️ ${message}
+                </div>
+            `;
+            document.body.appendChild(warning);
+            setTimeout(() => warning.remove(), 3000);
+        }
+    }
+
+    showUnlockNotification() {
+        const notification = document.createElement('div');
+        notification.innerHTML = `
+            <div style="position: fixed; top: 20px; right: 20px;
+                        background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+                        color: white; padding: 15px 20px; border-radius: 10px;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; font-weight: 600;">
+                🎉 Quiz Unlocked! You can now take the assessment.
+            </div>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 4000);
+    }
+
+    hideQuizInitially() {
+        if (this.quizSection) {
+            this.quizSection.style.display = 'none';
+        }
+
+        if (!document.getElementById('videoLockedMessage')) {
+            const lockedMessage = document.createElement('div');
+            lockedMessage.id = 'videoLockedMessage';
+            lockedMessage.innerHTML = `
+                <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+                            color: #8b4513; padding: 20px; margin: 20px; border-radius: 15px;
+                            text-align: center; font-weight: 600; border: 2px solid #f4a261;">
+                    🔒 Complete ${this.config.requiredWatchPercentage}% of the video to unlock the quiz
+                    <div style="margin-top: 10px; font-size: 1.2em; color: #d63031;">
+                        Progress: <span id="videoProgressDisplay">0%</span>
+                    </div>
+                </div>
+            `;
+
+            if (this.quizSection) {
+                this.quizSection.parentNode.insertBefore(lockedMessage, this.quizSection);
+            }
+        }
+    }
+
+    setupProgressSaving() {
+        this.progressSaveInterval = setInterval(() => {
+            this.saveProgressToServer();
+        }, this.config.saveProgressInterval);
+    }
+
+    saveProgressToServer() {
+        const progressData = {
+            watchedSeconds: Object.values(this.watchData).filter(Boolean).length,
+            totalSeconds: this.videoDuration,
+            maxWatchedTime: this.maxWatchedTime,
+            completionPercentage: this.getWatchProgress(),
+            tabSwitches: this.tabSwitchCount,
+            seekAttempts: this.seekAttempts,
+            suspiciousActivity: this.suspiciousActivity,
+            isCompleted: this.isVideoCompleted,
+            timestamp: Date.now()
+        };
+
+        // Replace with actual API call
+        console.log('Saving progress:', progressData);
+        
+        // Example API call (uncomment and modify as needed):
+        /*
+        fetch('/api/save-video-progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(progressData)
+        }).then(response => response.json())
+          .then(data => console.log('Progress saved:', data))
+          .catch(error => console.error('Error saving progress:', error));
+        */
+    }
+
+    updateDurationDisplay() {
+        if (this.durationEl && this.videoDuration) {
+            this.durationEl.textContent = this.formatTime(this.videoDuration);
+        }
+    }
+
+    formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    addCustomStyles() {
+        if (!document.getElementById('videoLearningStyles')) {
+            const styles = document.createElement('style');
+            styles.id = 'videoLearningStyles';
+            styles.textContent = `
+                .hidden { display: none !important; }
+                .quiz-section { transition: all 0.5s ease-out; }
+                .video-overlay { cursor: pointer; }
+                .progress-container { cursor: pointer; }
+                .completion-message.show { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                    visibility: visible; 
+                }
+                video { 
+                    pointer-events: auto; 
+                    -webkit-user-select: none; 
+                    -moz-user-select: none; 
+                    -ms-user-select: none; 
+                    user-select: none; 
+                }
+                video::-webkit-media-controls-download-button { display: none !important; }
+                video::-webkit-media-controls-fullscreen-button { display: none !important; }
+            `;
+            document.head.appendChild(styles);
+        }
+    }
+
+    // Public API methods
+    getWatchProgress() {
+        if (!this.videoDuration) return 0;
+        const watchedSeconds = Object.values(this.watchData).filter(Boolean).length;
+        return (watchedSeconds / this.videoDuration) * 100;
+    }
+
+    isQuizUnlocked() {
+        return this.quizUnlocked;
+    }
+
+    getVideoStats() {
+        return {
+            duration: this.videoDuration,
+            watchedTime: Object.values(this.watchData).filter(Boolean).length,
+            completionPercentage: this.getWatchProgress(),
+            maxWatchedTime: this.maxWatchedTime,
+            tabSwitches: this.tabSwitchCount,
+            seekAttempts: this.seekAttempts,
+            suspiciousActivityCount: this.suspiciousActivity.length,
+            isCompleted: this.isVideoCompleted
+        };
+    }
+
+    destroy() {
+        if (this.progressSaveInterval) {
+            clearInterval(this.progressSaveInterval);
+        }
+        // Final save before destroying
+        this.saveProgressToServer();
+    }
+}
+
+// Quiz form validation setup
+function setupQuizFormValidation() {
+    const quizForm = document.querySelector('.quiz-section form');
+    
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            if (window.videoLearningSystem && !window.videoLearningSystem.isQuizUnlocked()) {
+                e.preventDefault();
+                alert('Please complete the required video percentage before submitting the quiz.');
+                return false;
+            }
+            
+            // Log final stats
+            if (window.videoLearningSystem) {
+                console.log('Quiz submitted with video stats:', 
+                           window.videoLearningSystem.getVideoStats());
+            }
+        });
+    }
+}
+
+// Sidebar toggle (from original code)
+function setupSidebarToggle() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            document.querySelector('.sidebar')?.classList.toggle('collapsed');
+            document.querySelector('.main-content')?.classList.toggle('expanded');
+        });
+    }
+}
+
+// Mark lesson completion (from original code)
+function markCompleted() {
+    const lessonId = document.querySelector('[data-lesson-id]')?.getAttribute('data-lesson-id');
+    const userId = document.querySelector('[data-user-id]')?.getAttribute('data-user-id');
+    const videoFile = document.querySelector('[data-video-file]')?.getAttribute('data-video-file');
+    
+    if (lessonId && userId) {
+        fetch(`mark_progress.php?lesson_id=${lessonId}&user_id=${userId}&temp_file=${encodeURIComponent(videoFile || '')}`)
+            .then(response => response.json())
+            .then(data => console.log("Progress marked:", data))
+            .catch(error => console.error("Error marking progress:", error));
+    }
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the video learning system
+    window.videoLearningSystem = new VideoLearningSystem({
+        requiredWatchPercentage: 95,
+        saveProgressInterval: 30000
+    });
+    
+    // Setup additional functionality
+    setupQuizFormValidation();
+    setupSidebarToggle();
+    
+    console.log('Video Learning Management System initialized');
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (window.videoLearningSystem) {
+        window.videoLearningSystem.destroy();
+    }
+});
     </script>
 </body>
 </html>

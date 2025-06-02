@@ -28,7 +28,7 @@ try {
     $region = $user['region'];
 
     // Step 2: Fetch all users in the same region
-    $stmt2 = $db->prepare("SELECT * FROM user_logins WHERE region = :region");
+    $stmt2 = $db->prepare("SELECT * FROM users WHERE region = :region");
     $stmt2->execute([':region' => $region]);
     $rows = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
