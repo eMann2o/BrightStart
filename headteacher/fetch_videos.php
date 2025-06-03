@@ -2,8 +2,8 @@
 
 session_start();
 $host = 'localhost';
-$db   = 'brightstart';
-$user = 'root';
+$db   = 'stcciju4_brightstart';
+$user = 'stcciju4_eMann';
 $pass = '';
 $charset = 'utf8mb4';
 

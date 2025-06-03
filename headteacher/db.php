@@ -7,9 +7,9 @@
 
 // Database connection parameters
 $db_host = 'localhost';       // Database host
-$db_name = 'brightstart';     // Database name
-$db_user = 'root';            // Database username 
-$db_pass = '';                // Database password (default empty for XAMPP)
+$db_name = 'stcciju4_brightstart';     // Database name
+$db_user = 'stcciju4_eMann';            // Database username 
+$db_pass = 'ABCDrugHIJKlsd';                // Database password (default empty for XAMPP)
 $db_charset = 'utf8mb4';      // Character set
 
 // DSN (Data Source Name)

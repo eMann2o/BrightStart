@@ -18,8 +18,8 @@ $file_path = $data['file_path'];
 
 // DB connection (same as before)
 $host = 'localhost';
-$db   = 'brightstart';
-$user = 'root';
+$db   = 'stcciju4_brightstart';
+$user = 'stcciju4_eMann';
 $pass = '';
 $charset = 'utf8mb4';
 
