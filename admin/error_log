@@ -1,0 +1,5 @@
+[04-Jun-2025 10:16:11 UTC] PHP Fatal error:  Uncaught ValueError: Path cannot be empty in /home3/stcciju4/public_html/admin/addlesson.php:421
+Stack trace:
+#0 /home3/stcciju4/public_html/admin/addlesson.php(421): file_get_contents()
+#1 {main}
+  thrown in /home3/stcciju4/public_html/admin/addlesson.php on line 421

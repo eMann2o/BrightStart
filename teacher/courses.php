@@ -38,7 +38,7 @@ if (!isset($_SESSION['email'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course</title>
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -221,7 +221,7 @@ if (!isset($_SESSION['email'])) {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name"><?php
@@ -321,7 +321,7 @@ if (!isset($_SESSION['email'])) {
                                     <div class="status-tag ' . $status_class . '">' . $status_text . '</div>
                                 </div>
                                 <div class="card-content">
-                                    <img src="../logo.png" alt="Institution Logo" class="institution-logo">
+                                    <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">
                                     <h3 class="module-title">' . htmlspecialchars($module["title"]) . '</h3>
                                     <p class="module-description">' . htmlspecialchars($module["description"]) . '</p>
                                     <div class="course-count">

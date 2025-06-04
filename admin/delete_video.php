@@ -12,16 +12,12 @@ if (!isset($data['id'], $data['file_path'])) {
     echo json_encode(['error' => 'Missing parameters']);
     exit;
 }
-
+ 
 $id = (int)$data['id'];
 $file_path = $data['file_path'];
 
 // DB connection (same as before)
-$host = 'localhost';
-$db   = 'stcciju4_brightstart';
-$user = 'stcciju4_eMann';
-$pass = '';
-$charset = 'utf8mb4';
+include "../dbconnect.php";
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [

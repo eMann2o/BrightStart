@@ -82,7 +82,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brightstart SISO/STEM-Coordinator's Dashboard</title>
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -355,7 +355,7 @@ try {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name">
@@ -400,6 +400,12 @@ try {
                         <i class="fa-solid fa-file"></i>
                     </div>
                     <div class="action-text">My Uploaded Files</div>
+                </div>
+                <div class="action-item" onclick="window.location.href='profile.php';">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="action-text">My Profile</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='videoupload.php';">
                     <div class="action-icon">
@@ -449,7 +455,7 @@ try {
             echo '      <img src="chill.jpg" alt="Module illustration" class="module-image">';
             echo '  </div>';
             echo '  <div class="card-content">';
-            echo '      <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
+            echo '      <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
             echo "      <h3 class=\"module-title\">{$module['title']}</h3>";
             echo "      <p class=\"module-description\">{$module['description']}</p>";
             echo '      <div class="course-count">';

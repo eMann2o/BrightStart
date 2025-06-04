@@ -37,7 +37,7 @@ if (!isset($_SESSION['email'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Uploaded Files</title>
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -409,7 +409,7 @@ if (!isset($_SESSION['email'])) {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name"><?php
@@ -431,6 +431,7 @@ if (!isset($_SESSION['email'])) {
                 <thead>
                 <tr>
                     <th>File Name</th>
+                    <th>Uploader Name</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -497,7 +498,12 @@ if (!isset($_SESSION['email'])) {
         nameTd.textContent = video.file_name;
         tr.appendChild(nameTd);
 
-        // Actions
+        // Uploader username
+            const uploaderTd = document.createElement('td');
+            uploaderTd.textContent = video.name;
+            tr.appendChild(uploaderTd);
+
+        // Actions 
         const actionsTd = document.createElement('td');
         actionsTd.style.display = 'flex';
         actionsTd.style.gap = '8px';

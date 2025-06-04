@@ -78,7 +78,7 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($lesson['title']) ?></title>
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         h1 {
@@ -593,7 +593,7 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name">

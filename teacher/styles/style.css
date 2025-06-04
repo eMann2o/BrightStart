@@ -1358,9 +1358,6 @@ align-items: center;
     }
 }
 @media (max-width: 576px) {
-    .user-profile .user-info {
-        display: none;
-    }
     
     .welcome-title {
         font-size: 22px;

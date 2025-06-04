@@ -6,11 +6,7 @@
  */
 
 // Database connection parameters
-$db_host = 'localhost';       // Database host
-$db_name = 'stcciju4_brightstart';     // Database name
-$db_user = 'stcciju4_eMann';            // Database username 
-$db_pass = 'ABCDrugHIJKlsd';                // Database password (default empty for XAMPP)
-$db_charset = 'utf8mb4';      // Character set
+include_once "../conn.php";
 
 // DSN (Data Source Name)
 $dsn = "mysql:host=$db_host;dbname=$db_name;charset=$db_charset";
@@ -29,5 +25,5 @@ try {
     // Die with error message
     die('Database Connection Failed: ' . $e->getMessage());
 }
-
+ 
 ?>

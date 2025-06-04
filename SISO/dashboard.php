@@ -30,7 +30,7 @@ try {
             SUM(role = 'headteacher') AS headteacher_count,
             SUM(role = 'admin') AS admin_count
         FROM users
-    ");
+    "); 
     
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -73,6 +73,75 @@ try {
     echo "Error: " . $e->getMessage();
     exit();
 }
+
+
+
+try {
+    // Create a new PDO instance
+    $database = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
+    $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Fetch users with specific roles
+    $userQuery = $database->prepare("SELECT * FROM users WHERE role IN ('siso', 'teacher', 'headteacher');");
+    $userQuery->execute();
+    $userRows = $userQuery->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get total count and counts per role in one query
+    $roleCountQuery = $database->query("
+        SELECT 
+            COUNT(*) AS total,
+            SUM(role = 'siso') AS siso_count,
+            SUM(role = 'teacher') AS teacher_count,
+            SUM(role = 'headteacher') AS headteacher_count,
+            SUM(role = 'admin') AS admin_count
+        FROM users
+    ");
+    
+    $roleData = $roleCountQuery->fetch(PDO::FETCH_ASSOC);
+
+    $totalUsers = $roleData['total'];
+    $sisoCount = $roleData['siso_count'];
+    $teacherCount = $roleData['teacher_count'];
+    $headteacherCount = $roleData['headteacher_count'];
+    $adminCount = $roleData['admin_count'];
+
+    // Calculate percentages
+    $sisoPercentage = $totalUsers > 0 ? round(($sisoCount / $totalUsers) * 100, 2) : 0;
+    $teacherPercentage = $totalUsers > 0 ? round(($teacherCount / $totalUsers) * 100, 2) : 0;
+    $headteacherPercentage = $totalUsers > 0 ? round(($headteacherCount / $totalUsers) * 100, 2) : 0;
+    $adminPercentage = $totalUsers > 0 ? round(($adminCount / $totalUsers) * 100, 2) : 0;
+
+    // Count total lessons
+    $lessonCountQuery = $database->query("SELECT COUNT(*) FROM lessons");
+    $totalLessons = $lessonCountQuery->fetchColumn();
+
+    // Get the current user ID (assuming it's stored in session)
+    $currentUserEmail = $_SESSION['email'];
+    $userIdQuery = $database->prepare("SELECT id FROM users WHERE email = ?");
+    $userIdQuery->execute([$currentUserEmail]);
+    $currentUserData = $userIdQuery->fetch(PDO::FETCH_ASSOC);
+    $currentUserId = $currentUserData ? $currentUserData['id'] : 0;
+
+    // Count user completed lessons
+    $completedLessonsQuery = $database->prepare("
+        SELECT COUNT(*) FROM progress 
+        WHERE user_id = ? 
+        AND status = 'completed'
+    ");
+    $completedLessonsQuery->execute([$currentUserId]);
+    $completedLessonsCount = $completedLessonsQuery->fetchColumn();
+
+    $completedLessonsCount = (int) $completedLessonsCount;
+    $totalLessons = (int) $totalLessons;
+    $incompleteLessonsCount = max($totalLessons - $completedLessonsCount, 0);
+
+    // Calculate remaining lessons
+    $remainingLessons = $totalLessons - $completedLessonsCount;
+
+} catch (PDOException $exception) {
+    echo "Database Error: " . $exception->getMessage();
+    exit();
+}
 ?>
 
 
@@ -82,7 +151,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brightstart SISO/STEM-Coordinator's Dashboard</title>
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -355,7 +424,7 @@ try {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name">
@@ -400,6 +469,12 @@ try {
                         <i class="fa-solid fa-file"></i>
                     </div>
                     <div class="action-text">My Uploaded Files</div>
+                </div>
+                <div class="action-item" onclick="window.location.href='profile.php';">
+                    <div class="action-icon">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="action-text">My Profile</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='videoupload.php';">
                     <div class="action-icon">
@@ -449,7 +524,7 @@ try {
             echo '      <img src="chill.jpg" alt="Module illustration" class="module-image">';
             echo '  </div>';
             echo '  <div class="card-content">';
-            echo '      <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
+            echo '      <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
             echo "      <h3 class=\"module-title\">{$module['title']}</h3>";
             echo "      <p class=\"module-description\">{$module['description']}</p>";
             echo '      <div class="course-count">';
@@ -575,31 +650,122 @@ try {
 
         <script>
             // Initialize charts
-            const ctx = document.getElementById('lessonsDoughnut').getContext('2d');
-            const lessonsChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed Lessons', 'Remaining Lessons'],
-                    datasets: [{
-                        data: [<?= $completed_lessons ?>, <?= $remaining ?>],
-                        backgroundColor: ['#4CAF50', '#ffbf00'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
+            // Wait for DOM to be fully loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get the canvas element
+                const canvas = document.getElementById('lessonsDoughnut');
+                
+                if (!canvas) {
+                    console.error('Canvas element with id "lessonsDoughnut" not found');
+                    return;
+                }
+
+                // Initialize chart data with proper validation
+                const completedLessons = <?= json_encode((int)$completedLessonsCount) ?>;
+                const totalLessons = <?= json_encode((int)$totalLessons) ?>;
+                
+                console.log('Completed lessons:', completedLessons);
+                console.log('Total lessons:', totalLessons);
+                
+                // Calculate incomplete lessons with validation
+                const incompleteLessons = Math.max(0, totalLessons - completedLessons);
+                
+                // Check if we have valid data
+                if (totalLessons <= 0) {
+                    // Handle case where there are no lessons
+                    const ctx = canvas.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['No lessons available'],
+                            datasets: [{
+                                data: [1],
+                                backgroundColor: ['#e0e0e0'],
+                                borderWidth: 1
+                            }]
                         },
-                        title: {
-                            display: true,
-                            text: 'Lesson Completion Overview'
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'No Lessons Available',
+                                    font: { size: 16 }
+                                },
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                    return;
+                }
+
+                // Create the chart with valid data
+                const ctx = canvas.getContext('2d');
+                const lessonsChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Remaining'],
+                        datasets: [{
+                            data: [completedLessons, incompleteLessons],
+                            backgroundColor: [
+                                '#4CAF50', // Green for completed
+                                '#fbbc04'  // Light gray for remaining
+                            ],
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
+                            hoverBackgroundColor: [
+                                '#45a049',
+                                '#d0d0d0'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%', // Makes it a proper doughnut (not pie)
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `Lesson Progress: ${completedLessons} of ${totalLessons} completed`,
+                                font: { 
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: {
+                                    top: 10,
+                                    bottom: 20
+                                }
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percentage = totalLessons > 0 ? ((value / totalLessons) * 100).toFixed(1) : 0;
+                                        return `${context.label}: ${value} lessons (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
                         }
                     }
-                }
+                });
             });
-
             // Sidebar toggle functionality
             document.querySelector('.menu-toggle').addEventListener('click', function() {
                 document.querySelector('.sidebar').classList.toggle('collapsed');

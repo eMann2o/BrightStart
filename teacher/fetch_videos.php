@@ -1,11 +1,12 @@
 <?php
-
 session_start();
-$host = 'localhost';
-$db   = 'stcciju4_brightstart';
-$user = 'stcciju4_eMann';
-$pass = '';
-$charset = 'utf8mb4';
+
+if (!isset($_SESSION['email'])) {
+    echo json_encode(['error' => 'User not logged in']);
+    exit;
+}
+
+include "../dbconnect.php";
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
@@ -20,20 +21,25 @@ try {
     exit;
 }
 
+$userEmail = $_SESSION['email'];
+
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
-
-// Total videos count
-$stmtTotal = $pdo->query("SELECT COUNT(*) FROM videos");
+ 
+// Count user's videos
+$stmtTotal = $pdo->prepare("SELECT COUNT(*) FROM videos WHERE email = :email");
+$stmtTotal->execute(['email' => $userEmail]);
 $totalVideos = $stmtTotal->fetchColumn();
 
-// Fetch videos with uploader's username
+// Fetch user's videos with uploader's name
 $stmt = $pdo->prepare("SELECT v.id, v.file_name, v.file_path, u.name 
                        FROM videos v
                        JOIN users u ON v.email = u.email
+                       WHERE v.email = :email
                        ORDER BY v.uploaded_at DESC
                        LIMIT :limit OFFSET :offset");
+$stmt->bindValue(':email', $userEmail, PDO::PARAM_STR);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
@@ -46,3 +52,4 @@ echo json_encode([
     'page' => $page,
 ]);
 ?>
+

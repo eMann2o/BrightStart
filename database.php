@@ -1,8 +1,8 @@
 <?php
-
+include_once 'keys.php';
 $host = 'localhost';
-$dbname = 'stcciju4_brightstart';
-$username_db = 'stcciju4_eMann';
-$password_db = "ABCDrugHIJKlsd";
+$dbname = $edbn;
+$username_db = $edbuser;
+$password_db = $epassword; 
 
-?>
+?>  

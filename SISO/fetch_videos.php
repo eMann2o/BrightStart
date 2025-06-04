@@ -1,11 +1,9 @@
 <?php
 
 session_start();
-$host = 'localhost';
-$db   = 'stcciju4_brightstart';
-$user = 'stcciju4_eMann';
-$pass = '';
-$charset = 'utf8mb4';
+include "../dbconnect.php";
+
+
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
@@ -23,7 +21,7 @@ try {
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
 $offset = ($page - 1) * $limit;
-
+ 
 // Total videos count
 $stmtTotal = $pdo->query("SELECT COUNT(*) FROM videos");
 $totalVideos = $stmtTotal->fetchColumn();

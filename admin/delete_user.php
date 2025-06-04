@@ -1,9 +1,6 @@
 <?php
-$host = 'localhost';
-$dbname = 'stcciju4_brightstart';
-$username_db = 'stcciju4_eMann';
-$password_db = "";
-
+include_once "../database.php";
+ 
 // Connect to the database
 try {
     $db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username_db, $password_db);

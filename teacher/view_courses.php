@@ -61,7 +61,7 @@ if (!$module) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($module['title']); ?></title>
-    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -352,7 +352,7 @@ th, td {
                     <i class="fa-solid fa-pencil"></i>
                 </button>
                 
-                <div class="user-profile" onclick="window.location.href='profile.php';">
+                <div class="user-profile" >
                     
                     <div class="user-info">
                         <div class="user-name"><?php
@@ -396,7 +396,7 @@ th, td {
     echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
     echo '    </div>';
     echo '    <div class="card-content">';
-    echo '        <img src="../logo.png" alt="Institution Logo" class="institution-logo">';
+    echo '        <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
     echo "        <h3 class='module-title'>{$course['title']}</h3>";
     echo "        <p class='module-description'>{$course['description']}</p>";
     echo '        <div class="course-count">';
