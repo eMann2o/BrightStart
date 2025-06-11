@@ -268,6 +268,30 @@ h2 {
 .highlight {
   color: #0073e6;
 }
+
+.edit-button-container {
+    margin-top: 10px;
+}
+
+.edit-button {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
+.sid{
+    display: flex;
+    justify-content: space-between;
+}
     </style>
 </head>
 <body>
@@ -309,6 +333,9 @@ h2 {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+                <div class="user-profile" >
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
                 
                 <div class="user-profile" >
                     
@@ -368,7 +395,12 @@ h2 {
                     echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
+                    echo '<div class="sid">';
                     echo '        <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '        <div class="edit-button-container">';
+                    echo '            <a href="edit_course.php?id=' . $module['id'] . '" class="edit-button" onclick="event.stopPropagation();">Edit</a>';
+                    echo '        </div>';
+                    echo '</div>';
                     echo "        <h3 class='module-title'>{$module['title']}</h3>";
                     echo "        <p class='module-description'>{$module['description']}</p>";
                     echo '        <div class="course-count">';

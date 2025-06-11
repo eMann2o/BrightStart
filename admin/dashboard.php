@@ -1,80 +1,142 @@
 <?php
-include_once '../database.php';//include database connection file  
+// Security improvements
+ini_set('display_errors', 0); // Don't display errors in production
+error_reporting(E_ALL);
 
-// Start the session at the beginning
-session_start();
-// Check if the user is logged in
-if (!isset($_SESSION['email'])) {
-    // Redirect to login page if not logged in
+include_once '../database.php';
+
+// Start the session at the beginning with secure settings
+session_start([
+    'cookie_httponly' => true,
+    'cookie_secure' => isset($_SERVER['HTTPS']),
+    'cookie_samesite' => 'Strict'
+]);
+
+// CSRF Protection
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Check if the user is logged in and has admin privileges
+if (!isset($_SESSION['email']) || !isset($_SESSION['role'])) {
     header("Location: ../index.html");
     exit();
-  }
-  
-  try {
-      // Create a new PDO instance
-      $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
-      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  
-      // Prepare the SQL query to fetch data from the table
-      $stmt = $db->prepare("SELECT * FROM users WHERE role IN ('siso', 'teacher', 'headteacher');"); 
-      $stmt->execute();
-  
-      // Fetch all data from the query
-      $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
-  } catch (PDOException $e) {
-      echo "Connection failed: " . $e->getMessage();
-      exit();
 }
 
+
+// Database connection with improved error handling
 try {
-    // Get total count and counts per role in one query
-    $stmt = $db->query("
-        SELECT 
-            COUNT(*) AS total,
-            SUM(role = 'siso') AS siso_count,
-            SUM(role = 'teacher') AS teacher_count,
-            SUM(role = 'headteacher') AS headteacher_count,
-            SUM(role = 'admin') AS admin_count
-        FROM users
-    ");
-    
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $total = $row['total'];
-    $siso = $row['siso_count'];
-    $teacher = $row['teacher_count'];
-    $headteacher = $row['headteacher_count'];
-    $admin = $row['admin_count'];
-
-    // Calculate percentages
-    $siso_percent = $total > 0 ? round(($siso / $total) * 100, 2) : 0;
-    $teacher_percent = $total > 0 ? round(($teacher / $total) * 100, 2) : 0;
-    $headteacher_percent = $total > 0 ? round(($headteacher / $total) * 100, 2) : 0;
-    $admin_percent = $total > 0 ? round(($admin / $total) * 100, 2) : 0;
-
-    
-
+    $db = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username_db, $password_db, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]);
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    error_log("Database connection failed: " . $e->getMessage());
+    die("Connection failed. Please try again later.");
 }
 
-try {
-    // Get total count and counts per role in one query
-    $stmt = $db->query("
-        SELECT 
-            COUNT(*) AS total_lessons
-        FROM lessons
-    ");
-    
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+// Function to get user statistics
+function getUserStats($db) {
+    try {
+        $stmt = $db->prepare("
+            SELECT 
+                COUNT(*) AS total,
+                SUM(CASE WHEN role = 'siso' THEN 1 ELSE 0 END) AS siso_count,
+                SUM(CASE WHEN role = 'teacher' THEN 1 ELSE 0 END) AS teacher_count,
+                SUM(CASE WHEN role = 'headteacher' THEN 1 ELSE 0 END) AS headteacher_count,
+                SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) AS admin_count,
+                SUM(CASE WHEN role = 'District Director' THEN 1 ELSE 0 END) AS dd_count,
+                SUM(CASE WHEN role = 'Regional Director' THEN 1 ELSE 0 END) AS rd_count
+            FROM users
+        ");
+        $stmt->execute();
+        return $stmt->fetch();
+    } catch (PDOException $e) {
+        error_log("Error fetching user stats: " . $e->getMessage());
+        return false;
+    }
+}
 
-    $total_lessons = $row['total_lessons'];
+// Function to get lesson count
+function getLessonCount($db) {
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) AS total_lessons FROM lessons");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result['total_lessons'];
+    } catch (PDOException $e) {
+        error_log("Error fetching lesson count: " . $e->getMessage());
+        return 0;
+    }
+}
 
-    
+// Function to get users for display (with proper filtering)
+function getDisplayUsers($db) {
+    try {
+        $stmt = $db->prepare("
+            SELECT id, name, email, role, created_at 
+            FROM users 
+            WHERE role IN ('siso', 'teacher', 'headteacher') 
+            ORDER BY created_at DESC 
+            LIMIT 50
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        error_log("Error fetching users: " . $e->getMessage());
+        return [];
+    }
+}
 
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+// Get statistics
+$userStats = getUserStats($db);
+$totalLessons = getLessonCount($db);
+$displayUsers = getDisplayUsers($db);
+
+// Calculate percentages safely
+$total = $userStats['total'] ?? 0;
+$siso = $userStats['siso_count'] ?? 0;
+$teacher = $userStats['teacher_count'] ?? 0;
+$headteacher = $userStats['headteacher_count'] ?? 0;
+$admin = $userStats['admin_count'] ?? 0;
+$dd = $userStats['dd_count'] ?? 0;
+$rd = $userStats['rd_count'] ?? 0;
+
+// Calculate percentages
+function calculatePercentage($count, $total) {
+    return $total > 0 ? round(($count / $total) * 100, 2) : 0;
+}
+
+$siso_percent = calculatePercentage($siso, $total);
+$teacher_percent = calculatePercentage($teacher, $total);
+$headteacher_percent = calculatePercentage($headteacher, $total);
+$admin_percent = calculatePercentage($admin, $total);
+$dd_percent = calculatePercentage($dd, $total);
+$rd_percent = calculatePercentage($rd, $total);
+
+// Prepare user data for chart
+$userData = [
+    ["role" => "Admin", "count" => $admin, "color" => "#4F46E5"],
+    ["role" => "SISO", "count" => $siso, "color" => "#F59E0B"],
+    ["role" => "Headteacher", "count" => $headteacher, "color" => "#10B981"],
+    ["role" => "Teacher", "count" => $teacher, "color" => "#EF4444"],
+    ["role" => "District Director", "count" => $dd, "color" => "#8B5CF6"],
+    ["role" => "Regional Director", "count" => $rd, "color" => "#F97316"]
+];
+
+
+// Filter out roles with zero count for cleaner chart
+$userData = array_filter($userData, function($item) {
+    return $item['count'] > 0;
+});
+
+// Crucial fix: Re-index the array to ensure it's always treated as a list in JavaScript
+$userData = array_values($userData); 
+
+// Sanitize output function
+function sanitizeOutput($data) {
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 ?>
 
@@ -87,57 +149,7 @@ try {
     <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link rel="stylesheet" href="styles/style.css">
-    <script>
-        let activityChart;
-
-        function fetchChartData(days) {
-            fetch(`fetch_logins.php?days=${days}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (activityChart) activityChart.destroy();
-
-                    const ctx = document.getElementById('activityChart').getContext('2d');
-                    activityChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Unique Logins',
-                                data: data.logins,
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: '#4bc0c0',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.4,
-                            }, {
-                            label: 'Module Views',
-                            data: data.completions,
-                            borderColor: '#00d2ff',
-                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    });
-                });
-        }
-
-        // Load default (7 days) on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchChartData(7);
-        });
-    </script>
-
+    <link rel="stylesheet" href="styles/style.css">    
     <style>
         .dashboard-container {
             display: flex;
@@ -203,6 +215,7 @@ try {
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .legend-item {
@@ -216,6 +229,21 @@ try {
             width: 12px;
             height: 12px;
             border-radius: 2px;
+        }
+        
+        .error-message {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
     </style>
 </head>
@@ -237,14 +265,10 @@ try {
                 <i class="fas fa-users"></i>
                 <span>Participants</span>
             </div>
-            
             <div class="menu-item" onclick="window.location.href='messages.php';">
                 <i class="fas fa-comment"></i>
                 <span>Messages</span>
-              
             </div>
-            
-            
         </div>
     </div>
     
@@ -258,35 +282,28 @@ try {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
-                
                 <div class="user-profile" >
-                    
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
+                
+                <div class="user-profile">
                     <div class="user-info">
                         <div class="user-name">
-                            <?php
-                            $name = isset($_SESSION['name']) ? $_SESSION['name'] : "Unknown User";
-                            echo htmlspecialchars($name);
-                            ?>
+                            <?php echo sanitizeOutput($_SESSION['name'] ?? 'Unknown User'); ?>
                         </div>
                         <div class="user-role">
-                            <?php
-                            $role = isset($_SESSION['role']) ? $_SESSION['role'] : "Unknown User";
-                            echo htmlspecialchars($role);
-                            ?>
+                            <?php echo sanitizeOutput($_SESSION['role'] ?? 'Unknown Role'); ?>
                         </div>
                     </div>
-                    <div class="user-avatar" onclick="window.location.href='logout.php';"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                    <div class="user-avatar" onclick="window.location.href='logout.php';" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </div>
                 </div>
             </div>
         </div>
         
         <div class="welcome-section">
-            <h1 class="welcome-title">
-                
-                Dashboard Overview
-            </h1>
-            
-            
+            <h1 class="welcome-title">Dashboard Overview</h1>
         </div>
         
         <div class="dashboard-grid">
@@ -298,7 +315,6 @@ try {
                         <option value="30">Last 30 Days</option>
                         <option value="90">Last 3 Months</option>
                     </select>
-
                 </div>
                 <div class="chart-container">
                     <canvas id="activityChart"></canvas>
@@ -320,12 +336,6 @@ try {
                         <i class="fas fa-book"></i>
                     </div>
                     <div class="action-text">Create Module</div>
-                </div>
-                <div class=>
-                    <div class=>
-                       
-                    </div>
-                    
                 </div>
                 <div class="action-item" onclick="window.location.href='uploaded_videos.php';">
                     <div class="action-icon">
@@ -386,9 +396,25 @@ try {
                     
                     <div class="stat-row">
                         <div class="stat-label">
-                        <i class="fa-solid fa-chalkboard-user"></i>    Teachers
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            Teachers
                         </div>
                         <div class="stat-value"><?php echo $teacher; ?></div>
+                    </div>
+
+                    <div class="stat-row">
+                        <div class="stat-label">
+                            <i class="fa-solid fa-user-tie"></i>
+                            District Directors
+                        </div>
+                        <div class="stat-value"><?php echo $dd; ?></div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-label">
+                            <i class="fa-solid fa-user-tie"></i>
+                            Regional Directors
+                        </div>
+                        <div class="stat-value"><?php echo $rd; ?></div>
                     </div>
                     
                     <div class="stat-row">
@@ -398,7 +424,7 @@ try {
                             </svg>
                             Total Lessons
                         </div>
-                        <div class="stat-value"><?php echo $total_lessons; ?></div>
+                        <div class="stat-value"><?php echo $totalLessons; ?></div>
                     </div>
                     
                     <div class="stat-row">
@@ -406,7 +432,7 @@ try {
                             <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            Total users
+                            Total Users
                         </div>
                         <div class="stat-value"><?php echo $total; ?></div>
                     </div>
@@ -416,81 +442,123 @@ try {
                 <div class="panel">
                     <h2>User Distribution</h2>
                     <div class="chart-container">
-                        <canvas id="userChart"></canvas>
+                        <?php if (!empty($userData)): ?>
+                            <canvas id="userChart"></canvas>
+                        <?php else: ?>
+                            <div class="no-data-message">No user data to display.</div>
+                        <?php endif; ?>
                     </div>
                     <div class="role-legend">
-                        <div class="legend-item">
-                            <div class="color-box" style="background-color: #4F46E5;"></div>
-                            <span>Admin (<?php
-                                echo $admin_percent;
-                            ?>%)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="color-box" style="background-color: #F59E0B;"></div>
-                            <span>SISO/STEM-Coordinator (<?php
-                                echo $siso_percent;
-                            ?>%)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="color-box" style="background-color: #10B981;"></div>
-                            <span>Headteacher (<?php
-                                echo $headteacher_percent;
-                            ?>%)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="color-box" style="background-color: #EF4444;"></div>
-                            <span>Teacher (<?php
-                                echo $teacher_percent;
-                            ?>%)</span>
-                        </div>
+                        <?php foreach ($userData as $user): ?>
+                            <div class="legend-item">
+                                <div class="color-box" style="background-color: <?php echo $user['color']; ?>;"></div>
+                                <span><?php echo sanitizeOutput($user['role']); ?> 
+                                (<?php echo calculatePercentage($user['count'], $total); ?>%)
+                                </span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <script>
+        // Pass data to JavaScript safely
+        const userData = <?php echo json_encode($userData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        const csrfToken = '<?php echo $_SESSION['csrf_token']; ?>';
         
+        let activityChart;
 
-        <?php
-            // Connect to DB and count roles
-            $stmt = $db->query("
-                SELECT 
-                    COUNT(*) AS total,
-                    SUM(role = 'siso') AS siso,
-                    SUM(role = 'teacher') AS teacher,
-                    SUM(role = 'headteacher') AS headteacher,
-                    SUM(role = 'admin') AS admin
-                FROM users
-            ");
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Map roles to JavaScript-friendly format
-            $userData = [
-                [ "role" => "Admin", "count" => (int)$row['admin'], "color" => "#4F46E5" ],
-                [ "role" => "SISO", "count" => (int)$row['siso'], "color" => "#F59E0B" ],
-                [ "role" => "Headteacher", "count" => (int)$row['headteacher'], "color" => "#10B981" ],
-                [ "role" => "Teacher", "count" => (int)$row['teacher'], "color" => "#EF4444" ]
-            ];
-
-            // Output JSON into JavaScript variable
-            echo "<script>const userData = " . json_encode($userData) . ";</script>";
-        ?>
-
-        <script>
-
-            // Sidebar toggle functionality
-            document.querySelector('.menu-toggle').addEventListener('click', function() {
-                document.querySelector('.sidebar').classList.toggle('collapsed');
-                document.querySelector('.main-content').classList.toggle('expanded');
-            });
+        function fetchChartData(days) {
+            const loadingEl = document.querySelector('.chart-container');
+            const originalContent = loadingEl.innerHTML;
             
-            // Initialize charts
-            document.addEventListener('DOMContentLoaded', function() {                
+            // Show loading state
+            loadingEl.innerHTML = '<div class="loading">Loading chart data...</div>';
             
-                // Calculate total
-                const total = userData.reduce((sum, item) => sum + item.count, 0);
-                userData.forEach(item => {
-                    item.percentage = ((item.count / total) * 100).toFixed(1);
+            fetch(`fetch_logins.php?days=${encodeURIComponent(days)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-Token': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Restore original content
+                loadingEl.innerHTML = originalContent;
+                
+                if (activityChart) {
+                    activityChart.destroy();
+                }
+
+                const ctx = document.getElementById('activityChart').getContext('2d');
+                activityChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels || [],
+                        datasets: [{
+                            label: 'Unique Logins',
+                            data: data.logins || [],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: '#4bc0c0',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                        }, {
+                            label: 'Module Views',
+                            data: data.completions || [],
+                            borderColor: '#00d2ff',
+                            backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            }
+                        }
+                    }
                 });
+            })
+            .catch(error => {
+                console.error('Error fetching chart data:', error);
+                loadingEl.innerHTML = '<div class="error-message">Error loading chart data. Please try again.</div>';
+            });
+        }
+
+        // Sidebar toggle functionality
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load default chart data
+            fetchChartData(7);
+            
+            // Calculate total for pie chart
+            const total = userData.reduce((sum, item) => sum + item.count, 0);
+            
+            if (total > 0) {
                 // Create pie chart
                 const ctx = document.getElementById('userChart').getContext('2d');
                 new Chart(ctx, {
@@ -501,9 +569,9 @@ try {
                             data: userData.map(item => item.count),
                             backgroundColor: userData.map(item => item.color),
                             borderColor: 'white',
-                            borderWidth: 2
-                        }],
-                        hoverOffset: 4
+                            borderWidth: 2,
+                            hoverOffset: 4
+                        }]
                     },
                     options: {
                         responsive: true,
@@ -513,7 +581,6 @@ try {
                                 display: false
                             },
                             tooltip: {
-                                
                                 callbacks: {
                                     label: function(context) {
                                         const value = context.raw;
@@ -525,9 +592,8 @@ try {
                         }
                     }
                 });
-            });
-
-        </script>
-    </div>
+            }
+        });
+    </script>
 </body>
 </html>

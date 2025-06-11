@@ -423,6 +423,9 @@ try {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+                <div class="user-profile" >
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
                 
                 <div class="user-profile" >
                     
@@ -469,12 +472,6 @@ try {
                         <i class="fa-solid fa-file"></i>
                     </div>
                     <div class="action-text">My Uploaded Files</div>
-                </div>
-                <div class="action-item" onclick="window.location.href='profile.php';">
-                    <div class="action-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="action-text">My Profile</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='videoupload.php';">
                     <div class="action-icon">

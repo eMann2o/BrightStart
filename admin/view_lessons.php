@@ -44,14 +44,181 @@ if (!isset($_SESSION['email'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-
+/* Responsive styles */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .modules-container {
+                gap: 15px;
+            }
+            
+            .module-card {
+                max-width: 100%;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .module-title {
+                font-size: 16px;
+            }
+            
+            .module-description {
+                font-size: 13px;
+                -webkit-line-clamp: 2;
+            }
+            
+            .module-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .module-image-container {
+                height: 120px;
+            }
+        }
+        
+        /* Container for all module cards */
+        .modules-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-content: start;
+        }
+        
+        /* Individual module card */
+        .module-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 280px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Module image container */
+        .module-image-container {
+            position: relative;
+            height: 140px;
+        }
+        
+        /* Module image */
+        .module-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Status tag */
+        .status-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-complete {
+            background-color: #e7f5ea;
+            color: #34a853;
+        }
+        
+        .status-in-progress {
+            background-color: #fff8e1;
+            color: #fbbc04;
+        }
+        
+        .status-not-started {
+            background-color: #f5f5f5;
+            color: #5f6368;
+        }
+        
+        /* Card content */
+        .card-content {
+            padding: 15px;
+        }
+        
+        /* Institution logo */
+        .institution-logo {
+            height: 30px;
+            margin-bottom: 10px;
+        }
+        
+        /* Module title */
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            line-height: 1.3;
+        }
+        
+        /* Module description */
+        .module-description {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
+        
+        /* Course count */
+        .course-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #4285F4;
+            margin-top: 12px;
+        }
+        
+        /* Progress bar container */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 15px;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            background-color: #4285F4;
+        }
+        
+        /* Module info container */
+        .module-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #5f6368;
+        }
 
 .container {
   max-width: 1000px;
-  margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
 }
 
 h2 {
@@ -77,214 +244,73 @@ h2 {
   cursor: pointer;
 }
 
+.add-course-btn {
+  float: right;
+  margin-bottom: 10px;
+  background-color: #0061f2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-.courses-header {
-      margin-bottom: 30px;
-    }
-    
-    .courses-header h1 {
-      font-size: 28px;
-      color: #2c3e50;
-      font-weight: 600;
-    }
-    
-    .progress-container {
-      margin-bottom: 25px;
-    }
-    
-    .progress-text {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #2c3e50;
-      font-weight: 500;
-    }
-    
-    .progress-bar-container {
-      height: 20px;
-      width: 100%;
-      background-color: #f0f0f0;
-      border-radius: 10px;
-      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 3px;
-      margin-bottom: 5px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #4776E6, #8E54E9);
-      border-radius: 8px;
-      transition: width 1s ease;
-      position: relative;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      animation: pulse 2s infinite;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(142, 84, 233, 0.4);
-      }
-      70% {
-        box-shadow: 0 0 0 5px rgba(142, 84, 233, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(142, 84, 233, 0);
-      }
-    }
+thead {
+  background-color: #f2f2f2;
+}
 
-    .progress-percentage {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      color: #fff;
-      font-size: 12px;
-      font-weight: bold;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      z-index: 2;
-    }
-    
-    /* Adding animated stripes for progress bar */
-    .progress-bar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: linear-gradient(
-        -45deg,
-        rgba(255, 255, 255, 0.2) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.2) 75%,
-        transparent 75%,
-        transparent
-      );
-      background-size: 20px 20px;
-      animation: move 1s linear infinite;
-      z-index: 1;
-      border-radius: 8px;
-    }
-    
-    @keyframes move {
-      0% {
-        background-position: 0 0;
-      }
-      100% {
-        background-position: 20px 0;
-      }
-    }
-    
-    .lessons-header {
-      padding-bottom: 10px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #e9ecef;
-      font-size: 22px;
-      color: #2c3e50;
-    }
-    
-    .lesson-card {
-      background-color: #f8f9fa;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
-      border-left: 5px solid #3498db;
-      width: fit-content;
-    }
-    
-    .lesson-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .lesson-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: #3498db;
-      margin-bottom: 5px;
-    }
-    
-    .lesson-subtitle {
-      color: #7f8c8d;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-    
-    .status {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    
-    .status-label {
-      font-weight: 500;
-      margin-right: 8px;
-    }
-    
-    .status-completed {
-      color: #27ae60;
-      font-weight: 600;
-    }
-    
-    .lesson-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .action-button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-weight: 500;
-    }
-    
-    .video-button {
-      background-color: #9b59b6;
-      color: white;
-    }
-    
-    .video-button:hover {
-      background-color: #8e44ad;
-    }
-    
-    .download-button {
-      background-color: #f1f1f1;
-      color: #555;
-    }
-    
-    .download-button:hover {
-      background-color: #e6e6e6;
-    }
-    
-    .icon {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-    }
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
 
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px;
-        padding: 15px;
-      }
-      
-      .progress-text {
-        font-size: 16px;
-      }
-      
-      .lesson-title {
-        font-size: 18px;
-      }
-    }
+.icon {
+  margin-left: 6px;
+}
+
+.status.inactive {
+  background-color: #d3dbe4;
+  color: #333;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.highlight {
+  color: #0073e6;
+}
+
+
+.edit-button-container {
+    margin-top: 10px;
+}
+
+.edit-button {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
+}
+
+.sid{
+    display: flex;
+    justify-content: space-between;
+}
     </style>
 </head>
 <body>
@@ -326,6 +352,9 @@ h2 {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+                <div class="user-profile" >
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
                 
                 <div class="user-profile" >
                     
@@ -345,64 +374,85 @@ h2 {
         </div>
         
         <section class="content">
-            <div class="card">
-              <h2 class="lessons-header">Lessons</h2>
-                <div class="container">
-                    <?php
-                    require 'db.php';
+          <h2 class="lessons-header">Lessons</h2>
+            <div class="container">
+                <?php
+                require 'db.php';
 
-                    // Validate session
-                    if (!isset($_SESSION['email'])) {
-                        echo "You must be logged in to view this page.";
-                        exit;
+                // Validate session
+                if (!isset($_SESSION['email'])) {
+                    echo "You must be logged in to view this page.";
+                    exit;
+                }
+
+                $email = $_SESSION['email'];
+
+                // Get user ID from email
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
+
+                if (!$user) {
+                    echo "User not found.";
+                    exit;
+                }
+
+                $user_id = $user['id'];
+
+                // Check course ID
+                if (!isset($_GET['course_id'])) {
+                    echo "Invalid course ID";
+                    exit;
+                }
+
+                $course_id = $_GET['course_id'];
+
+                // Get all lessons for this course
+                $lesson_stmt = $pdo->prepare("SELECT * FROM lessons WHERE course_id = ?");
+                $lesson_stmt->execute([$course_id]);
+                $lessons = $lesson_stmt->fetchAll();
+                foreach ($lessons as $lesson) {
+                    echo '<div class="module-card" onclick="window.location.href=\'view_video.php?lesson_id=' . $lesson['id'] . '\'">';
+                    echo '    <div class="module-image-container">';
+                    echo '        <img src="chill.jpg" alt="Lesson illustration" class="module-image">';
+                    echo '    </div>';
+                    echo '    <div class="card-content">';
+                    
+                    // Optional edit button (customize if needed)
+                    echo '        <div class="sid">';
+                    echo '            <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '            <div class="edit-button-container">';
+                    echo '                <a href="edit_lesson.php?lesson_id=' . $lesson['id'] . '" class="edit-button" onclick="event.stopPropagation();">Edit</a>';
+                    echo '            </div>';
+                    echo '        </div>';
+
+                    echo "        <h3 class='module-title'>{$lesson['title']}</h3>";
+                    echo "        <p class='module-description'>{$lesson['content']}</p>";
+                    
+                    echo '        <div class="course-count">';
+                    echo '            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+                    echo '                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>';
+                    echo '            </svg>';
+                    echo '            Lesson';
+                    echo '        </div>';
+
+                    // Action buttons (watch video & download)
+                    echo '        <div class="lesson-actions">';
+                    echo '            <a href="view_video.php?lesson_id=' . $lesson['id'] . '" target="_blank" class="action-button video-button" onclick="event.stopPropagation();">';
+                    echo '                <span class="icon">▶</span> Watch Video';
+                    echo '            </a><br>';
+                    if ($lesson['file_attachment']) {
+                        echo '            <a href="download_file.php?lesson_id=' . $lesson['id'] . '" class="action-button download-button" onclick="event.stopPropagation();">';
+                        echo '                <span class="icon">⬇</span> Download File';
+                        echo '            </a>';
                     }
+                    echo '        </div>';
 
-                    $email = $_SESSION['email'];
+                    echo '    </div>';
+                    echo '</div>';
+                }
 
-                    // Get user ID from email
-                    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-                    $stmt->execute([$email]);
-                    $user = $stmt->fetch();
-
-                    if (!$user) {
-                        echo "User not found.";
-                        exit;
-                    }
-
-                    $user_id = $user['id'];
-
-                    // Check course ID
-                    if (!isset($_GET['course_id'])) {
-                        echo "Invalid course ID";
-                        exit;
-                    }
-
-                    $course_id = $_GET['course_id'];
-
-                    // Get all lessons for this course
-                    $lesson_stmt = $pdo->prepare("SELECT * FROM lessons WHERE course_id = ?");
-                    $lesson_stmt->execute([$course_id]);
-                    $lessons = $lesson_stmt->fetchAll();
-                    foreach ($lessons as $lesson) {
-                        echo "<div class=\"lesson-card\">";
-                        echo "<h3 class=\"lesson-title\">{$lesson['title']}</h3>";                        
-                        echo "<p class=\"lesson-subtitle\">{$lesson['content']}</p>"; 
-
-                        echo "
-                            <div class=\"lesson-actions\">
-                                <a href='view_video.php?lesson_id={$lesson['id']}' target='_blank' class=\"action-button video-button\">
-                                <span class=\"icon\">▶</span> Watch Video
-                                </a>";
-                                if ($lesson['file_attachment']) {
-                                    echo "<a href='download_file.php?lesson_id={$lesson['id']}' class=\"action-button download-button\"><span class=\"icon\">⬇</span> Download File</a>";
-                                }
-                        echo "</div>";
-
-                        echo "<hr>";
-                        echo "</div>";
-                    }
-                    ?>
-                </div>
+                ?>
             </div>
         </section>
         

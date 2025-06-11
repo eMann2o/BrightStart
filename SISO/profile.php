@@ -23,6 +23,22 @@ if (!isset($_SESSION['email'])) {
     $stmt->execute(['email' => $_SESSION['email']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // Fetch the user row (assumes $email is already sanitized and set)
+    $email = $_SESSION['email']; // Ensure session is started before this line
+    $stmt = $pdo->prepare("SELECT profile_pic FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($row && !empty($row['profile_pic'])) {
+        // Encode the BLOB image data as base64
+        $base64Image = base64_encode($row['profile_pic']);
+        $mimeType = "image/jpeg"; // or detect dynamically if stored with type
+        $imageSrc = "data:$mimeType;base64,$base64Image";
+    } else {
+        // Fallback image
+        $imageSrc = "emoji.png"; // Or a base64-encoded placeholder
+    }
+
 
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
@@ -291,6 +307,9 @@ if (!isset($_SESSION['email'])) {
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+                <div class="user-profile" >
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
                 
                 <div class="user-profile" >
                     
@@ -311,13 +330,20 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="container">
+                <div class="profile-footer">
+                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff; margin-right: 5px;" onclick="window.location.href='upload_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Upload Profile Picture</button>
+                </div>
                 <div class="profile-card">
                     <!-- Header Section -->
                     <div class="profile-header">
                         <div class="profile-image-container">
-                            <div class="profile-image">
-                                <img src="emoji.png" alt="Teacher Profile Picture" onerror="this.src='/api/placeholder/400/400'">
-                            </div>
+                            <?php
+                                echo "
+                                    <div class='profile-image'>
+                                        <img src='$imageSrc' alt='Profile Picture' class='profile-picture' width='150' height='150' style='border-radius: 50%; object-fit: cover;'/>
+                                    </div>
+                                ";
+                            ?>
                         </div>
                     </div>
                     <!-- Details Section - Responsive Grid -->

@@ -588,6 +588,9 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
                 </button>
+                <div class="user-profile" >
+                    <div class="user-avatar" style="color:blue;"onclick="window.location.href='profile.php';"><i class="fa-solid fa-user"></i></div>
+                </div>
                 
                 <div class="user-profile" >
                     
