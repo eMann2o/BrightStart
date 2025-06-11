@@ -471,7 +471,7 @@ try {
                 <div class="action-item" onclick="window.location.href='my_files.php';">
                     <div class="action-icon">
                         <i class="fa-solid fa-file"></i>
-                    </div>
+                    </div>    
                     <div class="action-text">My Uploaded Files</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='videoupload.php';">
