@@ -18,7 +18,7 @@ if (!isset($_SESSION['email'])) {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Prepare the SQL query to fetch data from the table
-    $stmt = $db->prepare("SELECT * FROM users"); // Replace 'employees' with your table name
+    $stmt = $db->prepare("SELECT * FROM users ORDER BY name ASC"); // Replace 'employees' with your table name
     $stmt->execute();
 
     // Fetch all data from the query
@@ -139,6 +139,10 @@ if (!isset($_SESSION['email'])) {
         background-color: #f0f0f0;
         color: #555;
         }
+        #roleFilter {
+            margin: 10px 0;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -213,6 +217,21 @@ if (!isset($_SESSION['email'])) {
         <section class="content">
             <div class="toolbar">
                 <input type="text" placeholder="Search users..." id="searchInput" onkeyup="searchTable()">
+                <div class="">
+                    <label for="roleFilter">Filter by Role:</label>
+                    <select id="roleFilter">
+                        <option value="">All</option>
+                        <option value="Admin">Admin</option>
+                        <option value="SISO">SISO</option>
+                        <option value="STEM-Coordinator">STEM-Coordinator</option>
+                        <option value="Headteacher">Headteacher</option>
+                        <option value="Teacher">Teacher</option>
+                        <option value="District Director">District Director</option>
+                        <option value="Regional Director">Regional Director</option>
+
+                        <!-- Add other roles here if needed -->
+                    </select>
+                </div>
                 <button class="add-user-btn" onclick="window.location.href='useradd.php';">Add user</button>
                 <button class="add-user-btn" onclick="downloadTableAsExcel()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
                 
@@ -309,6 +328,20 @@ if (!isset($_SESSION['email'])) {
             // Trigger the download
             link.click();
         }
+
+        document.getElementById('roleFilter').addEventListener('change', function() {
+            const selectedRole = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#myTable tbody tr');
+
+            rows.forEach(row => {
+                const roleCell = row.cells[2].textContent.toLowerCase();
+                if (!selectedRole || roleCell === selectedRole) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
 
         </script>
     </div>

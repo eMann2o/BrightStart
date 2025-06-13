@@ -50,14 +50,12 @@ $totalVideos = $stmtTotal->fetchColumn();
 
 // Step 3: Fetch paginated videos from same organization
 $stmt = $pdo->prepare("
-    SELECT v.id, v.file_name, v.file_path, u.name 
+    SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
     FROM videos v
     JOIN users u ON v.email = u.email
-    WHERE u.organization = :org
     ORDER BY v.uploaded_at DESC
     LIMIT :limit OFFSET :offset
 ");
-$stmt->bindValue(':org', $organization, PDO::PARAM_STR);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();

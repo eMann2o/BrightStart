@@ -45,7 +45,7 @@ if (!isset($_SESSION['email'])) {
     <link rel="stylesheet" href="styles/style.css">
     <style>        
         /* Responsive styles */
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 1000px) {
             .modules-container {
                 gap: 15px;
             }

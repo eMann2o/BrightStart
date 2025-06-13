@@ -439,7 +439,7 @@ if (!isset($_SESSION['email'])) {
         }
 
         /* Mobile Responsiveness */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .chat-header {
                 padding: 8px 16px 6px;
             }

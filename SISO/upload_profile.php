@@ -135,7 +135,7 @@ $email = $_GET['email'];
         }
 
         /* Responsive design */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .container {
                 margin: 20px;
                 padding: 30px 20px;

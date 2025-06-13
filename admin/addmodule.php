@@ -131,7 +131,7 @@ if (!isset($_SESSION['email'])) {
     }
 
     /* Responsive adjustments */
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 1000px) {
         .btn {
             width: 100%;
             padding: 15px 20px;

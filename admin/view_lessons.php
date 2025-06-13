@@ -13,13 +13,13 @@ if (!isset($_SESSION['email'])) {
   
 
 
-  try {
+try {
     // Create a new PDO instance
     $db = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Prepare the SQL query to fetch data from the table
-    $stmt = $db->prepare("SELECT * FROM users"); // Replace 'employees' with your table name
+    $stmt = $db->prepare("SELECT * FROM courses"); // Replace 'employees' with your table name
     $stmt->execute();
 
     // Fetch all data from the query
@@ -28,6 +28,23 @@ if (!isset($_SESSION['email'])) {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
     exit();
+}
+
+$courses_id = $_GET['course_id'] ?? null;
+if (!$courses_id) {
+    echo "Course ID not specified.";
+    exit;
+}
+
+// Fetch course information
+$course_stmt = $db->prepare("SELECT * FROM courses WHERE id = :course_id");
+$course_stmt->bindParam(':course_id', $courses_id, PDO::PARAM_INT);
+$course_stmt->execute();
+$course = $course_stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$course) {
+    echo "Course not found.";
+    exit;
 }
 
 ?>
@@ -45,7 +62,7 @@ if (!isset($_SESSION['email'])) {
     <link rel="stylesheet" href="styles/style.css">
     <style>
 /* Responsive styles */
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 1000px) {
             body {
                 padding: 10px;
             }
@@ -374,7 +391,12 @@ th, td {
         </div>
         
         <section class="content">
-          <h2 class="lessons-header">Lessons</h2>
+            <div class="cart" style="background-color: white; border-radius: 12px; margin-bottom: 30px; padding: 25px;">
+                <h2><?php echo htmlspecialchars($course['title']); ?> Description</h2>
+                <pre style="white-space: pre-wrap; word-wrap: break-word; overflow: auto; max-width: 1000px; font-family: inherit; padding: 10px; border-radius: 8px;"><?php echo htmlspecialchars($course['description']); ?></pre>
+            </div>
+            <h2 class="lessons-header">Lessons</h2>
+
             <div class="container">
                 <?php
                 require 'db.php';

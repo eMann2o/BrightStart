@@ -141,7 +141,7 @@ if (!isset($_SESSION['email'])) {
             margin-left: 3px;
         }
         
-        .header {
+        .headers {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -257,7 +257,6 @@ if (!isset($_SESSION['email'])) {
             <button class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-            
             <div class="header-actions">
                 <button class="notification-btn" onclick="window.location.href='editpass.php';" title="Edit Password">
                     <i class="fa-solid fa-pencil"></i>
@@ -286,7 +285,7 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="container">
-                <div class="header">
+                <div class="headers">
                     <h1>Edit Password</h1>
                 </div>
                 

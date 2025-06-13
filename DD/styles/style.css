@@ -1320,7 +1320,7 @@ align-items: center;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .analytics-grid, .course-grid, .team-grid {
         grid-template-columns: 1fr;
     }
@@ -1709,7 +1709,7 @@ input:checked + .slider:before {
             gap: 0.5rem;
         }
       
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
         
             .sidebar {
                 position: absolute;

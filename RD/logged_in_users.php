@@ -199,7 +199,7 @@ tbody td:first-child {
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .content {
         padding: 0 1rem;
     }

@@ -30,6 +30,23 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+$courses_id = $_GET['course_id'] ?? null;
+if (!$courses_id) {
+    echo "Course ID not specified.";
+    exit;
+}
+
+// Fetch course information
+$course_stmt = $db->prepare("SELECT * FROM courses WHERE id = :course_id");
+$course_stmt->bindParam(':course_id', $courses_id, PDO::PARAM_INT);
+$course_stmt->execute();
+$course = $course_stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$course) {
+    echo "Course not found.";
+    exit;
+}
+
 ?>
 <?php
 require 'db.php';
@@ -319,7 +336,7 @@ function renderLessonCard($lesson, $status) {
             font-size: 14px;
             border-radius: 0 4px 4px 0;
         }
-      @media (max-width: 768px) {
+      @media (max-width: 1000px) {
           .lessons-grid {
               grid-template-columns: 1fr;
           }
@@ -393,7 +410,14 @@ function renderLessonCard($lesson, $status) {
         </div>
         
         <section class="course-content">
+            
           <div class="course-container">
+            <div class="pro">
+                    <div class="cart" style="background-color: white; border-radius: 12px; margin-bottom: 30px; padding: 25px;">
+                        <h2><?php echo htmlspecialchars($course['title']); ?> Description</h2>
+                        <pre style="white-space: pre-wrap; word-wrap: break-word; overflow: auto; max-width: 1000px; font-family: inherit; padding: 10px; border-radius: 8px;"><?php echo htmlspecialchars($course['description']); ?></pre>
+                    </div>
+                </div>
               <?php
               // Authentication check
               if (!isset($_SESSION['email'])) {

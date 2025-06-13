@@ -304,7 +304,7 @@ if (!isset($_SESSION['email'])) {
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             body {
                 padding: 1rem;
             }
@@ -430,6 +430,8 @@ if (!isset($_SESSION['email'])) {
                 <thead>
                 <tr>
                     <th>File Name</th>
+                    <th>Category</th>
+                    <th>Caption</th>
                     <th>Uploader Name</th>
                     <th>Actions</th>
                 </tr>
@@ -491,11 +493,22 @@ if (!isset($_SESSION['email'])) {
 
     userVideos.forEach(video => {
         const tr = document.createElement('tr');
+        
 
         // Video name
         const nameTd = document.createElement('td');
         nameTd.textContent = video.file_name;
         tr.appendChild(nameTd);
+
+        // Video name
+        const capTd = document.createElement('td');
+        capTd.textContent = video.caption || 'No caption';
+        tr.appendChild(capTd);
+
+        // Category name
+        const catTd = document.createElement('td');
+        catTd.textContent = video.category || 'N/A';
+        tr.appendChild(catTd);
 
         // Uploader username
             const uploaderTd = document.createElement('td');

@@ -33,13 +33,11 @@ $stmtTotal->execute(['email' => $userEmail]);
 $totalVideos = $stmtTotal->fetchColumn();
 
 // Fetch user's videos with uploader's name
-$stmt = $pdo->prepare("SELECT v.id, v.file_name, v.file_path, u.name 
+$stmt = $pdo->prepare("SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
                        FROM videos v
                        JOIN users u ON v.email = u.email
-                       WHERE v.email = :email
                        ORDER BY v.uploaded_at DESC
                        LIMIT :limit OFFSET :offset");
-$stmt->bindValue(':email', $userEmail, PDO::PARAM_STR);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();

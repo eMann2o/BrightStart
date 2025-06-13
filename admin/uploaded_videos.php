@@ -304,7 +304,7 @@ if (!isset($_SESSION['email'])) {
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             body {
                 padding: 1rem;
             }
@@ -430,6 +430,8 @@ if (!isset($_SESSION['email'])) {
                 <thead>
                 <tr>
                     <th>File Name</th>
+                    <th>Category</th>
+                    <th>Caption</th>
                     <th>Uploader</th>
                     <th>Actions</th>
                 </tr>
@@ -490,6 +492,16 @@ if (!isset($_SESSION['email'])) {
                 const nameTd = document.createElement('td');
                 nameTd.textContent = video.file_name;
                 tr.appendChild(nameTd);
+
+            // Category name
+            const catTd = document.createElement('td');
+            catTd.textContent = video.category || 'N/A';
+            tr.appendChild(catTd);
+
+            // Video name
+            const capTd = document.createElement('td');
+            capTd.textContent = video.caption || 'No caption';
+            tr.appendChild(capTd);
 
                 // Uploader username
                 const uploaderTd = document.createElement('td');

@@ -25,7 +25,7 @@ $stmtTotal = $pdo->query("SELECT COUNT(*) FROM videos");
 $totalVideos = $stmtTotal->fetchColumn();
 
 // Fetch videos with uploader's username
-$stmt = $pdo->prepare("SELECT v.id, v.file_name, v.file_path, u.name 
+$stmt = $pdo->prepare("SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
                        FROM videos v
                        JOIN users u ON v.email = u.email
                        ORDER BY v.uploaded_at DESC

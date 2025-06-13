@@ -17,7 +17,7 @@ $user_id = $user['id'];
 $lesson_id = $_GET['lesson_id'];
 
 // Fetch the current lesson
-$stmt = $pdo->prepare("SELECT id, course_id, title, video, file_attachment, file_name FROM lessons WHERE id = ?");
+$stmt = $pdo->prepare("SELECT id, course_id, title, content, video, file_attachment, file_name FROM lessons WHERE id = ?");
 $stmt->execute([$lesson_id]);
 $lesson = $stmt->fetch();
 
@@ -260,7 +260,7 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
             border: 1px solid #90cdf4;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .container {
                 padding: 20px;
                 margin: 10px;
@@ -618,6 +618,10 @@ file_put_contents($pdfFile, $lesson['file_attachment']);
         </div>
 
         <h1><?= htmlspecialchars($lesson['title']) ?></h1>
+        <div class="cart" style="background-color: white; border-radius: 12px; margin-bottom: 30px; padding: 25px;">
+            <h2><?php echo htmlspecialchars($lesson['title']); ?> Description</h2>
+            <pre style="white-space: pre-wrap; word-wrap: break-word; overflow: auto; max-width: 1000px; font-family: inherit; padding: 10px; border-radius: 8px;"><?php echo htmlspecialchars($lesson['content']); ?></pre>
+        </div>
         <!-- Replace this with your actual video source -->
         <div class="security-notice">
             🔒 This video player implements anti-cheat measures. Video skipping is disabled, and your progress is tracked accurately.

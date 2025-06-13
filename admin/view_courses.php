@@ -68,7 +68,7 @@ if (!$module) {
     <link rel="stylesheet" href="styles/style.css">
     <style>        
         /* Responsive styles */
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: 1000px) {
             body {
                 padding: 10px;
             }
@@ -408,6 +408,10 @@ th, td {
         </div>
         
         <section class="content">
+            <div class="cart" style="background-color: white; border-radius: 12px; margin-bottom: 30px; padding: 25px;">
+                <h2><?php echo htmlspecialchars($module['title']); ?> Description</h2>
+                <pre style="white-space: pre-wrap; word-wrap: break-word; overflow: auto; max-width: 1000px; font-family: inherit; padding: 10px; border-radius: 8px;"><?php echo htmlspecialchars($module['description']); ?></pre>
+            </div>
             <div class="modules-container">
                 <?php
                 // Fetch courses that belong to this module

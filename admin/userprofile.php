@@ -357,7 +357,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
         }
         
         /* Responsive Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .details-grid {
                 grid-template-columns: 1fr;
             }
@@ -412,7 +412,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
 }
 
 /* Chart container responsive behavior */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .chart-container {
         height: 300px;
         padding: 1rem;
@@ -534,9 +534,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
 
                 <!-- Footer Section -->
                 <div class="profile-footer">
-                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff; margin-right: 5px;" onclick="window.location.href='upload_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Upload Profile Picture</button>
+                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff; margin-right: 5px;" onclick="window.location.href='upload_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Upload Profile Picture <i class="fa-solid fa-image"></i></button>
+                    <button class="btn btn-secondary" style="color: white; border: 1px solid #00bdff; background-color: #00bdff; margin-right: 5px;" onclick="window.location.href='edit_profile.php?email=<?php echo htmlspecialchars($user['email']); ?>'">Edit Details <i class="fa-solid fa-user-pen"></i></button>
                     <button type="button" class="btn btn-danger delete-user-btn" style="color: #ff0000; border: 1px solid #ff0000; margin-left: 10px; background-color: white;" data-email="<?= htmlspecialchars($user['email']) ?>">
-                        Delete User
+                        Delete User <i class="fa-solid fa-trash"></i>
                     </button>
 
                 </div>

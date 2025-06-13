@@ -304,7 +304,7 @@ if (!isset($_SESSION['email'])) {
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             body {
                 padding: 1rem;
             }
@@ -434,6 +434,8 @@ if (!isset($_SESSION['email'])) {
                 <thead>
                 <tr>
                     <th>File Name</th>
+                    <th>Category</th>
+                    <th>Caption</th>
                     <th>Uploader Name</th>
                     <th>Actions</th>
                 </tr>
@@ -483,62 +485,74 @@ if (!isset($_SESSION['email'])) {
             }
 
             function renderTable(videos, sessionEmail) {
-    tableBody.innerHTML = '';
+                tableBody.innerHTML = '';
 
-    // Filter videos by logged-in user's email
-    const userVideos = videos.filter(video => video.uploader_email === sessionEmail);
+                if (videos.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center;">No files found.</td>
+                    </tr>
+                `;
+                return;
+            }
 
-    if (userVideos.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No files found.</td></tr>';
-        return;
-    }
+            videos.forEach(video => {
+                const tr = document.createElement('tr');
 
-    userVideos.forEach(video => {
-        const tr = document.createElement('tr');
+                // Video name
+                const nameTd = document.createElement('td');
+                nameTd.textContent = video.file_name;
+                tr.appendChild(nameTd);
 
-        // Video name
-        const nameTd = document.createElement('td');
-        nameTd.textContent = video.file_name;
-        tr.appendChild(nameTd);
+                // Category
+                const categoryTd = document.createElement('td');
+                categoryTd.textContent = video.category || 'N/A';
+                tr.appendChild(categoryTd);
 
-        // Uploader username
-            const uploaderTd = document.createElement('td');
-            uploaderTd.textContent = video.name;
-            tr.appendChild(uploaderTd);
+                // Caption
+                const captionTd = document.createElement('td');
+                captionTd.textContent = video.caption || 'No caption';
+                tr.appendChild(captionTd);
 
-        // Actions 
-        const actionsTd = document.createElement('td');
-        actionsTd.style.display = 'flex';
-        actionsTd.style.gap = '8px';
-        actionsTd.style.flexWrap = 'wrap';
+                // Uploader name
+                const uploaderTd = document.createElement('td');
+                uploaderTd.textContent = video.name;
+                tr.appendChild(uploaderTd);
 
-        // View button
-        const viewBtn = document.createElement('button');
-        viewBtn.textContent = 'View';
-        viewBtn.classList.add('btn-view');
-        viewBtn.addEventListener('click', () => {
-            const url = `../uploads/${encodeURIComponent(video.file_path)}`;
-            window.open(url, '_blank');
-        });
-        actionsTd.appendChild(viewBtn);
+                // Actions
+                const actionsTd = document.createElement('td');
+                actionsTd.style.display = 'flex';
+                actionsTd.style.gap = '8px';
+                actionsTd.style.flexWrap = 'wrap';
 
-        // Download button
-        const downloadBtn = document.createElement('button');
-        downloadBtn.textContent = 'Download';
-        downloadBtn.classList.add('btn-download');
-        downloadBtn.addEventListener('click', () => {
-            const url = `../uploads/${encodeURIComponent(video.file_path)}`;
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = video.file_name;
-            a.click();
-        });
-        actionsTd.appendChild(downloadBtn);
+                // View button
+                const viewBtn = document.createElement('button');
+                viewBtn.textContent = 'View';
+                viewBtn.className = 'btn-view';
+                viewBtn.addEventListener('click', () => {
+                    const url = `../uploads/${encodeURIComponent(video.file_path)}`;
+                    window.open(url, '_blank');
+                });
 
-        tr.appendChild(actionsTd);
-        tableBody.appendChild(tr);
-    });
-}
+                // Download button
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.className = 'btn-download';
+                downloadBtn.addEventListener('click', () => {
+                    const url = `../uploads/${encodeURIComponent(video.file_path)}`;
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = video.file_name;
+                    a.click();
+                });
+
+                actionsTd.append(viewBtn, downloadBtn);
+                tr.appendChild(actionsTd);
+
+                // Append row to table
+                tableBody.appendChild(tr);
+            });
+        }
 
 
             function renderPagination(total, limit, page) {

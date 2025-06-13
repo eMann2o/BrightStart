@@ -127,7 +127,7 @@ if (!isset($_SESSION['email'])) {
         </div>
     </div>
 
-    <div class="main_content">
+    <div class="main-content">
         <div class="header">
             <button class="menu-toggle">
                 <i class="fas fa-bars"></i>

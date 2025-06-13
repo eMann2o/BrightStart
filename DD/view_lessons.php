@@ -30,6 +30,23 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+$courses_id = $_GET['course_id'] ?? null;
+if (!$courses_id) {
+    echo "Course ID not specified.";
+    exit;
+}
+
+// Fetch course information
+$course_stmt = $db->prepare("SELECT * FROM courses WHERE id = :course_id");
+$course_stmt->bindParam(':course_id', $courses_id, PDO::PARAM_INT);
+$course_stmt->execute();
+$course = $course_stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$course) {
+    echo "Course not found.";
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -348,6 +365,10 @@ h2 {
         </div>
         
         <section class="content">
+            <div class="cart" style="background-color: white; border-radius: 12px; margin-bottom: 30px; padding: 25px;">
+                <h2><?php echo htmlspecialchars($course['title']); ?> Description</h2>
+                <pre style="white-space: pre-wrap; word-wrap: break-word; overflow: auto; max-width: 1000px; font-family: inherit; padding: 10px; border-radius: 8px;"><?php echo htmlspecialchars($course['description']); ?></pre>
+            </div>
             <div class="card">
               <h2 class="lessons-header">Lessons</h2>
                 <div class="container">

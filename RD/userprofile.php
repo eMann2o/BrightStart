@@ -342,7 +342,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
         }
         
         /* Responsive Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .details-grid {
                 grid-template-columns: 1fr;
             }
@@ -397,7 +397,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
 }
 
 /* Chart container responsive behavior */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .chart-container {
         height: 300px;
         padding: 1rem;

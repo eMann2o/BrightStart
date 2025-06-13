@@ -235,7 +235,7 @@ if (!isset($_SESSION['email'])) {
         }
         
         /* Responsive Styles */
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .details-grid {
                 grid-template-columns: 1fr;
             }

@@ -10,7 +10,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 
 // Database credentials
-require '../database.php'; // Make sure this sets $host, $dbname, $username_db, $password_db
+require '../database.php';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username_db, $password_db);
@@ -53,9 +53,14 @@ if (!move_uploaded_file($_FILES['video']['tmp_name'], $destination)) {
     exit;
 }
 
+// Get caption and category
+$category = isset($_POST['category']) ? trim($_POST['category']) : '';
+$caption = isset($_POST['caption']) ? trim($_POST['caption']) : '';
+$filePath = $uniqueName; // saved filename
+
 // Save file details in database
-$stmt = $pdo->prepare("INSERT INTO videos (email, file_name, file_path, file_size, uploaded_at) VALUES (?, ?, ?, ?, NOW())");
-$stmt->execute([$email, $originalName, $uniqueName, $fileSize]);
+$stmt = $pdo->prepare("INSERT INTO videos (email, file_name, category, caption, file_path, file_size, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+$stmt->execute([$email, $originalName, $category, $caption, $filePath, $fileSize]);
 
 echo "Upload successful!";
 ?>

@@ -345,7 +345,7 @@ $rows = $stmt->fetchAll();
             color: white;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .pagination {
                 flex-direction: column;
                 text-align: center;
@@ -359,7 +359,7 @@ $rows = $stmt->fetchAll();
             font-size: 1.1rem;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             .filters {
                 flex-direction: column;
                 align-items: stretch;

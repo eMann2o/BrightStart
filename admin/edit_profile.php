@@ -52,28 +52,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = htmlspecialchars($_POST['role']);
     $region = htmlspecialchars($_POST['region']);
 
+    // Handle password fields
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirmPassword'] ?? '';
+    $hashedPassword = null;
+
+    if (!empty($password) || !empty($confirmPassword)) {
+        if ($password !== $confirmPassword) {
+            echo json_encode(['success' => false, 'error' => 'Passwords do not match.']);
+            exit();
+        }
+
+        if (strlen($password) < 6) {
+            echo json_encode(['success' => false, 'error' => 'Password must be at least 6 characters.']);
+            exit();
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    }
+
     if (!$email || !$contact_mail) {
         echo json_encode(['success' => false, 'error' => 'Invalid email address.']);
         exit();
     }
 
     if ($email !== $student_email) {
-    $check = $db->prepare("SELECT id FROM users WHERE email = :email");
-    $check->bindParam(':email', $email);
-    $check->execute();
-    if ($check->rowCount() > 0) {
-        echo json_encode(['success' => false, 'error' => 'Email is already in use by another user.']);
-        exit();
+        $check = $db->prepare("SELECT id FROM users WHERE email = :email");
+        $check->bindParam(':email', $email);
+        $check->execute();
+        if ($check->rowCount() > 0) {
+            echo json_encode(['success' => false, 'error' => 'Email is already in use by another user.']);
+            exit();
+        }
     }
-}
 
     try {
-        $stmt = $db->prepare("UPDATE users 
-            SET name = :name, phone = :phone, email = :email, contact_mail = :contact_mail,
-                district = :district, town = :town, organization = :organization, 
-                role = :role, region = :region 
-            WHERE email = :original_email");
+        if (!empty($password)) {
+            // Update with password
+            $stmt = $db->prepare("UPDATE users 
+                SET name = :name, phone = :phone, email = :email, contact_mail = :contact_mail,
+                    district = :district, town = :town, organization = :organization, 
+                    role = :role, region = :region, password = :password
+                WHERE email = :original_email");
 
+            $stmt->bindParam(':password', $hashedPassword);
+        } else {
+            // Update without password
+            $stmt = $db->prepare("UPDATE users 
+                SET name = :name, phone = :phone, email = :email, contact_mail = :contact_mail,
+                    district = :district, town = :town, organization = :organization, 
+                    role = :role, region = :region
+                WHERE email = :original_email");
+        }
+
+        // Bind common parameters
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':phone', $phone);
         $stmt->bindParam(':email', $email);
@@ -100,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -373,7 +406,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label>Region</label>
                             <input type="text" name="region" value="<?php echo htmlspecialchars($student['region']); ?>">
                         </div>
+
+                        <div class="form-group">
+                            <label for="password" class="required">Password</label>
+                            <div class="password-container">
+                                <input type="password" id="password" name="password">
+                                <button type="button" class="password-toggle" aria-label="Show password" data-target="password">
+                                    <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword" class="required">Confirm Password</label>
+                            <div class="password-container">
+                                <input type="password" id="confirmPassword" name="confirmPassword">
+                                <button type="button" class="password-toggle" aria-label="Show password" data-target="confirmPassword">
+                                    <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <svg class="eye-off-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="button-group">
                         <button type="submit" class="btn btn-primary" style="background-color: green;">Update Profile</button>
                         <a href="users.php"><button type="button" class="btn btn-primary">Cancel</button></a>
@@ -384,7 +452,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
 
         <script>
-            
+             
 
             // Sidebar toggle functionality
             document.querySelector('.menu-toggle').addEventListener('click', function() {
@@ -459,6 +527,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (result.isConfirmed) {
                             form.reset();
                             Swal.fire('Cancelled', 'Form has been reset.', 'success');
+                        }
+                    });
+                });
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('addUserForm');
+                
+                // Add event listeners for password toggle buttons
+                const passwordToggles = document.querySelectorAll('.password-toggle');
+                passwordToggles.forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const targetId = toggle.getAttribute('data-target');
+                        const passwordInput = document.getElementById(targetId);
+                        const eyeIcon = toggle.querySelector('.eye-icon');
+                        const eyeOffIcon = toggle.querySelector('.eye-off-icon');
+                        
+                        // Toggle password visibility
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';
+                            eyeIcon.style.display = 'none';
+                            eyeOffIcon.style.display = 'block';
+                            toggle.setAttribute('aria-label', 'Hide password');
+                        } else {
+                            passwordInput.type = 'password';
+                            eyeIcon.style.display = 'block';
+                            eyeOffIcon.style.display = 'none';
+                            toggle.setAttribute('aria-label', 'Show password');
                         }
                     });
                 });
