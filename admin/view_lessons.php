@@ -436,13 +436,13 @@ th, td {
                 foreach ($lessons as $lesson) {
                     echo '<div class="module-card" onclick="window.location.href=\'view_video.php?lesson_id=' . $lesson['id'] . '\'">';
                     echo '    <div class="module-image-container">';
-                    echo '        <img src="chill.jpg" alt="Lesson illustration" class="module-image">';
+                    echo '        <img loading="lazy" src="chill.jpg" alt="Lesson illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
                     
                     // Optional edit button (customize if needed)
                     echo '        <div class="sid">';
-                    echo '            <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '            <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
                     echo '            <div class="edit-button-container">';
                     echo '                <a href="edit_lesson.php?lesson_id=' . $lesson['id'] . '" class="edit-button" onclick="event.stopPropagation();">Edit</a>';
                     echo '            </div>';

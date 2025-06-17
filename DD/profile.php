@@ -335,7 +335,7 @@ if (!isset($_SESSION['email'])) {
                             <?php
                                 echo "
                                     <div class='profile-image'>
-                                        <img src='$imageSrc' alt='Profile Picture' class='profile-picture' width='150' height='150' style='border-radius: 50%; object-fit: cover;'/>
+                                        <img loading='lazy' src='$imageSrc' alt='Profile Picture' class='profile-picture' width='150' height='150' style='border-radius: 50%; object-fit: cover;'/>
                                     </div>
                                 ";
                             ?>

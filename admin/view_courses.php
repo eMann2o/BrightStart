@@ -423,11 +423,11 @@ th, td {
                 foreach ($courses as $course) {
                     echo '<div class="module-card" onclick="window.location.href=\'view_lessons.php?course_id=' . $course['id'] . '\'">';
                     echo '    <div class="module-image-container">';
-                    echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
+                    echo '        <img loading="lazy" src="chill.jpg" alt="Module illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
                     echo '<div class="sid">';
-                    echo '        <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '        <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
                     echo '        <div class="edit-button-container">';
                     echo '            <a href="edit_module.php?id=' . $course['id'] . '" class="edit-button" onclick="event.stopPropagation();">Edit</a>';
                     echo '        </div>';

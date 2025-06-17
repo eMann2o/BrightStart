@@ -320,11 +320,11 @@ if (!isset($_SESSION['email'])) {
                         echo '                        
                             <div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">
                                 <div class="module-image-container">
-                                    <img src="chill.jpg" alt="Module illustration" class="module-image">
+                                    <img loading="lazy" src="chill.jpg" alt="Module illustration" class="module-image">
                                     <div class="status-tag ' . $status_class . '">' . $status_text . '</div>
                                 </div>
                                 <div class="card-content">
-                                    <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">
+                                    <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">
                                     <h3 class="module-title">' . htmlspecialchars($module["title"]) . '</h3>
                                     <p class="module-description">' . htmlspecialchars($module["description"]) . '</p>
                                     <div class="course-count">

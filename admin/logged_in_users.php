@@ -36,7 +36,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Participants</title>
+    <title>User logins</title>
     <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
@@ -45,99 +45,162 @@ if (!isset($_SESSION['email'])) {
     <style>
         
         .content {
-        padding: 30px;
-        background-color: #f5f7fa;
+            padding: 30px;
+            background-color: #f5f7fa;
         }
 
         .content h1 {
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
         }
 
-        .toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* Filter Styles */
+        label[for="date-dropdown"] {
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
         }
 
-        .toolbar input[type="text"] {
-        padding: 10px;
-        width: 300px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        #date-dropdown {
+            display: block;
+            width: 250px;
+            padding: 12px 16px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .add-user-btn {
-        background-color: #3a7bd5;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background 0.3s ease;
+        #date-dropdown:hover {
+            border-color: #0082ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .add-user-btn:hover {
-        background-color: #2c5fb3;
+        #date-dropdown:focus {
+            outline: none;
+            border-color: #0082ff;
+            box-shadow: 0 0 0 3px rgba(17, 195, 255, 0.49);
         }
 
+        /* Table Styles */
         table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: white;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
         }
 
         th,
         td {
-        padding: 14px;
-        border: 1px solid #e0e0e0;
-        text-align: left;
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
         }
 
         th {
-        background-color: #f0f0f0;
-        font-weight: 600;
-        color: #333;
+            background-color: #f0f0f0;
+            font-weight: 600;
+            color: #333;
         }
 
         td {
-        color: #555;
+            color: #555;
         }
 
         tr:hover {
-        background-color: #f9f9f9;
+            background-color: #f9f9f9;
         }
 
-        .user-role {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: 500;
+        /* Pagination Styles */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
         }
 
-        .role-admin {
-        background-color: #e6f7ee;
-        color: #00b894;
+        .pagination-controls button {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            color: #555;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 45px;
         }
 
-        .role-instructor {
-        background-color: #e6f7ff;
-        color: #3a7bd5;
+        .pagination-controls button:hover {
+            background-color: #f0f0f0;
+            border-color: #0082ff;
+            color: #333;
         }
 
-        .role-learner {
-        background-color: #f0f0f0;
-        color: #555;
+        .pagination-controls button.active {
+            background-color: #0082ff;
+            border-color: #0082ff;
+            color: white;
+        }
+
+        .pagination-controls button:disabled {
+            background-color: #f5f5f5;
+            border-color: #e0e0e0;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination-controls button:disabled:hover {
+            background-color: #f5f5f5;
+            border-color: #e0e0e0;
+            color: #ccc;
+        }
+
+        .pagination-controls .page-info {
+            padding: 10px 16px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #date-dropdown {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .pagination-controls {
+                gap: 5px;
+            }
+            
+            .pagination-controls button {
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 40px;
+            }
+            
+            .pagination-controls .page-info {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -155,7 +218,7 @@ if (!isset($_SESSION['email'])) {
                 <i class="fas fa-book"></i>
                 <span>Courses</span>
             </div>
-            <div class="menu-item active" onclick="window.location.href='users.php';">
+            <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
                 <span>Participants</span>
             </div>

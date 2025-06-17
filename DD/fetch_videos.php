@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 include "../dbconnect.php";
 
@@ -15,58 +14,52 @@ try {
     echo json_encode(['error' => 'Database connection failed']);
     exit;
 }
- 
-if (!isset($_SESSION['email'])) {
-    echo json_encode(['error' => 'User not logged in']);
-    exit;
-}
-
-$userEmail = $_SESSION['email'];
-
-// Step 1: Get the logged-in user's district
-$stmtOrg = $pdo->prepare("SELECT district FROM users WHERE email = :email");
-$stmtOrg->execute([':email' => $userEmail]);
-$orgData = $stmtOrg->fetch();
-
-if (!$orgData) {
-    echo json_encode(['error' => 'User not found']);
-    exit;
-}
-
-$district = $orgData['district'];
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
-// Step 2: Get total count of videos from the same district
-$stmtTotal = $pdo->prepare("
-    SELECT COUNT(*) FROM videos v
-    JOIN users u ON v.email = u.email
-    WHERE u.district = :district
-");
-$stmtTotal->execute([':district' => $district]);
-$totalVideos = $stmtTotal->fetchColumn();
+$where = '';
+if (!empty($category)) {
+    $where = 'WHERE v.category = :category';
+}
 
-// Step 3: Fetch paginated videos from same district
-$stmt = $pdo->prepare("
-    SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
-    FROM videos v
-    JOIN users u ON v.email = u.email
-    WHERE u.district = :district
-    ORDER BY v.uploaded_at DESC
-    LIMIT :limit OFFSET :offset
-");
-$stmt->bindValue(':district', $district, PDO::PARAM_STR);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->execute();
-$videos = $stmt->fetchAll();
+// Count total videos
+$countSql = "SELECT COUNT(*) FROM videos v $where";
+$countStmt = $pdo->prepare($countSql);
+if (!empty($category)) {
+    $countStmt->bindParam(':category', $category, PDO::PARAM_STR);
+}
+$countStmt->execute();
+$totalVideos = $countStmt->fetchColumn();
 
+// Fetch paginated videos with uploader name
+$dataSql = "SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
+            FROM videos v
+            JOIN users u ON v.email = u.email
+            $where
+            ORDER BY v.uploaded_at DESC
+            LIMIT :limit OFFSET :offset";
+$dataStmt = $pdo->prepare($dataSql);
+if (!empty($category)) {
+    $dataStmt->bindParam(':category', $category, PDO::PARAM_STR);
+}
+$dataStmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$dataStmt->execute();
+$videos = $dataStmt->fetchAll();
+
+// Get all distinct categories
+$catStmt = $pdo->query("SELECT DISTINCT category FROM videos WHERE category IS NOT NULL AND category != '' ORDER BY category ASC");
+$categories = $catStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Return response
 echo json_encode([
     'videos' => $videos,
     'totalVideos' => (int)$totalVideos,
     'limit' => $limit,
     'page' => $page,
+    'categories' => $categories
 ]);
 ?>

@@ -341,7 +341,7 @@ function sanitizeOutput($data) {
                     <div class="action-icon">
                         <i class="fas fa-file-export"></i>
                     </div>
-                    <div class="action-text">User Uploaded Files</div>
+                    <div class="action-text">Uploaded Files</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='logged_in_users.php';">
                     <div class="action-icon">

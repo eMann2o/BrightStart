@@ -392,11 +392,11 @@ h2 {
 
                     echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
                     echo '    <div class="module-image-container">';
-                    echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
+                    echo '        <img loading="lazy" src="chill.jpg" alt="Module illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
                     echo '<div class="sid">';
-                    echo '        <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '        <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
                     echo '        <div class="edit-button-container">';
                     echo '            <a href="edit_course.php?id=' . $module['id'] . '" class="edit-button" onclick="event.stopPropagation();">Edit</a>';
                     echo '        </div>';

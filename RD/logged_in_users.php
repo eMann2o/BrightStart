@@ -46,207 +46,172 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Participants</title>
+    <title>User logins</title>
     <link rel="shortcut icon" href="../logo.PNG" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-/* Welcome section */
-.welcome-section {
-    color: white;
-    padding: 2rem 0;
-    text-align: center;
-    margin-bottom: 2rem;
-}
+        
+        .content {
+            padding: 30px;
+            background-color: #f5f7fa;
+        }
 
-.welcome-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-}
+        .content h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+        }
 
-/* Content section */
-.content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
+        /* Filter Styles */
+        label[for="date-dropdown"] {
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
 
-/* Filter section */
-label {
-    display: inline-block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #34495e;
-    font-size: 1rem;
-}
+        #date-dropdown {
+            display: block;
+            width: 250px;
+            padding: 12px 16px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: white;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
 
-#date-dropdown {
-    background-color: white;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    color: #2c3e50;
-    min-width: 200px;
-    margin-bottom: 2rem;
-    transition: border-color 0.3s ease;
-}
+        #date-dropdown:hover {
+            border-color: #0082ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-#date-dropdown:focus {
-    outline: none;
-    border-color: #3498db;
-}
+        #date-dropdown:focus {
+            outline: none;
+            border-color: #0082ff;
+            box-shadow: 0 0 0 3px rgba(17, 195, 255, 0.49);
+        }
 
-#date-dropdown:hover {
-    border-color: #7f8c8d;
-}
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
 
-/* Table styles */
-table {
-    width: 100%;
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
+        th,
+        td {
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
 
-thead {
-    background-color: #34495e;
-}
+        th {
+            background-color: #f0f0f0;
+            font-weight: 600;
+            color: #333;
+        }
 
-thead th {
-    color: white;
-    font-weight: 600;
-    padding: 1.25rem 1rem;
-    text-align: left;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
+        td {
+            color: #555;
+        }
 
-tbody tr {
-    border-bottom: 1px solid #ecf0f1;
-    transition: background-color 0.2s ease;
-}
+        tr:hover {
+            background-color: #f9f9f9;
+        }
 
-tbody tr:hover {
-    background-color: #f8f9fa;
-}
+        /* Pagination Styles */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
 
-tbody tr:last-child {
-    border-bottom: none;
-}
+        .pagination-controls button {
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            color: #555;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 45px;
+        }
 
-tbody td {
-    padding: 1rem;
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
+        .pagination-controls button:hover {
+            background-color: #f0f0f0;
+            border-color: #0082ff;
+            color: #333;
+        }
 
-tbody td:first-child {
-    font-weight: 500;
-    color: #2980b9;
-}
+        .pagination-controls button.active {
+            background-color: #0082ff;
+            border-color: #0082ff;
+            color: white;
+        }
 
-/* Pagination controls */
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-}
+        .pagination-controls button:disabled {
+            background-color: #f5f5f5;
+            border-color: #e0e0e0;
+            color: #ccc;
+            cursor: not-allowed;
+        }
 
-.pagination-controls button {
-    background-color: white;
-    border: 2px solid #bdc3c7;
-    color: #2c3e50;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    min-width: 40px;
-}
+        .pagination-controls button:disabled:hover {
+            background-color: #f5f5f5;
+            border-color: #e0e0e0;
+            color: #ccc;
+        }
 
-.pagination-controls button:hover {
-    background-color: #ecf0f1;
-    border-color: #95a5a6;
-}
+        .pagination-controls .page-info {
+            padding: 10px 16px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
 
-.pagination-controls button.active {
-    background-color: #3498db;
-    border-color: #3498db;
-    color: white;
-}
-
-.pagination-controls button:disabled {
-    background-color: #ecf0f1;
-    border-color: #d5dbdb;
-    color: #95a5a6;
-    cursor: not-allowed;
-}
-
-.pagination-controls span {
-    color: #7f8c8d;
-    font-size: 0.9rem;
-    margin: 0 0.5rem;
-}
-
-/* Responsive design */
-@media (max-width: 1000px) {
-    .content {
-        padding: 0 1rem;
-    }
-    
-    .welcome-title {
-        font-size: 2rem;
-    }
-    
-    table {
-        font-size: 0.85rem;
-    }
-    
-    thead th,
-    tbody td {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .pagination-controls {
-        flex-wrap: wrap;
-        gap: 0.25rem;
-    }
-    
-    .pagination-controls button {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-    }
-}
-
-/* Loading state */
-.loading {
-    text-align: center;
-    padding: 2rem;
-    color: #7f8c8d;
-    font-style: italic;
-}
-
-/* Empty state */
-.empty-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: #7f8c8d;
-}
-
-.empty-state h3 {
-    margin-bottom: 0.5rem;
-    color: #95a5a6;
-}
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #date-dropdown {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .pagination-controls {
+                gap: 5px;
+            }
+            
+            .pagination-controls button {
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 40px;
+            }
+            
+            .pagination-controls .page-info {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -263,7 +228,7 @@ tbody td:first-child {
                 <i class="fas fa-book"></i>
                 <span>Courses</span>
             </div>
-            <div class="menu-item active" onclick="window.location.href='users.php';">
+            <div class="menu-item" onclick="window.location.href='users.php';">
                 <i class="fas fa-users"></i>
                 <span>Participants</span>
             </div>

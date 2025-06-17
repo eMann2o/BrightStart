@@ -471,7 +471,7 @@ try {
                     <div class="action-icon">
                         <i class="fa-solid fa-file"></i>
                     </div>
-                    <div class="action-text">My Uploaded Files</div>
+                    <div class="action-text">Uploaded Files</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='videoupload.php';">
                     <div class="action-icon">
@@ -518,10 +518,10 @@ try {
         function renderModuleCard($module, $course, $percent, $courseCount) {
             echo '<div class="module-card" onclick="window.location.href=\'view_courses.php?module_id=' . $module['id'] . '\'">';
             echo '  <div class="module-image-container">';
-            echo '      <img src="chill.jpg" alt="Module illustration" class="module-image">';
+            echo '      <img loading="lazy" src="chill.jpg" alt="Module illustration" class="module-image">';
             echo '  </div>';
             echo '  <div class="card-content">';
-            echo '      <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+            echo '      <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
             echo "      <h3 class=\"module-title\">{$module['title']}</h3>";
             echo "      <p class=\"module-description\">{$module['description']}</p>";
             echo '      <div class="course-count">';

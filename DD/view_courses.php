@@ -399,10 +399,10 @@ th, td {
 
                     echo '<div class="module-card" onclick="window.location.href=\'view_lessons.php?course_id=' . $course['id'] . '\'">';
                     echo '    <div class="module-image-container">';
-                    echo '        <img src="chill.jpg" alt="Module illustration" class="module-image">';
+                    echo '        <img loading="lazy" src="chill.jpg" alt="Module illustration" class="module-image">';
                     echo '    </div>';
                     echo '    <div class="card-content">';
-                    echo '        <img src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
+                    echo '        <img loading="lazy" src="../logo.PNG" alt="Institution Logo" class="institution-logo">';
                     echo "        <h3 class='module-title'>{$course['title']}</h3>";
                     echo "        <p class='module-description'>{$course['description']}</p>";
                     echo '        <div class="course-count">';

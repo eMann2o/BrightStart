@@ -251,7 +251,7 @@ $email = $_GET['email'];
                     </div>
 
                     <div class="mb-3">
-                        <img id="preview" src="" alt="Preview" style="display:none; width:150px; height:150px; border-radius:50%; object-fit:cover; border:1px dashed #888;">
+                        <img loading="lazy" id="preview" src="" alt="Preview" style="display:none; width:150px; height:150px; border-radius:50%; object-fit:cover; border:1px dashed #888;">
                     </div>
 
                     <button class="btn btn-primary" type="submit">Upload</button>

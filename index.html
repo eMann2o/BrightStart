@@ -1037,6 +1037,207 @@
         .password-toggle:hover {
             color: var(--primary-color);
         }
+
+        .faq-section {
+            background: linear-gradient(to bottom, #e6f7ff, #f0f8ff);
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .faq-header h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .faq-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        .faq-header p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .faq-category {
+            margin-bottom: 50px;
+        }
+
+        .faq-category h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            position: relative;
+        }
+
+        .faq-category h3::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .faq-item {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .faq-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(26, 106, 162, 0.15);
+            border-left-color: var(--secondary);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 25px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover {
+            background: rgba(26, 106, 162, 0.05);
+            color: var(--dark);
+        }
+
+        .faq-question i {
+            font-size: 1.3rem;
+            transition: var(--transition);
+            color: var(--secondary);
+        }
+
+        .faq-item.active .faq-question {
+            background: rgba(26, 106, 162, 0.08);
+            color: var(--dark);
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+            color: var(--accent);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(26, 106, 162, 0.03);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 25px 25px;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .faq-answer-content p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .faq-answer-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .faq-answer-content li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .faq-answer-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .faq-answer-content strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 60px 1rem;
+            }
+
+            .faq-header h2 {
+                font-size: 2.2rem;
+            }
+
+            .faq-header p {
+                font-size: 1rem;
+            }
+
+            .faq-question {
+                padding: 18px 20px;
+                font-size: 1rem;
+            }
+
+            .faq-answer-content {
+                padding: 0 20px 20px;
+            }
+
+            .faq-category h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .faq-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .faq-question {
+                padding: 15px;
+            }
+
+            .faq-answer-content {
+                padding: 0 15px 15px;
+            }
+        }
     </style>
 </head>
 
@@ -1050,7 +1251,7 @@
                 }
             </style>
             <a href="index.html#index" class="nav__logo">
-                <img src="logo.png" alt="logo" style="height: 4rem;">
+                <img loading="lazy" src="logo.png" alt="logo" style="height: 4rem;">
             </a>
             <a href="#" class="nav__logo" style='font-family: "Lucida Bright", Georgia, serif; font-size: 24px; font-style: normal; font-weight: 700; line-height: 26.4px; '>
                 BRIGHT <span>START</span>
@@ -1065,15 +1266,15 @@
                   <li class="nav__item">
                      <a href="#about" class="nav__link">About</a>
                   </li>
-
-                  <li class="nav__item">
-                     <a href="#pillars" class="nav__link">Pillars</a>
-                  </li>
                   <li class="nav__item">
                      <a href="#district" class="nav__link">Districts</a>
                   </li>
                   <li class="nav__item">
                      <a href="#footer" class="nav__link">Contact</a>
+                  </li>
+
+                  <li class="nav__item">
+                     <a href="#faq" class="nav__link">FAQs</a>
                   </li>
                 </ul>
 
@@ -1152,7 +1353,7 @@
             </div>
             <div class="about-content">
                 <div class="about-image">
-                    <img src="teach.png"
+                    <img loading="lazy" src="teach.png"
                         alt="Ghana Children">
                 </div>
                 <div class="about-text">
@@ -1360,13 +1561,154 @@
             </style>
             <div class="partners-logos">
                 <div class="partner-logo">
-                    <img src="logo.PNG" alt="Tullow Ghana" width="100px">
+                    <img loading="lazy" src="logo.PNG" alt="Tullow Ghana" width="100px">
                 </div>
                 <div class="partner-logo">
-                    <img src="tullow.PNG" alt="Tullow Ghana" width="100px">
+                    <img loading="lazy" src="tullow.PNG" alt="Tullow Ghana" width="100px">
                 </div>
                 <div class="partner-logo">
-                    <img src="stcci.png" alt="Tullow Ghana" width="100px">
+                    <img loading="lazy" src="stcci.png" alt="Tullow Ghana" width="100px">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section faq-section">
+        <div class="container">
+            <div class="faq-container">
+                <div class="faq-header">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find answers to common questions about the Bright Start Portal</p>
+                </div>
+                
+                <div class="faq-category">
+                    <h3>General Overview</h3>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            What is the Bright Start Portal?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>The Bright Start Portal is an interactive Learning Management System (LMS) designed to support STEM education by providing educators with structured lesson plans, quizzes, and digital teaching resources.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Who can access the portal?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>The portal is accessible to various user groups, including Administrators, STEM Coordinators, Headteachers, Teachers, District Directors, and Regional Directors, each with specific permissions and responsibilities.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-category">
+                    <h3>Dashboard & Navigation</h3>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            What features does the dashboard provide?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>The dashboard offers an overview of user activity, uploaded files, quiz results, and total lessons, allowing admins to monitor engagement and performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-category">
+                    <h3>User Management</h3>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            How can new users be added?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Administrators can add new users by selecting "Add New User" in the Quick Actions menu and filling in the required details.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            What are the different user roles and permissions?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <ul>
+                                    <li><strong>Admin</strong> – Full access to manage the portal, add users, create modules, and review analytics.</li>
+                                    <li><strong>STEM Coordinators</strong> – Oversee lesson implementation and training progress for schools within their district.</li>
+                                    <li><strong>Headteachers & Teachers</strong> – Access STEM learning materials and conduct assessments.</li>
+                                    <li><strong>District/Regional Directors</strong> – Monitor engagement at higher levels.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Are quiz results tracked?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Yes. Quiz results are logged and accessible through the portal's dashboard analytics, helping educators assess learner performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-category">
+                    <h3>Technical Support & Troubleshooting</h3>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            What should I do if I can't log in?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>First, check your username and password. If the issue persists, contact the admin support team/the number on the homepage.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            How can I reset my password?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>Navigate to "Account Settings" and select "Change Password" to update your credentials securely.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            Who do I contact for technical support?
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p>For assistance, contact the number on the homepage.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1410,8 +1752,8 @@
                 <div class="footer-column">
                     <h3>Contact Us</h3>
                     <p><i class="ri-map-pin-fill"></i> Sekondi-Takoradi, Ghana</p>
-                    <p><i class="ri-mail-fill"></i> info@brightstartproject.org</p>
-                    <p><i class="ri-phone-fill"></i> +233 24 123 4567</p>
+                    <p> <a href="mailto:stcci.ghana@gmail.com"><i class="ri-mail-fill"></i>&nbsp;stcci.ghana@gmail.com</a></p>
+                    <p><a href="tel:+233244694781"><i class="ri-phone-fill"></i>&nbsp; +233 24 469 4781</a></p>
                 </div>
                
             </div>
@@ -1489,7 +1831,31 @@ loginClose.addEventListener('click', () =>{
             }
         });
 
-
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    if (isActive) {
+                        item.classList.remove('active');
+                    } else {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

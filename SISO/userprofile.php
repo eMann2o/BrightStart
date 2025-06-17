@@ -524,7 +524,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete_student"])) {
                     <div class="profile-header">
                         <div class="profile-image-container">
                             <div class="profile-image">
-                                <img src="emoji.png" alt="Teacher Profile Picture" onerror="this.src='/api/placeholder/400/400'">
+                                <img loading="lazy" src="emoji.png" alt="Teacher Profile Picture" onerror="this.src='/api/placeholder/400/400'">
                             </div>
                         </div>
                     </div>
