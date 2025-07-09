@@ -141,7 +141,7 @@ if (!isset($_SESSION['email'])) {
             margin-left: 3px;
         }
         
-        .header {
+        .headers {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -286,7 +286,7 @@ if (!isset($_SESSION['email'])) {
         
         <section class="content">
             <div class="container">
-                <div class="header">
+                <div class="headers">
                     <h1>Edit Password</h1>
                 </div>
                 

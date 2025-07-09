@@ -35,7 +35,7 @@ $countStmt->execute();
 $totalVideos = $countStmt->fetchColumn();
 
 // Fetch paginated videos with uploader name
-$dataSql = "SELECT v.id, v.file_name, v.category, v.caption, v.file_path, u.name 
+$dataSql = "SELECT v.id, v.file_name, v.category, v.grade, v.activity, v.caption, v.file_path, u.name 
             FROM videos v
             JOIN users u ON v.email = u.email
             $where

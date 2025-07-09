@@ -194,7 +194,20 @@ if (!isset($_SESSION['email'])) {
             font-size: 14px;
             color: #6b7280;
         }
-
+    .dragging {
+      border: 2px dashed #007bff;
+      background-color: #f0f8ff;
+    }
+    .button-container button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #spinner {
+      display: none;
+      margin-top: 10px;
+    }
         
 
     </style>
@@ -262,112 +275,82 @@ if (!isset($_SESSION['email'])) {
         <section class="content">
             <div class="upload-container">
                 <h1 class="upload-title">Upload File</h1>
-                
-                <div class="upload-area" id="uploadArea">
-                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7,10 12,15 17,10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <div class="upload-text">Drag and drop your file here or click to browse</div>
-                    <div class="upload-subtext">Supports all files</div>
+
+                <div class="upload-area" id="uploadArea" style="
+                    border: 2px dashed #ccc;
+                    padding: 30px;
+                    text-align: center;
+                    cursor: pointer;
+                    margin-bottom: 20px;
+                ">
+                <svg class="upload-icon" viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <div class="upload-text">Drag and drop your file here or click to browse</div>
+                <div class="upload-subtext">Supports all files</div>
                 </div>
+
                 <div style="
                     background-color: #f5f5f5;
                     padding: 20px;
                     border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                     max-width: 400px;
                     margin: 20px auto;
                     font-family: Arial, sans-serif;
                 ">
-                    <div style="margin-bottom: 15px;">
-                        <label for="caption" style="
-                            display: block;
-                            margin-bottom: 5px;
-                            color: #333;
-                            font-weight: bold;
-                        ">Caption:</label>
-                        <input 
-                            type="text" 
-                            id="caption" 
-                            name="caption"
-                            placeholder="Enter caption here..."
-                            style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 2px solid #ddd;
-                                border-radius: 4px;
-                                font-size: 14px;
-                                box-sizing: border-box;
-                                transition: border-color 0.3s ease;
-                            "
-                            onfocus="this.style.borderColor='#007bff'"
-                            onblur="this.style.borderColor='#ddd'"
-                        >
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <label for="category" style="
-                            display: block;
-                            margin-bottom: 5px;
-                            color: #333;
-                            font-weight: bold;
-                        ">Category:</label>
-                        <select 
-                            id="category" 
-                            name="category"
-                            style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 2px solid #ddd;
-                                border-radius: 4px;
-                                font-size: 14px;
-                                box-sizing: border-box;
-                                transition: border-color 0.3s ease;
-                                background-color: white;
-                                cursor: pointer;
-                            "
-                            onfocus="this.style.borderColor='#28a745'"
-                            onblur="this.style.borderColor='#ddd'"
-                        >
-                            <option value="">Select a category...</option>
-                            <option value="technology">Technology</option>
-                            <option value="business">Business</option>
-                            <option value="entertainment">Entertainment</option>
-                            <option value="sports">Sports</option>
-                            <option value="news">News</option>
-                            <option value="education">Education</option>
-                            <option value="lifestyle">Lifestyle</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="grade" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Class/Grade:</label>
+                    <input type="text" id="grade" placeholder="Enter class here..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;" />
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="caption" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Caption:</label>
+                    <input type="text" id="caption" placeholder="Enter caption here..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;" />
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="category" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">STEM Focus Area:</label>
+                    <select id="category" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                    <option value="">Select an area...</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Science">Science</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Mathematics">Mathematics</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="activity" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Activity Type:</label>
+                    <select id="activity" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                    <option value="">Select an activity...</option>
+                    <option value="Individual Project">Individual Project</option>
+                    <option value="Group Project">Group Project</option>
+                    <option value="Outdoor Activity">Outdoor Activity</option>
+                    <option value="Classroom Demonstration">Classroom Demonstration</option>
+                    </select>
+                </div>
                 </div>
 
                 <div class="file-info" id="fileInfo" style="display: none;">
-                    <div class="file-name" id="fileName"></div>
-                    <div class="file-size" id="fileSize"></div>
+                <div id="fileName"></div>
+                <div id="fileSize"></div>
                 </div>
 
-                <div class="upload-status" id="uploadStatus"></div>
+                <div id="uploadStatus"></div>
 
                 <div class="button-container">
-                    <button class="upload-button" id="uploadButton">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7,10 12,15 17,10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Upload File
-                    </button>
-                    <div id="spinner">⏳ Uploading, please wait...</div>
-
-                    <button class="cancel-button" id="cancelButton">Cancel</button>
+                <button id="uploadButton" class="upload-button">Upload File</button>
+                <button id="cancelButton" class="cancel-button">Cancel</button>
                 </div>
 
-                <input type="file" id="fileInput" class="file-input" hidden>
+                <div id="spinner">⏳ Uploading, please wait...</div>
+
+                <input type="file" id="fileInput" hidden>
             </div>
-        </section>
+            </section>
+
         
     </div>
 
@@ -381,135 +364,138 @@ if (!isset($_SESSION['email'])) {
             });
 
             const uploadArea = document.getElementById('uploadArea');
-const fileInput = document.getElementById('fileInput');
-const fileNameDisplay = document.getElementById('fileName');
-const fileSizeDisplay = document.getElementById('fileSize');
-const fileInfo = document.getElementById('fileInfo');
-const uploadStatus = document.getElementById('uploadStatus');
-const uploadButton = document.getElementById('uploadButton');
-const cancelButton = document.getElementById('cancelButton');
-const spinner = document.getElementById('spinner');
-const captionInput = document.getElementById('caption');
-const categoryInput = document.getElementById('category');
+            const fileInput = document.getElementById('fileInput');
+            const fileNameDisplay = document.getElementById('fileName');
+            const fileSizeDisplay = document.getElementById('fileSize');
+            const fileInfo = document.getElementById('fileInfo');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadButton = document.getElementById('uploadButton');
+            const cancelButton = document.getElementById('cancelButton');
+            const spinner = document.getElementById('spinner');
+            const captionInput = document.getElementById('caption');
+            const categoryInput = document.getElementById('category');
+            const gradeInput = document.getElementById('grade');
+            const activityInput = document.getElementById('activity');
 
-let selectedFile = null;
+            let selectedFile = null;
 
-// Click-to-select file
-uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('click', () => fileInput.click());
 
-// File selected
-fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+            fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
-// Drag styling
-uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.classList.add('dragging');
-});
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragging'));
-uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragging');
-    handleFile(e.dataTransfer.files[0]);
-});
-
-function handleFile(file) {
-    if (!file) return;
-
-    if (file.size > 1024 * 1024 * 1024) {
-        uploadStatus.textContent = "❌ File too large. Max 1GB allowed.";
-        fileInfo.style.display = "none";
-        selectedFile = null;
-        return;
-    }
-
-    selectedFile = file;
-    fileNameDisplay.textContent = "📄 Name: " + file.name;
-    fileSizeDisplay.textContent = "📦 Size: " + (file.size / (1024 * 1024)).toFixed(2) + " MB";
-    fileInfo.style.display = "block";
-    uploadStatus.textContent = "";
-}
-
-// Upload button clicked
-uploadButton.addEventListener('click', () => {
-    if (!selectedFile) {
-        uploadStatus.textContent = "⚠️ Please select a file first.";
-        return;
-    }
-
-    const caption = captionInput.value.trim();
-    const category = categoryInput.value;
-
-    if (!caption || !category) {
-        uploadStatus.textContent = "⚠️ Please fill in both caption and category.";
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('video', selectedFile);
-    formData.append('caption', caption);
-    formData.append('category', category);
-
-    uploadStatus.textContent = "";
-    uploadButton.disabled = true;
-    spinner.style.display = 'block';
-
-    fetch('upload.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.text())
-    .then(data => {
-        uploadButton.disabled = false;
-        spinner.style.display = 'none';
-
-        if (data.toLowerCase().includes("success")) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Upload Successful',
-                text: 'Your file has been uploaded!',
-                confirmButtonColor: '#3085d6',
-                timer: 2000,
-                timerProgressBar: true
+            uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragging');
+            });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragging'));
+            uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragging');
+            handleFile(e.dataTransfer.files[0]);
             });
 
-            setTimeout(() => {
-                window.location.href = 'dashboard.php'; // Replace with your redirect
-            }, 2000);
-        } else {
-            Swal.fire({
+            function handleFile(file) {
+            if (!file) return;
+
+            if (file.size > 1024 * 1024 * 1024) {
+                uploadStatus.textContent = "❌ File too large. Max 1GB allowed.";
+                fileInfo.style.display = "none";
+                selectedFile = null;
+                return;
+            }
+
+            selectedFile = file;
+            fileNameDisplay.textContent = "📄 Name: " + file.name;
+            fileSizeDisplay.textContent = "📦 Size: " + (file.size / (1024 * 1024)).toFixed(2) + " MB";
+            fileInfo.style.display = "block";
+            uploadStatus.textContent = "";
+            }
+
+            uploadButton.addEventListener('click', () => {
+            if (!selectedFile) {
+                uploadStatus.textContent = "⚠️ Please select a file first.";
+                return;
+            }
+
+            const caption = captionInput.value.trim();
+            const category = categoryInput.value;
+            const grade = gradeInput.value.trim();
+            const activity = activityInput.value;
+
+            if (!caption || !category || !grade || !activity) {
+                uploadStatus.textContent = "⚠️ Please fill in all fields.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('video', selectedFile);
+            formData.append('caption', caption);
+            formData.append('category', category);
+            formData.append('grade', grade);
+            formData.append('activity', activity);
+
+            uploadStatus.textContent = "";
+            uploadButton.disabled = true;
+            cancelButton.disabled = true;
+            spinner.style.display = 'block';
+
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(data => {
+                uploadButton.disabled = false;
+                cancelButton.disabled = false;
+                spinner.style.display = 'none';
+
+                if (data.toLowerCase().includes("successful")) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Upload Successful',
+                    text: 'Your file has been uploaded!',
+                    confirmButtonColor: '#3085d6',
+                    timer: 2000,
+                    timerProgressBar: true
+                });
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.php'; // Adjust if needed
+                }, 2000);
+                } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: data,
+                    confirmButtonColor: '#d33'
+                });
+                }
+            })
+            .catch(err => {
+                uploadButton.disabled = false;
+                cancelButton.disabled = false;
+                spinner.style.display = 'none';
+
+                Swal.fire({
                 icon: 'error',
                 title: 'Upload Failed',
-                text: data,
+                text: 'Something went wrong. Try again.',
                 confirmButtonColor: '#d33'
+                });
+                console.error(err);
             });
-        }
-    })
-    .catch(err => {
-        uploadButton.disabled = false;
-        spinner.style.display = 'none';
+            });
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Upload Failed',
-            text: 'Something went wrong. Try again.',
-            confirmButtonColor: '#d33'
-        });
-        console.error(err);
-    });
-});
-
-// Cancel selection
-cancelButton.addEventListener('click', () => {
-    selectedFile = null;
-    fileInput.value = "";
-    fileInfo.style.display = "none";
-    uploadStatus.textContent = "";
-    captionInput.value = "";
-    categoryInput.value = "";
-});
-
-
-
+            cancelButton.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = "";
+            fileInfo.style.display = "none";
+            uploadStatus.textContent = "";
+            captionInput.value = "";
+            categoryInput.value = "";
+            gradeInput.value = "";
+            activityInput.value = "";
+            });
     </script>
 </body>
 </html>

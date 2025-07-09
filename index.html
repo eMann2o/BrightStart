@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bright Start Project</title>
+    <title>Bright Start</title>
+    <link rel="icon" href="logo.PNG" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
     <script src="https://kit.fontawesome.com/8e98006f77.js" crossorigin="anonymous" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,6 +33,9 @@
     <!-- Responsive and Appearance -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#005792">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <style>
         :root {
@@ -1238,6 +1242,13 @@
                 padding: 0 15px 15px;
             }
         }
+
+        .district-pin.highlighted {
+            transform: scale(1.4);
+            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.5);
+            background-color: #10b981;
+        }
+
     </style>
 </head>
 
@@ -1251,7 +1262,7 @@
                 }
             </style>
             <a href="index.html#index" class="nav__logo">
-                <img loading="lazy" src="logo.png" alt="logo" style="height: 4rem;">
+                <img loading="lazy" src="logo.PNG" alt="logo" style="height: 4rem;">
             </a>
             <a href="#" class="nav__logo" style='font-family: "Lucida Bright", Georgia, serif; font-size: 24px; font-style: normal; font-weight: 700; line-height: 26.4px; '>
                 BRIGHT <span>START</span>
@@ -1275,6 +1286,10 @@
 
                   <li class="nav__item">
                      <a href="#faq" class="nav__link">FAQs</a>
+                  </li>
+
+                  <li class="nav__item">
+                     <a href="gallery/" class="nav__link">Gallery</a>
                   </li>
                 </ul>
 
@@ -1435,68 +1450,91 @@
                 <div class="location-marker marker-2"></div>
                 <div class="location-marker marker-3"></div>
 
-                <!-- District pins -->
-                <div class="district-pin pin-ahanta-west">
+                <!-- Example Map Pins -->
+                <div class="district-pin pin-ahanta-west" 
+                    data-name="Ahanta-West District" 
+                    data-info="Ahanta-West is known for its beautiful beaches, fishing villages, and vibrant cultural festivals."
+                    data-image="images/ahanta-west.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">Ahanta-West</div>
                 </div>
 
-                <div class="district-pin pin-shama">
+                <div class="district-pin pin-shama" 
+                    data-name="Shama District" 
+                    data-info="Shama District is famous for its rich fishing industry and historical forts."
+                    data-image="images/shama.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">Shama</div>
                 </div>
 
-                <div class="district-pin pin-stma">
+                <div class="district-pin pin-stma" 
+                    data-name="Sekondi-Takoradi Metropolitan Assembly (STMA)" 
+                    data-info="STMA is the twin city hub, serving as a major industrial and commercial center in the Western Region."
+                    data-image="images/stma.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">STMA</div>
                 </div>
 
-                <div class="district-pin pin-ekma">
+                <div class="district-pin pin-ekma" 
+                    data-name="Effia-Kwesimintsim Municipal Assembly (EKMA)" 
+                    data-info="EKMA is a fast-developing urban area with a focus on trade and modern housing developments."
+                    data-image="images/ekma.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">EKMA</div>
                 </div>
 
-                <div class="district-pin pin-nzema-east">
+                <div class="district-pin pin-nzema-east" 
+                    data-name="Nzema-East District" 
+                    data-info="Nzema-East features beautiful beaches and is home to the iconic Fort Apollonia."
+                    data-image="images/nzema-east.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">Nzema-East</div>
                 </div>
 
-                <div class="district-pin pin-ellembele">
+                <div class="district-pin pin-ellembele" 
+                    data-name="Ellembele District" 
+                    data-info="Ellembele District is known for oil production, agriculture, and cultural heritage."
+                    data-image="images/ellembele.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">Ellembele</div>
                 </div>
 
-                <div class="district-pin pin-jomoro">
+                <div class="district-pin pin-jomoro" 
+                    data-name="Jomoro District" 
+                    data-info="Jomoro borders Ivory Coast and is known for coconut plantations and rich cultural traditions."
+                    data-image="images/jomoro.jpg">
                     <i class="fa-solid fa-location-dot"></i>
                     <div class="district-label">Jomoro</div>
                 </div>
+
             </div>
 
             <div class="districts-list-container">
                 <h2 class="districts-list-title">All Covered Districts</h2>
                 <ul class="districts-list">
-                    <li class="district-item">
+                    <li class="district-item" data-pin="ahanta-west">
                         <span class="district-name">Ahanta-West District</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="shama">
                         <span class="district-name">Shama District</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="stma">
                         <span class="district-name">Sekondi-Takoradi Metropolitan Assembly (STMA)</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="ekma">
                         <span class="district-name">Effia-Kwesimintsim Municipal Assembly (EKMA)</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="nzema-east">
                         <span class="district-name">Nzema-East District</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="ellembele">
                         <span class="district-name">Ellembele District</span>
                     </li>
-                    <li class="district-item">
+                    <li class="district-item" data-pin="jomoro">
                         <span class="district-name">Jomoro District</span>
                     </li>
                 </ul>
+
             </div>
         </div>
     </div>
@@ -1765,89 +1803,87 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-         const login = document.getElementById('signup');
-         const signupBtn = document.getElementById('signup-btn');
-         const signupClose = document.getElementById('signup-close');
+            /*=============== SHOW MENU ===============*/
+            const navMenu = document.getElementById('nav-menu'),
+                navToggle = document.getElementById('nav-toggle'),
+                navClose = document.getElementById('nav-close');
 
-         // Remove class to hide the signup form
-         signupClose.addEventListener('click', () => {
-            login.classList.remove('show-signup');
-         });
-      });/*=============== SHOW MENU ===============*/
-const navMenu = document.getElementById('nav-menu'),
-      navToggle = document.getElementById('nav-toggle'),
-      navClose = document.getElementById('nav-close')
-
-/* Menu show */
-navToggle.addEventListener('click', () =>{
-   navMenu.classList.add('show-menu')
-})
-
-/* Menu hidden */
-navClose.addEventListener('click', () =>{
-   navMenu.classList.remove('show-menu')
-})
-
-/*=============== SEARCH ===============*/
-const search = document.getElementById('search'),
-      searchBtn = document.getElementById('search-btn'),
-      searchClose = document.getElementById('search-close')
-
-/* Search show */
-searchBtn.addEventListener('click', () =>{
-   search.classList.add('show-search')
-})
-
-/* Search hidden */
-searchClose.addEventListener('click', () =>{
-   search.classList.remove('show-search')
-})
-
-/*=============== LOGIN ===============*/
-const login = document.getElementById('login'),
-      loginBtn = document.getElementById('login-btn'),
-      loginClose = document.getElementById('login-close')
-
-/* Login show */
-loginBtn.addEventListener('click', () =>{
-   login.classList.add('show-login')
-})
-
-/* Login hidden */
-loginClose.addEventListener('click', () =>{
-   login.classList.remove('show-login')
-})
-
-        // Toggle password visibility
-        const passwordInput = document.getElementById('password');
-        const passwordToggle = document.getElementById('password-toggle');
-        passwordToggle.addEventListener('click', function() {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordToggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
-            } else {
-                passwordInput.type = 'password';
-                passwordToggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.add('show-menu');
+                });
             }
-        });
 
-        document.addEventListener('DOMContentLoaded', function() {
+            if (navClose && navMenu) {
+                navClose.addEventListener('click', () => {
+                    navMenu.classList.remove('show-menu');
+                });
+            }
+
+            /*=============== SEARCH ===============*/
+            const search = document.getElementById('search'),
+                searchBtn = document.getElementById('search-btn'),
+                searchClose = document.getElementById('search-close');
+
+            if (searchBtn && search) {
+                searchBtn.addEventListener('click', () => {
+                    search.classList.add('show-search');
+                });
+            }
+
+            if (searchClose && search) {
+                searchClose.addEventListener('click', () => {
+                    search.classList.remove('show-search');
+                });
+            }
+
+            /*=============== LOGIN ===============*/
+            const login = document.getElementById('login'),
+                loginBtn = document.getElementById('login-btn'),
+                loginClose = document.getElementById('login-close');
+
+            if (loginBtn && login) {
+                loginBtn.addEventListener('click', () => {
+                    login.classList.add('show-login');
+                });
+            }
+
+            if (loginClose && login) {
+                loginClose.addEventListener('click', () => {
+                    login.classList.remove('show-login');
+                });
+            }
+
+            // Toggle password visibility
+            const passwordInput = document.getElementById('password');
+            const passwordToggle = document.getElementById('password-toggle');
+
+            if (passwordToggle && passwordInput) {
+                passwordToggle.addEventListener('click', function() {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        passwordToggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+                    } else {
+                        passwordInput.type = 'password';
+                        passwordToggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
+                    }
+                });
+            }
+
+            /*=============== FAQ TOGGLE ===============*/
             const faqItems = document.querySelectorAll('.faq-item');
-            
+
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
-                
                 question.addEventListener('click', () => {
                     const isActive = item.classList.contains('active');
-                    
-                    // Close all other FAQ items
+
                     faqItems.forEach(otherItem => {
                         if (otherItem !== item) {
                             otherItem.classList.remove('active');
                         }
                     });
-                    
-                    // Toggle current item
+
                     if (isActive) {
                         item.classList.remove('active');
                     } else {
@@ -1855,8 +1891,77 @@ loginClose.addEventListener('click', () =>{
                     }
                 });
             });
+
+            /*=============== DISTRICT PINS POPUP ===============*/
+            document.querySelectorAll('.district-pin').forEach(pin => {
+                pin.addEventListener('click', () => {
+                    const districtName = pin.getAttribute('data-name');
+                    const districtInfo = pin.getAttribute('data-info');
+                    const districtImage = pin.getAttribute('data-image');
+
+                    Swal.fire({
+                        title: districtName,
+                        html: `
+                            <img src="${districtImage}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+                            <p style="text-align: left;">${districtInfo}</p>
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Close',
+                        width: '600px',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
+                });
+            });
+
+            /*=============== DISTRICT LIST EVENTS ===============*/
+            document.querySelectorAll('.district-item').forEach(item => {
+                const pinName = item.getAttribute('data-pin');
+                const pin = document.querySelector(`.pin-${pinName}`);
+
+                if (!pin) return;
+
+                // Hover: highlight pin
+                item.addEventListener('mouseenter', () => {
+                    pin.classList.add('highlighted');
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    pin.classList.remove('highlighted');
+                });
+
+                // Click: show popup
+                item.addEventListener('click', () => {
+                    const districtName = pin.getAttribute('data-name');
+                    const districtInfo = pin.getAttribute('data-info');
+                    const districtImage = pin.getAttribute('data-image');
+
+                    Swal.fire({
+                        title: districtName,
+                        html: `
+                            <img src="${districtImage}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+                            <p style="text-align: left;">${districtInfo}</p>
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Close',
+                        width: '600px',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
+                });
+            });
         });
     </script>
+
+
 </body>
 
 </html>

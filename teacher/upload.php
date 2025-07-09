@@ -9,7 +9,6 @@ if (!isset($_SESSION['email'])) {
 
 $email = $_SESSION['email'];
 
-// Database credentials
 require '../database.php';
 
 try {
@@ -36,7 +35,6 @@ if ($fileSize > $maxSize) {
     exit;
 }
 
-// Preserve original extension
 $originalName = $_FILES['video']['name'];
 $extension = pathinfo($originalName, PATHINFO_EXTENSION);
 $uniqueName = uniqid('file_', true) . '.' . $extension;
@@ -53,14 +51,14 @@ if (!move_uploaded_file($_FILES['video']['tmp_name'], $destination)) {
     exit;
 }
 
-// Get caption and category
 $category = isset($_POST['category']) ? trim($_POST['category']) : '';
 $caption = isset($_POST['caption']) ? trim($_POST['caption']) : '';
-$filePath = $uniqueName; // saved filename
+$grade = isset($_POST['grade']) ? trim($_POST['grade']) : '';
+$activity = isset($_POST['activity']) ? trim($_POST['activity']) : '';
+$filePath = $uniqueName;
 
-// Save file details in database
-$stmt = $pdo->prepare("INSERT INTO videos (email, file_name, category, caption, file_path, file_size, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-$stmt->execute([$email, $originalName, $category, $caption, $filePath, $fileSize]);
+$stmt = $pdo->prepare("INSERT INTO videos (email, file_name, category, caption, grade, activity, file_path, file_size, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+$stmt->execute([$email, $originalName, $category, $caption, $grade, $activity, $filePath, $fileSize]);
 
 echo "Upload successful!";
 ?>

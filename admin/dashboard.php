@@ -325,11 +325,11 @@ function sanitizeOutput($data) {
                 <div class="card-header">
                     <h2 class="card-title">Quick Actions</h2>
                 </div>
-                <div class="action-item" onclick="window.location.href='useradd.php';">
+                <div class="action-item" onclick="window.location.href='fileupload.php';">
                     <div class="action-icon">
                         <i class="fas fa-plus"></i>
                     </div>
-                    <div class="action-text">Add New User</div>
+                    <div class="action-text">Upload To Gallery</div>
                 </div>
                 <div class="action-item" onclick="window.location.href='addcourse.php';">
                     <div class="action-icon">

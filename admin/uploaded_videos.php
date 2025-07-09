@@ -213,7 +213,7 @@ if (!isset($_SESSION['email'])) {
                 </div>
             </div>
         </div>
-        <label for="categoryFilter">Filter by Category:</label>
+        <label for="categoryFilter">Filter by STEM Focus Area</label>
         <select id="categoryFilter">
             <option value="">All Categories</option>
             <!-- Category options will be added dynamically -->
@@ -224,7 +224,9 @@ if (!isset($_SESSION['email'])) {
                     <thead>
                     <tr>
                         <th>File Name</th>
-                        <th>Category</th>
+                        <th>Grade/Class</th>
+                        <th>STEM Focus Area</th>
+                        <th>Activity Type</th>
                         <th>Caption</th>
                         <th>Uploader</th>
                         <th>Actions</th>
@@ -296,7 +298,9 @@ if (!isset($_SESSION['email'])) {
 
                     tr.innerHTML = `
                         <td>${video.file_name}</td>
+                        <td>${video.grade || 'N/A'}</td>
                         <td>${video.category || 'N/A'}</td>
+                        <td>${video.activity || 'N/A'}</td>
                         <td>${video.caption || 'No caption'}</td>
                         <td>${video.name}</td>
                     `;

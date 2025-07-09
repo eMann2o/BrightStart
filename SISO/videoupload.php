@@ -266,112 +266,81 @@ if (!isset($_SESSION['email'])) {
         <section class="content">
             <div class="upload-container">
                 <h1 class="upload-title">Upload File</h1>
-                
-                <div class="upload-area" id="uploadArea">
-                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7,10 12,15 17,10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <div class="upload-text">Drag and drop your file here or click to browse</div>
-                    <div class="upload-subtext">Supports all files</div>
+
+                <div class="upload-area" id="uploadArea" style="
+                    border: 2px dashed #ccc;
+                    padding: 30px;
+                    text-align: center;
+                    cursor: pointer;
+                    margin-bottom: 20px;
+                ">
+                <svg class="upload-icon" viewBox="0 0 24 24" width="50" height="50" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <div class="upload-text">Drag and drop your file here or click to browse</div>
+                <div class="upload-subtext">Supports all files</div>
                 </div>
+
                 <div style="
                     background-color: #f5f5f5;
                     padding: 20px;
                     border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                     max-width: 400px;
                     margin: 20px auto;
                     font-family: Arial, sans-serif;
                 ">
-                    <div style="margin-bottom: 15px;">
-                        <label for="caption" style="
-                            display: block;
-                            margin-bottom: 5px;
-                            color: #333;
-                            font-weight: bold;
-                        ">Caption:</label>
-                        <input 
-                            type="text" 
-                            id="caption" 
-                            name="caption"
-                            placeholder="Enter caption here..."
-                            style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 2px solid #ddd;
-                                border-radius: 4px;
-                                font-size: 14px;
-                                box-sizing: border-box;
-                                transition: border-color 0.3s ease;
-                            "
-                            onfocus="this.style.borderColor='#007bff'"
-                            onblur="this.style.borderColor='#ddd'"
-                        >
-                    </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <label for="category" style="
-                            display: block;
-                            margin-bottom: 5px;
-                            color: #333;
-                            font-weight: bold;
-                        ">Category:</label>
-                        <select 
-                            id="category" 
-                            name="category"
-                            style="
-                                width: 100%;
-                                padding: 10px;
-                                border: 2px solid #ddd;
-                                border-radius: 4px;
-                                font-size: 14px;
-                                box-sizing: border-box;
-                                transition: border-color 0.3s ease;
-                                background-color: white;
-                                cursor: pointer;
-                            "
-                            onfocus="this.style.borderColor='#28a745'"
-                            onblur="this.style.borderColor='#ddd'"
-                        >
-                            <option value="">Select a category...</option>
-                            <option value="technology">Technology</option>
-                            <option value="business">Business</option>
-                            <option value="entertainment">Entertainment</option>
-                            <option value="sports">Sports</option>
-                            <option value="news">News</option>
-                            <option value="education">Education</option>
-                            <option value="lifestyle">Lifestyle</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="grade" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Class/Grade:</label>
+                    <input type="text" id="grade" placeholder="Enter class here..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;" />
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="caption" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Caption:</label>
+                    <input type="text" id="caption" placeholder="Enter caption here..." style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;" />
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="category" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">STEM Focus Area:</label>
+                    <select id="category" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                    <option value="">Select an area...</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Science">Science</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Mathematics">Mathematics</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="activity" style="display: block; margin-bottom: 5px; color: #333; font-weight: bold;">Activity Type:</label>
+                    <select id="activity" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px;">
+                    <option value="">Select an activity...</option>
+                    <option value="Individual Project">Individual Project</option>
+                    <option value="Group Project">Group Project</option>
+                    <option value="Outdoor Activity">Outdoor Activity</option>
+                    <option value="Classroom Demonstration">Classroom Demonstration</option>
+                    </select>
+                </div>
                 </div>
 
                 <div class="file-info" id="fileInfo" style="display: none;">
-                    <div class="file-name" id="fileName"></div>
-                    <div class="file-size" id="fileSize"></div>
+                <div id="fileName"></div>
+                <div id="fileSize"></div>
                 </div>
 
-                <div class="upload-status" id="uploadStatus"></div>
+                <div id="uploadStatus"></div>
 
                 <div class="button-container">
-                    <button class="upload-button" id="uploadButton">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7,10 12,15 17,10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Upload File
-                    </button>
-                    <div id="spinner">⏳ Uploading, please wait...</div>
-
-                    <button class="cancel-button" id="cancelButton">Cancel</button>
+                <button id="uploadButton" class="upload-button">Upload File</button>
+                <button id="cancelButton" class="cancel-button">Cancel</button>
                 </div>
 
-                <input type="file" id="fileInput" class="file-input" hidden>
+                <div id="spinner">⏳ Uploading, please wait...</div>
+
+                <input type="file" id="fileInput" hidden>
             </div>
-        </section>
+            </section>
         
     </div>
 
