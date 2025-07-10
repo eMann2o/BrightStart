@@ -77,8 +77,9 @@
 
     .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
+        justify-content: center;
         margin-bottom: 40px;
     }
 
@@ -90,10 +91,15 @@
         transition: all 0.3s ease;
         cursor: pointer;
         background: white;
-        aspect-ratio: 1;
+
+        width: 100%;
+        max-width: 341px;
+        aspect-ratio: 1 / 1; /* keeps it square always */
+
         display: flex;
         flex-direction: column;
     }
+
 
     .gallery-item:hover {
         transform: translateY(-8px);
