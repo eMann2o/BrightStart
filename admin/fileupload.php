@@ -382,7 +382,7 @@ try {
 
                         <div class="form-group">
                             <label for="photoTitle">Photo Description (optional)</label>
-                            <input type="text" id="photoTitle" name="photo_title" placeholder="Enter a title for your photos">
+                            <input type="text" id="photoTitle" name="photo_title" placeholder="Enter a description for your photos">
                         </div>
                     </div>
 
