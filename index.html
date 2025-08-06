@@ -89,7 +89,6 @@
         }
 
         .hero-content {
-            max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
@@ -103,7 +102,6 @@
             font-size: 3.5rem;
             font-weight: 800;
             line-height: 1.2;
-            max-width: 800px;
         }
 
         .hero p {
@@ -119,6 +117,7 @@
             gap: 20px;
             margin-top: 30px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn {
@@ -459,7 +458,7 @@
 
         /* Partners Section */
         .partners {
-            background: var(--light);
+            background-color: #ff990026;
             text-align: center;
         }
 
@@ -1348,9 +1347,13 @@
     <!-- Hero Section -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <h1>Inspiring Excellence Through STEM Education</h1>
-            <p>The Bright Start Project is an initiative aim at revolutionizing public education through STEM
-                education, teacher training, and infrastructure development in coastal districts.</p>
+            <center><h1>Inspiring Excellence Through STEM Education</h1></center>
+            <center>
+                <p>
+                    The Bright Start Project is an initiative aim at revolutionizing public education through STEM
+                    education, teacher training, and infrastructure development in coastal districts.
+                </p>
+            </center>
             <div class="hero-btns">
                 <a href="#about" class="btn btn-primary">
                     <i class="ri-information-line"></i> Learn More
@@ -1364,7 +1367,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>About the Project</h2>
-                <p>A transformative initiative sponsored by Tullow and Ten partners</p>
+                <p>A transformative initiative sponsored by Jubilee and TEN partners</p>
             </div>
             <div class="about-content">
                 <div class="about-image">
@@ -1373,7 +1376,7 @@
                 </div>
                 <div class="about-text">
                     <h2>Bright Start Project</h2>
-                    <p>Sponsored by Tullow and Ten partners, the Bright Start Project is a transformative 
+                    <p>Sponsored by Jubilee and TEN partners, the Bright Start Project is a transformative 
                         initiative aimed at revolutionizing public education in the coastal districts of Ghana's Western
                         Region.</p>
                     <p>With a core focus on <span class="highlight">STEM education</span>, the project is structured
@@ -1545,7 +1548,7 @@
             <div class="focus-content">
                 <h2>Focus on STEM Education</h2>
                 <p>The <span>Bright Start Project</span> is dedicated to strengthening <span>STEM education</span> in Ghana’s Western Region by equipping educators with innovative teaching tools, refining lesson plans to align with national standards, and fostering interactive, hands-on learning experiences</p>
-                 <p> Through <span>teacher training workshops, Learning Management System (LMS) development, and the distribution of STEM-focused Teaching and Learning Materials (TLMs), the project ensures that both students and teachers have the resources needed to engage in meaningful scientific exploration.</span> By integrating <span> monitoring and evaluation frameworks</span>, the initiative also tracks impact, refines strategies, and sustains long-term improvements in STEM education accessibility and effectiveness.</p>  
+                 <p> Through <span>teacher training workshops, Learning Management System (LMS) development, and the distribution of STEM-focused Teaching and Learning Materials (TLMs), the project ensures that both students and teachers have the resources needed to engage in meaningful scientific exploration.</span> By integrating <span> monitoring and evaluation frameworks</span>, the initiative also tracks impact, refines strategies, and sustains long-term improvements in STEM education accessibility and effectiveness.</p>  
 
                 <div class="stats">
                     <div class="stat-item">
@@ -1577,6 +1580,86 @@
                 <p>Collaborating for educational transformation</p>
             </div>
             <style>
+        .partners-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .partner-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .partner-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .partner-logo img {
+            max-width: 350px;
+            height: auto;
+        }
+
+        /* First row: Tullow, Kosmos, Petrosa */
+        .partner-logo:nth-child(1) { /* Tullow */
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .partner-logo:nth-child(2) { /* Kosmos */
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .partner-logo:nth-child(3) { /* Petrosa */
+            grid-column: 3;
+            grid-row: 1;
+        }
+
+        /* Second row: Explorco and GNPC closer together */
+        .partner-logo:nth-child(4) { /* Explorco */
+            grid-column: 1;
+            grid-row: 2;
+            justify-self: end;
+        }
+
+        .partner-logo:nth-child(5) { /* GNPC */
+            grid-column: 3;
+            grid-row: 2;
+            justify-self: start;
+        }
+    </style>
+         <div class="partners-logos">
+ 
+            <div class="partner-logo" onclick="window.location.href='https://www.tullowoil.com'">
+                <img loading="lazy" src="tullow.PNG" alt="Tullow Ghana" width="100px">
+            </div>
+            <div class="partner-logo" onclick="window.location.href='https://www.kosmosenergy.com/'">
+                <img loading="lazy" src="kosmos.png" alt="Kosmos Energy" width="100px">
+            </div>
+            <div class="partner-logo" onclick="window.location.href='https://www.petrosa.co.za/'">
+                <img loading="lazy" src="petrosa.png" alt="Petrosa" width="100px">
+            </div>
+        </div>
+        <div class="partners-logos"> 
+            <div class="partner-logo" onclick="window.location.href='https://www.gnpcghana.com/'">
+                <img loading="lazy" src="gnpc.png" alt="GNPC" width="100px">
+            </div>           
+            <div class="partner-logo">
+                <img loading="lazy" src="explorco.png" alt="Explorco" width="100px">
+            </div>
+        </div><br><br>
+
+        <div class="container">
+            <div class="section-title">
+                <p>Implemented By</p>
+            </div>
+            <style>
                 .partners-logos {
                 display: flex;
                 gap: 10vh;
@@ -1589,21 +1672,14 @@
                 cursor: pointer;
                 }
 
-                .partner-logo img {
-                height: 80px;           /* Fixed height */
-                width: auto;            /* Auto width to maintain aspect ratio */
+                .partner-logo img {          /* Fixed height */
+                width: 250px;            /* Auto width to maintain aspect ratio */
                 display: block;
                 margin: 0 auto;         /* Center image horizontally */
                 padding: 5px;
                 }
-            </style>
+            </style><br><br>
             <div class="partners-logos">
-                <div class="partner-logo">
-                    <img loading="lazy" src="logo.PNG" alt="Tullow Ghana" width="100px">
-                </div>
-                <div class="partner-logo">
-                    <img loading="lazy" src="tullow.PNG" alt="Tullow Ghana" width="100px">
-                </div>
                 <div class="partner-logo">
                     <img loading="lazy" src="stcci.png" alt="Tullow Ghana" width="100px">
                 </div>
@@ -1893,71 +1969,101 @@
             });
 
             /*=============== DISTRICT PINS POPUP ===============*/
-            document.querySelectorAll('.district-pin').forEach(pin => {
-                pin.addEventListener('click', () => {
-                    const districtName = pin.getAttribute('data-name');
-                    const districtInfo = pin.getAttribute('data-info');
-                    const districtImage = pin.getAttribute('data-image');
+            const districtData = {
+  "ahanta-west": {
+    name: "Ahanta-West District",
+    schools: [
+      { name: "Cape 3 Points M/A Basic School", img: "images/schools/cape3.jpg" },
+      { name: "Miemia M/A Basic School", img: "images/schools/miemia.jpg" }
+    ]
+  },
+  "shama": {
+    name: "Shama District",
+    schools: [
+      { name: "Shama Junction D/A Primary School", img: "images/schools/shama-junction.jpg" },
+      { name: "Abuesi Methodist Basic School (A & B)", img: "images/schools/abuesi.jpg" }
+    ]
+  },
+  "stma": {
+    name: "Sekondi-Takoradi Metropolitan Assembly (STMA)",
+    schools: [
+      { name: "St. John The Baptist Catholic Primary", img: "images/schools/stjohn.jpg" },
+      { name: "Gethsamane M/A Basic School", img: "images/schools/gethsemane.jpg" }
+    ]
+  },
+  "ekma": {
+    name: "Effia-Kwesimintsim Municipal Assembly (EKMA)",
+    schools: [
+      { name: "Tanokrom M/A Basic School (A & B)", img: "images/schools/tanokrom.jpg" },
+      { name: "Whindo Methodist Primary/KG School", img: "images/schools/whindo.jpg" }
+    ]
+  },
+  "nzema-east": {
+    name: "Nzema-East District",
+    schools: [
+      { name: "Brawire/Akyinim M/A Basic School", img: "images/schools/Brawire.jpg" },
+      { name: "Apewosika M/A Basic School", img: "images/schools/apewosika.jpg" },
+    ]
+  },
+  "ellembele": {
+    name: "Ellembele District",
+    schools: [
+      { name: "Ankobra Catholic Basic School", img: "images/schools/ankobra.jpg" },
+      { name: "Santaso M/A Primary/JHS School", img: "images/schools/santaso.jpg" }
+    ]
+  },
+  "jomoro": {
+    name: "Jomoro District",
+    schools: [
+      { name: "Nana Ayebie Amihere M/A Basic School", img: "images/schools/ayebie.jpg" },
+      { name: "Effasu M/A Primary and JHS", img: "images/schools/efasu.jpg" }
+    ]
+  }
+};
 
-                    Swal.fire({
-                        title: districtName,
-                        html: `
-                            <img src="${districtImage}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
-                            <p style="text-align: left;">${districtInfo}</p>
-                        `,
-                        icon: 'info',
-                        confirmButtonText: 'Close',
-                        width: '600px',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    });
-                });
-            });
 
-            /*=============== DISTRICT LIST EVENTS ===============*/
-            document.querySelectorAll('.district-item').forEach(item => {
-                const pinName = item.getAttribute('data-pin');
-                const pin = document.querySelector(`.pin-${pinName}`);
+function showSchoolList(districtKey) {
+  const district = districtData[districtKey];
+  if (!district) return;
 
-                if (!pin) return;
+  // Build list of schools
+  const schoolListHtml = district.schools.map((school, index) =>
+    `<li style="padding:8px; cursor:pointer; border-bottom:1px solid #ddd;" onclick="showSchoolImage('${districtKey}', ${index})">${school.name}</li>`
+  ).join('');
 
-                // Hover: highlight pin
-                item.addEventListener('mouseenter', () => {
-                    pin.classList.add('highlighted');
-                });
+  Swal.fire({
+    title: district.name,
+    html: `<ul style="list-style:none; padding:0; margin:0; text-align:left;">${schoolListHtml}</ul>`,
+    showConfirmButton: false,
+    width: '600px'
+  });
+}
 
-                item.addEventListener('mouseleave', () => {
-                    pin.classList.remove('highlighted');
-                });
 
-                // Click: show popup
-                item.addEventListener('click', () => {
-                    const districtName = pin.getAttribute('data-name');
-                    const districtInfo = pin.getAttribute('data-info');
-                    const districtImage = pin.getAttribute('data-image');
+window.showSchoolImage = function(districtKey, schoolIndex) {
+  const school = districtData[districtKey].schools[schoolIndex];
 
-                    Swal.fire({
-                        title: districtName,
-                        html: `
-                            <img src="${districtImage}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
-                            <p style="text-align: left;">${districtInfo}</p>
-                        `,
-                        icon: 'info',
-                        confirmButtonText: 'Close',
-                        width: '600px',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    });
-                });
-            });
+  Swal.fire({
+    title: school.name,
+    html: `<img src="${school.img}" style="width:100%; border-radius:10px; margin-bottom:15px;">`,
+    confirmButtonText: 'Close',
+    width: '500px'
+  });
+}
+
+
+// Pin Click Events
+document.querySelectorAll('.district-pin').forEach(pin => {
+  const pinKey = pin.classList[1].replace('pin-', ''); // e.g. pin-ahanta-west → ahanta-west
+  pin.addEventListener('click', () => showSchoolList(pinKey));
+});
+
+// District List Click Events
+document.querySelectorAll('.district-item').forEach(item => {
+  const pinKey = item.getAttribute('data-pin');
+  item.addEventListener('click', () => showSchoolList(pinKey));
+});
+
         });
     </script>
 
